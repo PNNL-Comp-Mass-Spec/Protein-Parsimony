@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SetCover
 {
-    class DFS
+    class DFS : AlgBase
     {
         Dictionary<int, Node> AllNodes = new Dictionary<int, Node>();
 
@@ -46,9 +46,8 @@ namespace SetCover
                 if (AllNodes.ContainsKey(mynode.Id))
                 {
                     Cluster cs = new Cluster();
-                    cs.children = Search(mynode).ToList();
+                    cs.children = new NodeChildren<Node>(Search(mynode));
          //           cs.nodeName = String.Concat(cs.chi);
-                    cs.memberCount = cs.children.Count;
                 }
             }
             return clusters;

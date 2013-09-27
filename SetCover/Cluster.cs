@@ -7,6 +7,6 @@ namespace SetCover
 {
     class Cluster : Node
     {
-        public int memberCount = 0;
+        
     }
 }

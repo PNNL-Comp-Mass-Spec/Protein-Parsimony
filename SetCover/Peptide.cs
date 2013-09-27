@@ -5,7 +5,8 @@ using System.Text;
 
 namespace SetCover
 {
-    class Peptide : Node
+    class Peptide : PeptideGroup 
     {
+        public Peptide(string nodeName):base(nodeName){}
     }
 }

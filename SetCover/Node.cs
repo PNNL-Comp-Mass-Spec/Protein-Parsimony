@@ -5,14 +5,12 @@ using System.Text;
 
 namespace SetCover
 {
-    public class Node
+    public class Node : IComparable
     {
 
         private static int IDNum = 0;
-
-
         public int Id { get; set; }
-        public List<Node> children { get; set; }
+        public NodeChildren<Node> children { get; set; }
         public String nodeName { get; set; }
 
         public Node() { }
@@ -22,8 +20,34 @@ namespace SetCover
         {
             this.nodeName = nodeName;
             this.Id = System.Threading.Interlocked.Increment(ref IDNum);
-            this.children = new List<Node>();
+            this.children = new NodeChildren<Node>();
+            
         }
+
+        public int ChildCount
+        {
+            get { return children.ChildCount; }
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj == null) return 1;
+
+            Node otherNode = obj as Node;
+            if (otherNode != null)
+            {
+                return this.ChildCount.CompareTo(otherNode.ChildCount);
+            }
+            else
+            {
+                throw new ArgumentException("Object is not a Node!");
+            }
+
+
+        }
+
+
+
     }
 
 

@@ -5,8 +5,13 @@ using System.Text;
 
 namespace SetCover
 {
-    class Protein : Node
+    class Protein : ProteinGroup
     {
+        public Protein(string nodeName)
+            : base(nodeName)
+        { }
+
+        
 
     }
 }
