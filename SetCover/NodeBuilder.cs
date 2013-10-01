@@ -18,7 +18,7 @@ namespace SetCover
             peps = Peptides;
         }
 
-        public void BuildNodes(DataTable dt)
+        private void BuildNodes(DataTable dt)
         {
             foreach (DataRow drow in dt.Rows)
             {

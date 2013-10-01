@@ -7,9 +7,9 @@ using System.Text;
 using System.Data;
 using System.IO;
 
-namespace AScore_DLL
+namespace SetCover
 {
-	class Utilities
+	static class Utilities
 	{
 
 		/// <summary>

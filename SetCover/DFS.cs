@@ -5,9 +5,14 @@ using System.Text;
 
 namespace SetCover
 {
-    class DFS : AlgBase
+    class DFS
     {
         Dictionary<int, Node> AllNodes = new Dictionary<int, Node>();
+
+        public void RunAlgorithm(ref List<Node> Proteins)
+        {
+            Proteins = ClusterNodes(Proteins);
+        }
 
         public bool CheckID(Node nextNode, HashSet<Node> searchedNodes)
         {
@@ -34,9 +39,9 @@ namespace SetCover
             return searchNodes;
         }
 
-        public List<Cluster> ClusterNodes(List<Node> inNodes)
+        public List<Node> ClusterNodes(List<Node> inNodes)
         {
-            List<Cluster> clusters = new List<Cluster>();
+            List<Node> clusters = new List<Node>();
             foreach (Node mynode in inNodes)
             {
                 AllNodes.Add(mynode.Id, mynode);
