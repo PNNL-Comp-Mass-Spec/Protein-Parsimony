@@ -8,47 +8,65 @@ namespace SetCover
 {
     class NodeBuilder
     {
-        List<Node> Proteins = new List<Node>();
-        List<Node> Peptides = new List<Node>();
+        Dictionary<string, Node> Proteins = new Dictionary<string, Node>();
+        Dictionary<string,Node> Peptides = new Dictionary<string, Node>();
 
         public void RunAlgorithm(DataTable dt, ref List<Node> prots, ref List<Node> peps)
         {
             BuildNodes(dt);
-            prots = Proteins;
-            peps = Peptides;
+            prots = Proteins.Values.ToList();
+            peps = Peptides.Values.ToList();
         }
-
+        /// <summary>
+        /// Builds the nodes for a bipartite graph composed of proteins 
+        /// on one side peptides on the other
+        /// </summary>
+        /// <param name="dt">input table must have at peptide and protein column</param>
         private void BuildNodes(DataTable dt)
         {
             foreach (DataRow drow in dt.Rows)
             {
                 Protein prot = new Protein((string)drow["Protein"]);
                 Peptide pep = new Peptide((string)drow["Peptide"]);
-                if (Proteins.Contains(prot))
+                if (pep.nodeName == "FADLSEAANR")
                 {
-                    Proteins[Proteins.IndexOf(prot)].children.Add(pep);
+                    string stop = "stop";
+                }
+
+                if (Proteins.ContainsKey(prot.nodeName) && Peptides.ContainsKey(pep.nodeName))
+                {
+                    Proteins[prot.nodeName].children.Add(Peptides[pep.nodeName]);
+                    Peptides[pep.nodeName].children.Add(Proteins[prot.nodeName]);
+                }
+                else if (Proteins.ContainsKey(prot.nodeName))
+                {
+                    Proteins[prot.nodeName].children.Add(pep);
+                    pep.children.Add(prot);
+                    Peptides.Add(pep.nodeName, pep);
+
+                }
+                else if (Peptides.ContainsKey(pep.nodeName))
+                {
+                    Peptides[pep.nodeName].children.Add(prot);
+                    prot.children.Add(pep);
+                    Proteins.Add(prot.nodeName, prot);
                 }
                 else
                 {
                     prot.children.Add(pep);
-                    Proteins.Add(prot);
-                  
-                }
-                if (Peptides.Contains(pep))
-                {
-                    Peptides[Peptides.IndexOf(pep)].children.Add(prot);
-                }
-                else
-                {
                     pep.children.Add(prot);
-                    Peptides.Add(pep);
+                    Proteins.Add(prot.nodeName, prot);
+                    Peptides.Add(pep.nodeName, pep);
                 }
             }
         }
 
+        /// <summary>
+        /// Ensures that all proteins in the graph have had the untaken peptide supdates.
+        /// </summary>
         public void UpdateUntakenPeptides()
         {
-            foreach (Protein p in Proteins)
+            foreach (Protein p in Proteins.Values)
             {
                 p.UntakenPeptide = p.ChildCount;
             }

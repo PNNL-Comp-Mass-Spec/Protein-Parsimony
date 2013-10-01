@@ -13,7 +13,10 @@ namespace SetCover
             RunAlgorithm(ref inNode);
         }
 
-
+        /// <summary>
+        /// Finds the best coverage using a greedy algorithm
+        /// </summary>
+        /// <param name="inNode"></param>
         public void RunAlgorithm(ref List<Node> inNode)
         {
             //log.Info("Running Greedy Set Cover");

@@ -19,6 +19,11 @@ namespace SetCover
             return searchedNodes.Contains(nextNode);
         }
 
+        /// <summary>
+        /// Using a depth first search to cluster sets of nodes for set cover assignment
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="searchNodes"></param>
         public void Search(Node input, HashSet<Node> searchNodes)
         {
             foreach (Node child in input.children)
