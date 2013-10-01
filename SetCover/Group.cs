@@ -8,18 +8,26 @@ namespace SetCover
     class Group : Node
     {
         protected NodeChildren<Node> nodeGroup;
-
+        string[] nodeNames;
         public Group(string nodeName) : base(nodeName) { }
         public Group(NodeChildren<Node> groupedNodes)
         {
             this.nodeGroup = groupedNodes;
-            foreach (Node n in groupedNodes)
+            children = groupedNodes[0].children;
+
+            foreach (Node child in children)
             {
-                foreach (Node child in n.children)
+                foreach (Node grNode in groupedNodes)
                 {
-                    this.children.Add(child);
+                    child.children.Remove(grNode);
                 }
             }
+
+            foreach (Node child in children)
+            {
+                child.children.Add(this);
+            }
+
         }
     }
 }
