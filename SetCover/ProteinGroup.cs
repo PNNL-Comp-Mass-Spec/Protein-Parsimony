@@ -11,7 +11,7 @@ namespace SetCover
 
         public ProteinGroup(NodeChildren<Node> groupedNodes) : base(groupedNodes)
         {
-            UntakenPeptide = this.ChildCount;
+            UntakenPeptide = this.children.Count;
 
         }
 

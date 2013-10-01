@@ -13,7 +13,7 @@ namespace SetCover
         public Group(NodeChildren<Node> groupedNodes)
         {
             this.nodeGroup = groupedNodes;
-            children = groupedNodes[0].children;
+            this.children = groupedNodes[0].children;
             this.nodeNames = new string[groupedNodes.Count];
             for (int i = 0; i < nodeNames.Length; i++)
             {
@@ -23,9 +23,9 @@ namespace SetCover
 
             foreach (Node child in children)
             {
-                foreach (Node grNode in groupedNodes)
+                for(int i = 0; i < groupedNodes.Count; i++)
                 {
-                    child.children.Remove(grNode);
+                    child.children.Remove(groupedNodes[i]);
                 }
             }
             foreach (Node child in children)

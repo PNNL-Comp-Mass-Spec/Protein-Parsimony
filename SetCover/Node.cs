@@ -24,10 +24,6 @@ namespace SetCover
 
         }
 
-        public int ChildCount
-        {
-            get { return children.ChildCount; }
-        }
 
         public int CompareTo(object obj)
         {
@@ -36,7 +32,7 @@ namespace SetCover
             Node otherNode = obj as Node;
             if (otherNode != null)
             {
-                return this.ChildCount.CompareTo(otherNode.ChildCount);
+                return this.children.Count.CompareTo(otherNode.children.Count);
             }
             else
             {

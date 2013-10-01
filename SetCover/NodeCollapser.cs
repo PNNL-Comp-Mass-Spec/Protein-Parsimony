@@ -25,8 +25,22 @@ namespace SetCover
             peptides.Sort();
             proteins.Sort();
             List<Node> tempList = new List<Node>();
-            foreach (Node protein in proteins)
+            int count = 0;
+            while(count != proteins.Count)
             {
+                Node protein = proteins[count];
+                if (protein.nodeName == "H31_MOUSE")
+                {
+                    string s = "stop";
+                }
+                if (protein.nodeName == "H32_MOUSE")
+                {
+                    string s = "stop";
+                }
+                if (protein.nodeName == "H33_MOUSE")
+                {
+                    string s = "stop";
+                }
                 if (protein.GetType() == typeof(Protein))
                 {
                     NodeChildren<Node> dups = FindDuplicates(protein);
@@ -39,11 +53,20 @@ namespace SetCover
                         }
                         proteins.Add(PG);
                     }
+                    else
+                    {
+                        count++;
+                    }
+                }
+                else
+                {
+                    count++;
                 }
             }
 
-            foreach (Node peptide in peptides)
+            while (count != peptides.Count)
             {
+                Node peptide = peptides[count];
                 if (peptide.GetType() == typeof(Peptide))
                 {
                     NodeChildren<Node> dups = FindDuplicates(peptide);
@@ -52,10 +75,18 @@ namespace SetCover
                         PeptideGroup PG = new PeptideGroup(dups);
                         foreach (Node pp2 in dups)
                         {
-                            proteins.Remove(pp2);
+                            peptides.Remove(pp2);
                         }
-                        proteins.Add(PG);
+                        peptides.Add(PG);
                     }
+                    else
+                    {
+                        count++;
+                    }
+                }
+                else
+                {
+                    count++;
                 }
             }
         }
@@ -65,17 +96,20 @@ namespace SetCover
             node.children.Sort();
             NodeChildren<Node> candidates = new NodeChildren<Node>();
             candidates = node.children[0].children;
-            candidates.RemoveChild(node);
+            candidates.Remove(node);
 
             int count = 0;
             //pulls out candidates with different counts of children than the master
             while(candidates.Count != count)
             {
-                if(node.ChildCount != candidates[count].ChildCount)
+                if (node.children.Count != candidates[count].children.Count)
                 {
                     candidates.RemoveAt(count);
                 }
-                count++;
+                else
+                {
+                    count++;
+                }
             }
             //may want to change the List to a Hashset to be faster.
             //finds identical sets.
@@ -88,7 +122,10 @@ namespace SetCover
                     {
                         candidates.RemoveAt(count);
                     }
-                    count++;
+                    else
+                    {
+                        count++;
+                    }
                 }
             }
             candidates.Add(node);

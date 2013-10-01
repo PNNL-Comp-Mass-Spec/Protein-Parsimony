@@ -28,11 +28,6 @@ namespace SetCover
             {
                 Protein prot = new Protein((string)drow["Protein"]);
                 Peptide pep = new Peptide((string)drow["Peptide"]);
-                if (pep.nodeName == "FADLSEAANR")
-                {
-                    string stop = "stop";
-                }
-
                 if (Proteins.ContainsKey(prot.nodeName) && Peptides.ContainsKey(pep.nodeName))
                 {
                     Proteins[prot.nodeName].children.Add(Peptides[pep.nodeName]);
@@ -68,7 +63,7 @@ namespace SetCover
         {
             foreach (Protein p in Proteins.Values)
             {
-                p.UntakenPeptide = p.ChildCount;
+                p.UntakenPeptide = p.children.Count;
             }
         }
 

@@ -80,7 +80,7 @@ namespace SetCover
 
         public void RemoveAt(int index)
         {
-            throw new NotImplementedException();
+            this.list.RemoveAt(index);
         }
 
         public T this[int index]
