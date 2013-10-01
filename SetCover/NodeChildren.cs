@@ -62,5 +62,79 @@ namespace SetCover
             }
         }
 
+
+        public int IndexOf(T item)
+        {
+           return this.list.IndexOf(item); 
+        }
+
+        public void Insert(int index, T item)
+        {
+            if (!this.list.Contains(item))
+            {
+                this.list.Insert(index, item);
+                memberCount++;
+            }
+
+        }
+
+        public void RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        public T this[int index]
+        {
+            get
+            {
+                return this.list[index];
+            }
+            set
+            {
+                this.list[index] = value;
+            }
+        }
+
+
+        public void Clear()
+        {
+            this.list.Clear(); 
+        }
+
+        public bool Contains(T item)
+        {
+            return this.list.Contains(item);
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            this.list.CopyTo(array, arrayIndex); 
+        }
+
+        public int Count
+        {
+            get { return this.list.Count(); }
+        }
+
+        public bool IsReadOnly
+        {
+            get { return false; }
+        }
+
+        public bool Remove(T item)
+        {
+            return this.list.Remove(item);
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return this.list.GetEnumerator();
+        }
+
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -24,9 +24,25 @@ namespace SetCover
             {
                 Protein prot = new Protein((string)drow["Protein"]);
                 Peptide pep = new Peptide((string)drow["Peptide"]);
-                prot.children.Add(pep);
-                pep.children.Add(prot);
-
+                if (Proteins.Contains(prot))
+                {
+                    Proteins[Proteins.IndexOf(prot)].children.Add(pep);
+                }
+                else
+                {
+                    prot.children.Add(pep);
+                    Proteins.Add(prot);
+                  
+                }
+                if (Peptides.Contains(pep))
+                {
+                    Peptides[Peptides.IndexOf(pep)].children.Add(prot);
+                }
+                else
+                {
+                    pep.children.Add(prot);
+                    Peptides.Add(pep);
+                }
             }
         }
 

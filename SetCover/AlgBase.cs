@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using log4net;
-
 namespace SetCover
 {
-    class AlgBase : SetCover.IAlgBase 
+    class AlgBase 
     {
-        protected ILog log = LogManager.GetLogger(typeof(AlgBase));
+      //  protected ILog log = LogManager.GetLogger(typeof(AlgBase));
         public void ReadFile()
         {
             throw new NotImplementedException();
@@ -16,7 +14,7 @@ namespace SetCover
 
         public virtual void RunAlgorithm(List<Node> inNode, List<Node> outNode)
         {
-            log.Info("some message");
+   //         log.Info("some message");
             
         }
 
