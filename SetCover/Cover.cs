@@ -6,12 +6,18 @@ using log4net;
 
 namespace SetCover
 {
-    class Cover : AlgBase
+    class Cover : IAlgBase
     {
-        public override void RunAlgorithm(ref List<Node> inNode, ref List<Node> outNode)
+        public void RunAlgorithm(ref List<Node> inNode, ref List<Node> outNode)
         {
-            log.Info("Running Greedy Set Cover");
-            outNode = BulkFinder(inNode);
+            RunAlgorithm(ref inNode);
+        }
+
+
+        public void RunAlgorithm(ref List<Node> inNode)
+        {
+            //log.Info("Running Greedy Set Cover");
+            inNode = BulkFinder(inNode);
         }
 
         public List<Node> BulkFinder(List<Node> inCluster)
@@ -71,6 +77,8 @@ namespace SetCover
             }
         }
 
-        
+
+
+
     }
 }

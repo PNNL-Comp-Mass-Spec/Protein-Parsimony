@@ -7,10 +7,10 @@ namespace SetCover
 {
     class Group : Node
     {
-        protected List<Node> nodeGroup;
+        protected NodeChildren<Node> nodeGroup;
 
         public Group(string nodeName) : base(nodeName) { }
-        public Group(List<Node> groupedNodes)
+        public Group(NodeChildren<Node> groupedNodes)
         {
             this.nodeGroup = groupedNodes;
             foreach (Node n in groupedNodes)

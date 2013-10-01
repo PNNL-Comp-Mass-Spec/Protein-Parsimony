@@ -6,7 +6,7 @@ using log4net;
 
 namespace SetCover
 {
-    class AlgBase 
+    class AlgBase : SetCover.IAlgBase 
     {
         protected ILog log = LogManager.GetLogger(typeof(AlgBase));
         public void ReadFile()

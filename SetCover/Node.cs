@@ -21,7 +21,7 @@ namespace SetCover
             this.nodeName = nodeName;
             this.Id = System.Threading.Interlocked.Increment(ref IDNum);
             this.children = new NodeChildren<Node>();
-            
+
         }
 
         public int ChildCount
