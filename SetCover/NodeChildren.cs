@@ -35,6 +35,12 @@ namespace SetCover
             memberCount = this.list.Count;
         }
 
+        public NodeChildren(NodeChildren<T> inlist)
+        {
+            this.list = new List<T>(inlist);
+            memberCount = this.list.Count;
+        }
+
         /// <summary>
         /// Ensures there are no duplicate adds
         /// </summary>

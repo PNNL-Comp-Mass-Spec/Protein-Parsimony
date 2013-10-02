@@ -36,14 +36,14 @@ namespace SetCover
                 else if (Proteins.ContainsKey(prot.nodeName))
                 {
                     Proteins[prot.nodeName].children.Add(pep);
-                    pep.children.Add(prot);
+                    pep.children.Add(Proteins[prot.nodeName]);
                     Peptides.Add(pep.nodeName, pep);
 
                 }
                 else if (Peptides.ContainsKey(pep.nodeName))
                 {
                     Peptides[pep.nodeName].children.Add(prot);
-                    prot.children.Add(pep);
+                    prot.children.Add(Peptides[pep.nodeName]);
                     Proteins.Add(prot.nodeName, prot);
                 }
                 else

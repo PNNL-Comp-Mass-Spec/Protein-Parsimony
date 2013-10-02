@@ -29,25 +29,14 @@ namespace SetCover
             while(count != proteins.Count)
             {
                 Node protein = proteins[count];
-                if (protein.nodeName == "H31_MOUSE")
-                {
-                    string s = "stop";
-                }
-                if (protein.nodeName == "H32_MOUSE")
-                {
-                    string s = "stop";
-                }
-                if (protein.nodeName == "H33_MOUSE")
-                {
-                    string s = "stop";
-                }
                 if (protein.GetType() == typeof(Protein))
                 {
                     NodeChildren<Node> dups = FindDuplicates(protein);
+                    NodeChildren<Node> dups2 = new NodeChildren<Node>(dups);
                     if (dups.Count > 1)
                     {
                         ProteinGroup PG = new ProteinGroup(dups);
-                        foreach (Node pp2 in dups)
+                        foreach (Node pp2 in dups2)
                         {
                             proteins.Remove(pp2);
                         }
@@ -73,7 +62,8 @@ namespace SetCover
                     if (dups.Count > 1)
                     {
                         PeptideGroup PG = new PeptideGroup(dups);
-                        foreach (Node pp2 in dups)
+                        NodeChildren<Node> dups2 = new NodeChildren<Node>(dups);
+                        foreach (Node pp2 in dups2)
                         {
                             peptides.Remove(pp2);
                         }

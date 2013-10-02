@@ -12,8 +12,9 @@ namespace SetCover
         public Group(string nodeName) : base(nodeName) { }
         public Group(NodeChildren<Node> groupedNodes)
         {
-            this.nodeGroup = groupedNodes;
-            this.children = groupedNodes[0].children;
+            NodeChildren<Node> tempNode = new NodeChildren<Node>(groupedNodes);
+            this.nodeGroup = new NodeChildren<Node>(groupedNodes);
+            this.children = new NodeChildren<Node>(groupedNodes[0].children);
             this.nodeNames = new string[groupedNodes.Count];
             for (int i = 0; i < nodeNames.Length; i++)
             {
@@ -21,12 +22,13 @@ namespace SetCover
             }
             this.nodeName = String.Join("-", nodeNames);
 
+
+            int toRemove = tempNode.Count;
             foreach (Node child in children)
             {
-                for(int i = 0; i < groupedNodes.Count; i++)
-                {
-                    child.children.Remove(groupedNodes[i]);
-                }
+                for(int i = 0; i < toRemove; i++)
+                    child.children.Remove(tempNode[i]);
+                
             }
             foreach (Node child in children)
             {
