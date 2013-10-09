@@ -33,5 +33,10 @@ namespace SetCover
             }
         }
 
+        public void UpdateUntakenPeptides()
+        {
+            UntakenPeptide = this.children.Count;
+        }
+
     }
 }

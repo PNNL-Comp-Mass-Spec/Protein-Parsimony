@@ -7,77 +7,72 @@ namespace SetCover
 {
     class NodeCollapser : IAlgBase
     {
-        public void RunAlgorithm(ref List<Node> pep, ref List<Node> protein)
+        public void RunAlgorithm(ref Dictionary<string, Node> protein, ref Dictionary<string, Node> pep)
         {
-            CollapseNodes(ref pep, ref protein);
+            CollapseNodes(ref protein, ref pep);
         }
 
         public void RunAlgorithm(ref List<Node> inNode)
         {
             List<Node> dummy = new List<Node>();
-            CollapseNodes(ref inNode, ref dummy);
+   //         CollapseNodes(ref inNode, ref dummy);
         }
 
 
         //Collapses redundant protein and peptides into single groups.
-        public void CollapseNodes(ref List<Node> proteins, ref List<Node> peptides)
+        public void CollapseNodes(ref Dictionary<string, Node> proteins, ref Dictionary<string, Node> peptides)
         {
-            peptides.Sort();
-            proteins.Sort();
+     //       peptides.Sort();
+     //       proteins.Sort();
             List<Node> tempList = new List<Node>();
             int count = 0;
+            List<string> listprotein = proteins.Keys.ToList();
             while(count != proteins.Count)
             {
-                Node protein = proteins[count];
-                if (protein.GetType() == typeof(Protein))
+                if(proteins.ContainsKey(listprotein[count]))
                 {
-                    NodeChildren<Node> dups = FindDuplicates(protein);
-                    NodeChildren<Node> dups2 = new NodeChildren<Node>(dups);
-                    if (dups.Count > 1)
-                    {
-                        ProteinGroup PG = new ProteinGroup(dups);
-                        foreach (Node pp2 in dups2)
-                        {
-                            proteins.Remove(pp2);
-                        }
-                        proteins.Add(PG);
-                    }
-                    else
-                    {
-                        count++;
-                    }
-                }
-                else
-                {
-                    count++;
-                }
-            }
+                    Node protein = proteins[listprotein[count]];
 
+                    if (protein.GetType() == typeof(Protein))
+                    {
+                        NodeChildren<Node> dups = new NodeChildren<Node>();
+                        dups.AddRange(FindDuplicates(protein));
+                        if (dups.Count > 1)
+                        {
+                            ProteinGroup PG = new ProteinGroup(dups);
+                            foreach (Node pp2 in dups)
+                            {
+                                proteins.Remove(pp2.nodeName);
+                            }
+                            proteins.Add(PG.nodeName, PG);
+                        }
+                    }
+                }
+                count++;
+            }
+            List<string> listpeptides = peptides.Keys.ToList();
             while (count != peptides.Count)
             {
-                Node peptide = peptides[count];
-                if (peptide.GetType() == typeof(Peptide))
+                if (peptides.ContainsKey(listpeptides[count]))
                 {
-                    NodeChildren<Node> dups = FindDuplicates(peptide);
-                    if (dups.Count > 1)
+                    Node peptide = peptides[listpeptides[count]];
+                    if (peptide.GetType() == typeof(Peptide))
                     {
-                        PeptideGroup PG = new PeptideGroup(dups);
-                        NodeChildren<Node> dups2 = new NodeChildren<Node>(dups);
-                        foreach (Node pp2 in dups2)
+                        NodeChildren<Node> dups = new NodeChildren<Node>();
+                        dups.AddRange(FindDuplicates(peptide));
+                        if (dups.Count > 1)
                         {
-                            peptides.Remove(pp2);
+                            PeptideGroup PG = new PeptideGroup(dups);
+
+                            foreach (Node pp2 in dups)
+                            {
+                                peptides.Remove(pp2.nodeName);
+                            }
+                            peptides.Add(PG.nodeName, PG);
                         }
-                        peptides.Add(PG);
-                    }
-                    else
-                    {
-                        count++;
                     }
                 }
-                else
-                {
-                    count++;
-                }
+                count++;
             }
         }
 
@@ -85,7 +80,7 @@ namespace SetCover
         {
             node.children.Sort();
             NodeChildren<Node> candidates = new NodeChildren<Node>();
-            candidates = node.children[0].children;
+            candidates.AddRange(node.children[0].children);
             candidates.Remove(node);
 
             int count = 0;

@@ -8,14 +8,17 @@ namespace SetCover
 {
     class NodeBuilder
     {
-        Dictionary<string, Node> Proteins = new Dictionary<string, Node>();
-        Dictionary<string,Node> Peptides = new Dictionary<string, Node>();
+        Dictionary<string, Node> Proteins;
+        Dictionary<string, Node> Peptides;
 
-        public void RunAlgorithm(DataTable dt, ref List<Node> prots, ref List<Node> peps)
+        public void RunAlgorithm(DataTable dt, ref Dictionary<string, Node> prots, ref Dictionary<string, Node> peps)
         {
+            this.Proteins = new Dictionary<string, Node>(dt.Rows.Count);
+            this.Peptides = new Dictionary<string, Node>(dt.Rows.Count);
             BuildNodes(dt);
-            prots = Proteins.Values.ToList();
-            peps = Peptides.Values.ToList();
+            prots = this.Proteins;
+            peps = this.Peptides;
+
         }
         /// <summary>
         /// Builds the nodes for a bipartite graph composed of proteins 
@@ -26,12 +29,20 @@ namespace SetCover
         {
             foreach (DataRow drow in dt.Rows)
             {
+
                 Protein prot = new Protein((string)drow["Protein"]);
                 Peptide pep = new Peptide((string)drow["Peptide"]);
+
                 if (Proteins.ContainsKey(prot.nodeName) && Peptides.ContainsKey(pep.nodeName))
                 {
-                    Proteins[prot.nodeName].children.Add(Peptides[pep.nodeName]);
-                    Peptides[pep.nodeName].children.Add(Proteins[prot.nodeName]);
+                    if (!Proteins[prot.nodeName].children.Contains(Peptides[pep.nodeName]))
+                    {
+                        Proteins[prot.nodeName].children.Add(Peptides[pep.nodeName]);
+                    }
+                    if (!Peptides[pep.nodeName].children.Contains(Proteins[prot.nodeName]))
+                    {
+                        Peptides[pep.nodeName].children.Add(Proteins[prot.nodeName]);
+                    }
                 }
                 else if (Proteins.ContainsKey(prot.nodeName))
                 {

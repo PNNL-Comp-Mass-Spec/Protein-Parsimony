@@ -9,7 +9,7 @@ namespace SetCover
     class TestRun
     {
         [Test]
-        public void Test()
+        public static void Main(string[] args)
         {
             string file = @"C:\Users\aldr699\Documents\Visual Studio 2010\Projects2\ProteinPars\SetCover\T_Row_Metadata.txt";
             Runner run = new Runner();

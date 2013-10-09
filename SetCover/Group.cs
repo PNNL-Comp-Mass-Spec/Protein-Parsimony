@@ -10,7 +10,7 @@ namespace SetCover
         protected NodeChildren<Node> nodeGroup;
         string[] nodeNames;
         public Group(string nodeName) : base(nodeName) { }
-        public Group(NodeChildren<Node> groupedNodes)
+        public Group(NodeChildren<Node> groupedNodes):base()
         {
             NodeChildren<Node> tempNode = new NodeChildren<Node>(groupedNodes);
             this.nodeGroup = new NodeChildren<Node>(groupedNodes);

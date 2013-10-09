@@ -49,7 +49,7 @@ namespace SetCover
 				{
 					DataRow row = dt.NewRow();
 
-					fields = line.Split(new char[] { '\t', ',' });
+					fields = line.Split(new char[] { '\t' });
 					int i = 0;
 					foreach (string s in fields)
 					{

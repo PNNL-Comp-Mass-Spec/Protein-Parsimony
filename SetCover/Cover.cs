@@ -51,17 +51,15 @@ namespace SetCover
                     peptides.Add(node);
                 }
             }
-            for (int i = proteins.Count - 1; i >= 0; i--)
+            //This loop is going to have to change.
+            proteins.Sort();
+            while(proteins.Count != 0 && ((ProteinGroup)proteins[proteins.Count-1]).UntakenPeptide != 0)
             {                    
-                proteins.Sort();
-                Node temp = proteins[i];
-                if (((ProteinGroup)temp).UntakenPeptide == 0)
-                {
-                    break;
-                }
+                Node temp = proteins[proteins.Count-1];
                 ProteinSet.Add(temp);
                 proteins.Remove(temp);
-                AdjustUntakenPeptides(temp, proteins);
+                AdjustUntakenPeptides(temp);
+                proteins.Sort();
             }
             
             return ProteinSet;
@@ -69,7 +67,7 @@ namespace SetCover
 
         }
 
-        private void AdjustUntakenPeptides(Node temp, List<Node> proteins)
+        private void AdjustUntakenPeptides(Node temp)
         {
             foreach (Node child in temp.children)
             {

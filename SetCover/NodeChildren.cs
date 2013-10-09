@@ -55,6 +55,11 @@ namespace SetCover
 
         }
 
+        public void AddRange(NodeChildren<T> nodes)
+        {
+            list.AddRange(nodes);
+        }
+
         /// <summary>
         /// Ensures removal is smooth
         /// </summary>

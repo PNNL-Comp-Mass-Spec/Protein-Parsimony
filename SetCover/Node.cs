@@ -13,7 +13,10 @@ namespace SetCover
         public NodeChildren<Node> children { get; set; }
         public String nodeName { get; set; }
 
-        public Node() { }
+        public Node() 
+        {
+            this.Id = System.Threading.Interlocked.Increment(ref IDNum);
+        }
 
 
         public Node(String nodeName)

@@ -40,6 +40,8 @@ namespace SetCover
         public HashSet<Node> Search(Node input)
         {
             HashSet<Node> searchNodes = new HashSet<Node>();
+            searchNodes.Add(input);
+            AllNodes.Remove(input.Id);
             Search(input, searchNodes);
             return searchNodes;
         }
@@ -58,6 +60,7 @@ namespace SetCover
                     Cluster cs = new Cluster();
                     cs.children = new NodeChildren<Node>(Search(mynode));
          //           cs.nodeName = String.Concat(cs.chi);
+                    clusters.Add(cs);
                 }
             }
             return clusters;
