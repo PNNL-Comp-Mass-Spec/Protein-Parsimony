@@ -36,5 +36,10 @@ namespace SetCover
             }
 
         }
+
+        public NodeChildren<Node> GetNodeGroup()
+        {
+            return nodeGroup;
+        }
     }
 }
