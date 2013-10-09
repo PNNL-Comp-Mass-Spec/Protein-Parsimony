@@ -108,6 +108,35 @@ namespace SetCover
 			}
 		}
 
+        public static void WriteTable(List<Node> outData, string filepath)
+        {
+            using (StreamWriter sw = new StreamWriter(filepath))
+            {
+                string header = "Protein\tPeptide";
+                sw.WriteLine(header);
+                foreach (Node node in outData)
+                {
+                    foreach(Node child in node.children)
+                    {
+                        if(child.GetType() == typeof(PeptideGroup))
+                        {
+                            foreach(Node groupedpep in ((Group)child).GetNodeGroup())
+                            {
+                                sw.WriteLine(string.Format("{0}\t{1}", 
+                                    node.nodeName, groupedpep.nodeName));
+                            }
+                        }
+                        else
+                        {
+                            sw.WriteLine(string.Format("{0}\t{1}", 
+                                    node.nodeName, child.nodeName));
+                        }
+                    }
+
+                }
+            }
+        }
+
 
 	}
 }

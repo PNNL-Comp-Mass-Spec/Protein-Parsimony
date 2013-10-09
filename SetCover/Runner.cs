@@ -33,6 +33,11 @@ namespace SetCover
             Cover cv = new Cover();
             //Number of proteins is not being reduced.
             cv.RunAlgorithm(ref ClProteins);
+
+            string mydir = System.IO.Path.GetDirectoryName(filename);
+            string outpath = System.IO.Path.Combine(mydir, "testout.txt");
+            Utilities.WriteTable(ClProteins, outpath);
+
             return true;
         }
 
