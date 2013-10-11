@@ -11,6 +11,10 @@ namespace SetCover
 
         public void RunAlgorithm(ref List<Node> Proteins)
         {
+            foreach (ProteinGroup p in Proteins)
+            {
+                p.UpdateUntakenPeptides();
+            }
             Proteins = ClusterNodes(Proteins);
         }
 

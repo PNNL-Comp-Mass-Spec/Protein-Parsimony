@@ -5,6 +5,9 @@ using System.Text;
 
 namespace SetCover
 {
+    /// <summary>
+    /// Set of functions used for collapsing proteins with identical peptides into a single protein group
+    /// </summary>
     class NodeCollapser : IAlgBase
     {
         public void RunAlgorithm(ref Dictionary<string, Node> protein, ref Dictionary<string, Node> pep)
@@ -22,26 +25,24 @@ namespace SetCover
         //Collapses redundant protein and peptides into single groups.
         public void CollapseNodes(ref Dictionary<string, Node> proteins, ref Dictionary<string, Node> peptides)
         {
-     //       peptides.Sort();
-     //       proteins.Sort();
-            List<Node> tempList = new List<Node>();
             int count = 0;
-            List<string> listprotein = proteins.Keys.ToList();
+            List<string> listprotein = proteins.Keys.ToList();//get a list of the keys
             while(count != proteins.Count)
             {
-                if(proteins.ContainsKey(listprotein[count]))
+                if(proteins.ContainsKey(listprotein[count]))//is the key there
                 {
-                    Node protein = proteins[listprotein[count]];
-
-                    if (protein.GetType() == typeof(Protein))
+                    Node protein = proteins[listprotein[count]]; //get the protein
+                    if (protein.GetType() == typeof(Protein))//no protein groups allowed
                     {
                         NodeChildren<Node> dups = new NodeChildren<Node>();
-                        dups.AddRange(FindDuplicates(protein));
+                        dups.AddRange(FindDuplicates(protein));  // look for duplicates and add to a duplicate list
                         if (dups.Count > 1)
                         {
+                            //Create a proteins group from the duplicates
                             ProteinGroup PG = new ProteinGroup(dups);
                             foreach (Node pp2 in dups)
                             {
+                                //Remove proteins from the library, add the protein group
                                 proteins.Remove(pp2.nodeName);
                             }
                             proteins.Add(PG.nodeName, PG);
@@ -50,6 +51,7 @@ namespace SetCover
                 }
                 count++;
             }
+            //Same thing as above but with peptides
             List<string> listpeptides = peptides.Keys.ToList();
             while (count != peptides.Count)
             {

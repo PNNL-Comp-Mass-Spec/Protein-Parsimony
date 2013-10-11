@@ -20,7 +20,9 @@ namespace SetCover
         public void RunAlgorithm(ref List<Node> inNode)
         {
             //log.Info("Running Greedy Set Cover");
+
             inNode = BulkFinder(inNode);
+
         }
 
         public List<Node> BulkFinder(List<Node> inCluster)

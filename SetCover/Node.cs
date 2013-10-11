@@ -5,6 +5,9 @@ using System.Text;
 
 namespace SetCover
 {
+    /// <summary>
+    /// Main object for generating the bipartite graph
+    /// </summary>
     public class Node : IComparable
     {
 
@@ -27,7 +30,7 @@ namespace SetCover
 
         }
 
-
+        //Use number of children to sort.
         public int CompareTo(object obj)
         {
             if (obj == null) return 1;

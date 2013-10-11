@@ -5,6 +5,9 @@ using System.Text;
 
 namespace SetCover
 {
+    /// <summary>
+    /// Stores proteins
+    /// </summary>
     class Protein : ProteinGroup
     {
         public Protein(string nodeName)

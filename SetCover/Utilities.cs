@@ -76,6 +76,31 @@ namespace SetCover
 
 		}
 
+        public static bool ReadTable(string filePath, out List<RowEntry> rows)
+        {
+            try
+            {
+                rows = new List<RowEntry>();
+                DataTable dt = TextFileToDataTableAssignTypeString(filePath, false);
+
+                foreach (DataRow drow in dt.Rows)
+                {
+                    var entry = new RowEntry
+                    {
+                        ProteinEntry = (string)drow["Protein"],
+                        PeptideEntry = (string)drow["Peptide"]
+                    };
+                    rows.Add(entry);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Problem adding rows to List<RowEntry>: " + ex.Message);
+            }
+            return true;
+        }
+
+
 		/// <summary>
 		/// Writes a datatable to text file
 		/// </summary>
@@ -108,6 +133,12 @@ namespace SetCover
 			}
 		}
 
+        /// <summary>
+        /// Writes a simple table with protein(group) for one column and associated
+        /// peptides for the other column.
+        /// </summary>
+        /// <param name="outData"></param>
+        /// <param name="filepath"></param>
         public static void WriteTable(List<Node> outData, string filepath)
         {
             using (StreamWriter sw = new StreamWriter(filepath))

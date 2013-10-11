@@ -5,16 +5,23 @@ using System.Text;
 
 namespace SetCover
 {
+    /// <summary>
+    /// Base class for groups which are composed of peptides or proteins
+    /// </summary>
     class Group : Node
     {
         protected NodeChildren<Node> nodeGroup;
-        string[] nodeNames;
+        private string[] nodeNames;
         public Group(string nodeName) : base(nodeName) { }
         public Group(NodeChildren<Node> groupedNodes):base()
         {
+            //copies inputted nodes to be grouped into a list
+            //copies the grouped nodes' children as the groups children.
+            //In this case since they should be identical we just grab the first member
             NodeChildren<Node> tempNode = new NodeChildren<Node>(groupedNodes);
             this.nodeGroup = new NodeChildren<Node>(groupedNodes);
             this.children = new NodeChildren<Node>(groupedNodes[0].children);
+            
             this.nodeNames = new string[groupedNodes.Count];
             for (int i = 0; i < nodeNames.Length; i++)
             {
@@ -37,6 +44,10 @@ namespace SetCover
 
         }
 
+        /// <summary>
+        /// Getter for grouped set of nodes.
+        /// </summary>
+        /// <returns></returns>
         public NodeChildren<Node> GetNodeGroup()
         {
             return nodeGroup;

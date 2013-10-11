@@ -8,30 +8,31 @@ namespace SetCover
 {
     class NodeBuilder
     {
+
         Dictionary<string, Node> Proteins;
         Dictionary<string, Node> Peptides;
 
-        public void RunAlgorithm(DataTable dt, ref Dictionary<string, Node> prots, ref Dictionary<string, Node> peps)
+        public void RunAlgorithm(List<RowEntry> toParsimonize, out Dictionary<string, Node> prots, out Dictionary<string, Node> peps)
         {
-            this.Proteins = new Dictionary<string, Node>(dt.Rows.Count);
-            this.Peptides = new Dictionary<string, Node>(dt.Rows.Count);
-            BuildNodes(dt);
-            prots = this.Proteins;
-            peps = this.Peptides;
-
+            
+                this.Proteins = new Dictionary<string, Node>(toParsimonize.Count);
+                this.Peptides = new Dictionary<string, Node>(toParsimonize.Count);
+                BuildNodes(toParsimonize);
+                prots = this.Proteins;
+                peps = this.Peptides;
         }
         /// <summary>
         /// Builds the nodes for a bipartite graph composed of proteins 
         /// on one side peptides on the other
         /// </summary>
-        /// <param name="dt">input table must have at peptide and protein column</param>
-        private void BuildNodes(DataTable dt)
+        /// <param name="toParsimonize">input table must have at peptide and protein column</param>
+        private void BuildNodes(List<RowEntry> toParsimonize)
         {
-            foreach (DataRow drow in dt.Rows)
+            foreach (RowEntry row in toParsimonize)
             {
 
-                Protein prot = new Protein((string)drow["Protein"]);
-                Peptide pep = new Peptide((string)drow["Peptide"]);
+                Protein prot = new Protein(row.ProteinEntry);
+                Peptide pep = new Peptide(row.PeptideEntry);
 
                 if (Proteins.ContainsKey(prot.nodeName) && Peptides.ContainsKey(pep.nodeName))
                 {

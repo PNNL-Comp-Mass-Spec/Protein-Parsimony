@@ -5,6 +5,9 @@ using System.Text;
 
 namespace SetCover
 {
+    /// <summary>
+    /// A grouped set of proteins with identical children
+    /// </summary>
     class ProteinGroup : Group, IComparable
     {
         public int UntakenPeptide { get; set; }
@@ -14,10 +17,14 @@ namespace SetCover
             UntakenPeptide = this.children.Count;
 
         }
-
+        //Dont know in what case this would be used.
         public ProteinGroup(string nodeName):base(nodeName){
         }
 
+        //Sorts onthe number of untaken nodes.  Used for the set coverage portion of
+        //algorithm because when a protein(group) is removed from the set, proteins which
+        //also have one or more of the same peptides can no longer count those towards being
+        //picked next in the greed algorithm.
         public int compareTo(object obj)
         {
             if (obj == null) return 1;
