@@ -65,22 +65,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AlgBase.cs" />
-    <Compile Include="RowEntry.cs" />
-    <Compile Include="Cluster.cs" />
-    <Compile Include="Cover.cs" />
-    <Compile Include="DFS.cs" />
-    <Compile Include="IAlgBase.cs" />
-    <Compile Include="NodeBuilder.cs" />
+    <Compile Include="Objects\RowEntry.cs" />
+    <Compile Include="Objects\Cluster.cs" />
+    <Compile Include="Algorithms\Cover.cs" />
+    <Compile Include="Algorithms\DFS.cs" />
+    <Compile Include="Algorithms\NodeBuilder.cs" />
     <Compile Include="NodeChildren.cs" />
-    <Compile Include="NodeCollapser.cs" />
-    <Compile Include="Peptide.cs" />
-    <Compile Include="Group.cs" />
-    <Compile Include="Node.cs" />
-    <Compile Include="PeptideGroup.cs" />
+    <Compile Include="Algorithms\NodeCollapser.cs" />
+    <Compile Include="Objects\Peptide.cs" />
+    <Compile Include="Objects\Group.cs" />
+    <Compile Include="Objects\Node.cs" />
+    <Compile Include="Objects\PeptideGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Protein.cs" />
-    <Compile Include="ProteinGroup.cs" />
+    <Compile Include="Objects\Protein.cs" />
+    <Compile Include="Objects\ProteinGroup.cs" />
     <Compile Include="Runner.cs" />
     <Compile Include="TestRun.cs" />
     <Compile Include="Utilities.cs" />
@@ -88,12 +86,7 @@
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="T_Row_Metadata.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="NewFolder1\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

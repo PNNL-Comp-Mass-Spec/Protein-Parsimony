@@ -2,8 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Data;
 using System.IO;
 
@@ -165,6 +163,33 @@ namespace SetCover
                     }
 
                 }
+            }
+        }
+
+
+        public static void WriteTableToConsole(List<Node> outData)
+        {
+            string header = "Protein\tPeptide";
+            Console.WriteLine(header);
+            foreach (Node node in outData)
+            {
+                foreach (Node child in node.children)
+                {
+                    if (child.GetType() == typeof(PeptideGroup))
+                    {
+                        foreach (Node groupedpep in ((Group)child).GetNodeGroup())
+                        {
+                            Console.WriteLine(string.Format("{0}\t{1}",
+                                node.nodeName, groupedpep.nodeName));
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine(string.Format("{0}\t{1}",
+                                node.nodeName, child.nodeName));
+                    }
+                }
+
             }
         }
 

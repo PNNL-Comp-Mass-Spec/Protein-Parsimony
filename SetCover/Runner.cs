@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Data;
 using System.IO;
+using System.Linq;
 using Mage;
 
 
@@ -210,12 +208,12 @@ namespace SetCover
             int proteinIdx = sink.ColumnIndex["Protein"];
             int peptideIdx = sink.ColumnIndex["Peptide"];
             pepToProtMapping = new List<RowEntry>();
-            foreach (string[] row in sink.Rows)
+            foreach (object[] row in sink.Rows)
             {
                 var entry = new RowEntry
                 {
-                    ProteinEntry = row[proteinIdx],
-                    PeptideEntry = row[peptideIdx]
+                    ProteinEntry = (string)row[proteinIdx],
+                    PeptideEntry = (string)row[peptideIdx]
                 };
                 pepToProtMapping.Add(entry);
             }
