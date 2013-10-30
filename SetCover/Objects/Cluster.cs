@@ -5,8 +5,11 @@ using System.Text;
 
 namespace SetCover
 {
-    class Cluster : Node
-    {
-        
-    }
+	class Cluster : Node
+	{
+		public Cluster()
+			: base(NodeTypeName.Cluster)
+		{
+		}
+	}
 }

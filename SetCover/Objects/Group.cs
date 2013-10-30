@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SetCover.Objects;
 
 namespace SetCover
 {
@@ -9,6 +10,8 @@ namespace SetCover
     /// </summary>
     class Group : Node
     {
+	    public const char LIST_SEP_CHAR = '\t';
+
         protected NodeChildren<Node> nodeGroup;
         private List<string> mNodeNameList;
 
@@ -36,10 +39,11 @@ namespace SetCover
 		}
 
 		// Constructor
-        public Group(string nodeName) : base(nodeName) { }
+		public Group(NodeTypeName nodeType, string nodeName) : base(nodeType, nodeName) { }
 
 		// Constructor
-        public Group(NodeChildren<Node> groupedNodes):base()
+		public Group(NodeTypeName nodeType, NodeChildren<Node> groupedNodes, GlobalIDContainer globalIDTracker)
+			: base(nodeType)
         {
             //copies inputted nodes to be grouped into a list
             //copies the grouped nodes' children as the groups children.
@@ -49,11 +53,15 @@ namespace SetCover
             this.children = new NodeChildren<Node>(groupedNodes[0].children);
             
 			mNodeNameList = new List<string>();
+			var nodeNameGlobalIDs = new List<int>();
+
             foreach (Node item in groupedNodes)
             {
 				this.mNodeNameList.Add(item.nodeName);
+				var globalID = globalIDTracker.GetGlobalID(item.nodeName);
+	            nodeNameGlobalIDs.Add(globalID);
             }
-	        this.nodeName = String.Join("-", mNodeNameList);
+			this.nodeName = String.Join(LIST_SEP_CHAR.ToString(), nodeNameGlobalIDs);
 
 
             int toRemove = tempNode.Count;

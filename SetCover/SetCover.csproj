@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Objects\GlobalIDContainer.cs" />
     <Compile Include="Objects\RowEntry.cs" />
     <Compile Include="Objects\Cluster.cs" />
     <Compile Include="Algorithms\Cover.cs" />

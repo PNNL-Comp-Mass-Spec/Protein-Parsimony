@@ -32,7 +32,8 @@ namespace ProteinParsimony
 
 			}
 
-	        string outputFilePath;
+	        string parsimonyResultsFilePath;
+	        string proteinGroupMembersFilePath;
 
 	        try
 	        {
@@ -40,14 +41,27 @@ namespace ProteinParsimony
 
 		        if (args.Length < 2)
 		        {
-			       
-			        outputFilePath = Path.Combine(fiSourceFile.Directory.FullName,
-			                                      Path.GetFileNameWithoutExtension(fiSourceFile.Name) + "_parsimony" + fiSourceFile.Extension);
+
+			        parsimonyResultsFilePath = Path.Combine(fiSourceFile.Directory.FullName,
+			                                             Path.GetFileNameWithoutExtension(fiSourceFile.Name) + "_parsimony" +
+			                                             fiSourceFile.Extension);
+
+			        proteinGroupMembersFilePath = Path.Combine(fiSourceFile.Directory.FullName,
+			                                                   Path.GetFileNameWithoutExtension(fiSourceFile.Name) +
+			                                                   "_parsimony_groups" + fiSourceFile.Extension);
+
 		        }
 		        else
-			        outputFilePath = args[1];
+		        {
+			        parsimonyResultsFilePath = args[1];
 
-		        var fiOutputFile = new FileInfo(outputFilePath);
+			        var fiOutputfile = new FileInfo(parsimonyResultsFilePath);
+					proteinGroupMembersFilePath = Path.Combine(fiOutputfile.Directory.FullName,
+							  Path.GetFileNameWithoutExtension(fiOutputfile.Name) + "_groups" + fiOutputfile.Extension);
+
+		        }
+
+		        var fiOutputFile = new FileInfo(parsimonyResultsFilePath);
 				if (!fiOutputFile.Directory.Exists)
 					fiOutputFile.Directory.Create();
 	        }
@@ -66,7 +80,7 @@ namespace ProteinParsimony
 				};
 
 				runner.ProgressChanged += RunnerProgressHandler;
-				bool success = runner.RunGUIAlgorithm(fiSourceFile.FullName, outputFilePath);
+				bool success = runner.RunGUIAlgorithm(fiSourceFile.FullName, parsimonyResultsFilePath, proteinGroupMembersFilePath);
 
 				if (success)
 					Console.WriteLine("Success");

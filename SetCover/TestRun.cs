@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using SetCover.Objects;
 
 namespace SetCover
 {
@@ -37,14 +38,15 @@ namespace SetCover
 
             var Proteins = new Dictionary<string,Node>();
             var Peptides = new Dictionary<string,Node>();
+			var globalIDTracker = new GlobalIDContainer();
 
             nodebuilder.RunAlgorithm(lr, out Proteins, out Peptides);
-            nodecollapser.RunAlgorithm(ref Proteins, ref Peptides);
+			nodecollapser.RunAlgorithm(ref Proteins, ref Peptides, ref globalIDTracker);
             var clProteins = Proteins.Values.ToList();
             dfs.RunAlgorithm(ref clProteins);
             cover.RunAlgorithm(ref clProteins);
 
-            Utilities.WriteTableToConsole(clProteins);
+			Utilities.WriteTableToConsole(clProteins, globalIDTracker);
 
             Console.ReadLine();
 
