@@ -13,23 +13,21 @@ namespace SetCover
 		/// <summary>
 		/// Generates a datatable with all entries being a string
 		/// </summary>
-		/// <param name="fileName">input file name</param>
+		/// <param name="filePath">input file name</param>
 		/// <param name="addDataSetName">whether to add the datasetname as a column</param>
 		/// <returns></returns>
-		public static DataTable TextFileToDataTableAssignTypeString(string fileName, bool addDataSetName)
+		public static DataTable TextFileToDataTableAssignTypeString(string filePath, bool addDataSetName)
 		{
 			string line = "";
 			string[] fields = null;
 			DataTable dt = new DataTable();
 
-
-
-			using (StreamReader sr = new StreamReader(fileName))
+			using (var sr = new StreamReader(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
 			{
 				// first line has headers   
 				if ((line = sr.ReadLine()) != null)
 				{
-					fields = line.Split(new char[] { '\t', ',' });
+					fields = line.Split(new char[] { '\t'});
 					foreach (string s in fields)
 					{
 						dt.Columns.Add(s);
@@ -40,23 +38,29 @@ namespace SetCover
 				else
 				{
 					// it's empty, that's an error   
-					throw new ApplicationException("The data provided is not in a valid format.");
+					throw new ApplicationException("The data provided is not in a valid format: Header row must be tab delimited");
 				}
+
 				// fill the rest of the table; positional   
 				while ((line = sr.ReadLine()) != null)
 				{
-					DataRow row = dt.NewRow();
-
-					fields = line.Split(new char[] { '\t' });
-					int i = 0;
-					foreach (string s in fields)
+					if (!string.IsNullOrEmpty(line))
 					{
-						row[i] = s;
-						i++;
+						DataRow row = dt.NewRow();
+
+						fields = line.Split(new char[] {'\t'});
+						int i = 0;
+						foreach (string s in fields)
+						{
+							row[i] = s;
+							i++;
+						}
+						dt.Rows.Add(row);
 					}
-					dt.Rows.Add(row);
+					
 				}
 			}
+
 			//if (!dt.Columns.Contains("DatasetName") && addDataSetName)
 			//{
 			//    string dataSetName = Regex.Replace(Path.GetFileName(fileName).Split('.')[0],
@@ -81,6 +85,12 @@ namespace SetCover
                 rows = new List<RowEntry>();
                 DataTable dt = TextFileToDataTableAssignTypeString(filePath, false);
 
+	            if (!dt.Columns.Contains("Protein"))
+		            throw new Exception("Input file is missing column 'Protein'");
+
+				if (!dt.Columns.Contains("Peptide"))
+					throw new Exception("Input file is missing column 'Peptide'");
+
                 foreach (DataRow drow in dt.Rows)
                 {
                     var entry = new RowEntry
@@ -90,11 +100,13 @@ namespace SetCover
                     };
                     rows.Add(entry);
                 }
+
             }
             catch (Exception ex)
             {
                 throw new Exception("Problem adding rows to List<RowEntry>: " + ex.Message);
             }
+
             return true;
         }
 
@@ -139,26 +151,42 @@ namespace SetCover
         /// <param name="filepath"></param>
         public static void WriteTable(List<Node> outData, string filepath)
         {
-            using (StreamWriter sw = new StreamWriter(filepath))
+            using (var sw = new StreamWriter(new FileStream(filepath, FileMode.Create, FileAccess.Write, FileShare.Read)))
             {
-                string header = "Protein\tPeptide";
+                string header = "GroupID\tProtein_First\tPeptide\tProtein_List";
                 sw.WriteLine(header);
-                foreach (Node node in outData)
+                foreach (Node proteinNode in outData)
                 {
-                    foreach(Node child in node.children)
+	                string proteinFirst;
+	                string proteinList;
+
+	                if (proteinNode.GetType() == typeof (ProteinGroup))
+	                {
+						var currentGroup = (ProteinGroup)proteinNode;
+		                proteinFirst = currentGroup.NodeNameFirst;
+						proteinList = currentGroup.nodeName;
+	                }
+	                else
+	                {
+		                proteinFirst = proteinNode.nodeName;
+		                proteinList = proteinNode.nodeName;
+	                }
+
+	                foreach(Node child in proteinNode.children)
                     {
                         if(child.GetType() == typeof(PeptideGroup))
                         {
-                            foreach(Node groupedpep in ((Group)child).GetNodeGroup())
+	                        var currentPeptides = (Group)child;
+							foreach (Node groupedpep in currentPeptides.GetNodeGroup())
                             {
-                                sw.WriteLine(string.Format("{0}\t{1}", 
-                                    node.nodeName, groupedpep.nodeName));
+                                sw.WriteLine("{0}\t{1}\t{2}\t{3}",
+									proteinNode.Id, proteinFirst, groupedpep.nodeName, proteinList);
                             }
                         }
                         else
                         {
-                            sw.WriteLine(string.Format("{0}\t{1}", 
-                                    node.nodeName, child.nodeName));
+							sw.WriteLine("{0}\t{1}\t{2}\t{3}",
+								proteinNode.Id, proteinFirst, child.nodeName, proteinList);
                         }
                     }
 

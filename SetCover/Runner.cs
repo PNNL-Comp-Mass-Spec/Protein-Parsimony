@@ -122,6 +122,9 @@ namespace SetCover
                 throw new Exception("Error loading the " +fiInputFile.FullName + "file: " + ex.Message);
             }
 
+	        if (lstTrowMetadata.Count == 0)
+		        throw new Exception("Input file is empty");
+
             try
             {
                 success = success && PerformParsimony(lstTrowMetadata, out result);
@@ -157,17 +160,27 @@ namespace SetCover
  //           var dt = Utilities.TextFileToDataTableAssignTypeString(filename, false);
             
             nodebuilder.RunAlgorithm(toParsimonize, out Proteins, out Peptides);
-            if (Proteins == null || Peptides == null || Proteins.Count == 0 || Peptides.Count == 0)
+			if (Proteins == null || Proteins.Count == 0)
             {
-                throw new Exception("Error in PerformParsimony: NodeBuilder returned null or 0 loading");
+				throw new Exception("Error in PerformParsimony: Protein list is empty");
             }
+
+			if (Peptides == null || Peptides.Count == 0)
+			{
+				throw new Exception("Error in PerformParsimony: Peptide list is empty");
+			}		
 
             nodecollapser.RunAlgorithm(ref Proteins, ref Peptides);
 
-            if (Proteins == null || Peptides == null || Proteins.Count == 0 || Peptides.Count == 0)
-            {
-                throw new Exception("Error in PerformParsimony: NodeCollapser returned null or 0 loading");
-            }
+			if (Proteins == null || Proteins.Count == 0)
+			{
+				throw new Exception("Error in PerformParsimony after NodeCollapser: Protein list is empty");
+			}
+
+			if (Peptides == null || Peptides.Count == 0)
+			{
+				throw new Exception("Error in PerformParsimony after NodeCollapser: Peptide list is empty");
+			}		
 
             ClProteins = Proteins.Values.ToList();
 
@@ -175,21 +188,19 @@ namespace SetCover
 
             if (ClProteins == null || ClProteins.Count == 0)
             {
-                throw new Exception("Error in PerformParsimony: DFS returned null or 0 loading");
+                throw new Exception("Error in PerformParsimony: DFS returned an empty protein list");
             }
 
             cover.RunAlgorithm(ref ClProteins);
 
             if (ClProteins == null || ClProteins.Count == 0)
             {
-                throw new Exception("Error in PerformParsimony: Cover returned null loading");
+                throw new Exception("Error in PerformParsimony: Cover returned an empty protein list");
             }
 
 
             if (ShowProgressAtConsole)
                 Console.WriteLine("Iteration Complete");
-
-
 
             return true;
 

@@ -30,7 +30,10 @@ namespace SetCover
                 Protein prot = new Protein(row.ProteinEntry);
                 Peptide pep = new Peptide(row.PeptideEntry);
 
-                if (Proteins.ContainsKey(prot.nodeName) && Peptides.ContainsKey(pep.nodeName))
+	            bool proteinDefined = Proteins.ContainsKey(prot.nodeName);
+	            bool peptideDefined = Peptides.ContainsKey(pep.nodeName);
+
+				if (proteinDefined && peptideDefined)
                 {
                     if (!Proteins[prot.nodeName].children.Contains(Peptides[pep.nodeName]))
                     {
@@ -41,14 +44,14 @@ namespace SetCover
                         Peptides[pep.nodeName].children.Add(Proteins[prot.nodeName]);
                     }
                 }
-                else if (Proteins.ContainsKey(prot.nodeName))
+				else if (proteinDefined)
                 {
                     Proteins[prot.nodeName].children.Add(pep);
                     pep.children.Add(Proteins[prot.nodeName]);
                     Peptides.Add(pep.nodeName, pep);
 
                 }
-                else if (Peptides.ContainsKey(pep.nodeName))
+				else if (peptideDefined)
                 {
                     Peptides[pep.nodeName].children.Add(prot);
                     prot.children.Add(Peptides[pep.nodeName]);

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SetCover
 {
@@ -8,23 +10,50 @@ namespace SetCover
     class Group : Node
     {
         protected NodeChildren<Node> nodeGroup;
-        private string[] nodeNames;
+        private List<string> mNodeNameList;
+
+	    public String NodeNameFirst
+	    {
+		    get
+		    {
+				if (mNodeNameList == null || mNodeNameList.Count == 0)
+					return string.Empty;
+				else
+					return mNodeNameList.First();
+		    }
+
+	    }
+
+		public List<string> NodeNameList
+		{
+			get
+			{
+				if (mNodeNameList == null)
+					return new List<string>();
+				else
+					return mNodeNameList;
+			}
+		}
+
+		// Constructor
         public Group(string nodeName) : base(nodeName) { }
+
+		// Constructor
         public Group(NodeChildren<Node> groupedNodes):base()
         {
             //copies inputted nodes to be grouped into a list
             //copies the grouped nodes' children as the groups children.
             //In this case since they should be identical we just grab the first member
-            NodeChildren<Node> tempNode = new NodeChildren<Node>(groupedNodes);
+            var tempNode = new NodeChildren<Node>(groupedNodes);
             this.nodeGroup = new NodeChildren<Node>(groupedNodes);
             this.children = new NodeChildren<Node>(groupedNodes[0].children);
             
-            this.nodeNames = new string[groupedNodes.Count];
-            for (int i = 0; i < nodeNames.Length; i++)
+			mNodeNameList = new List<string>();
+            foreach (Node item in groupedNodes)
             {
-                this.nodeNames[i] = groupedNodes[i].nodeName;
+				this.mNodeNameList.Add(item.nodeName);
             }
-            this.nodeName = String.Join("-", nodeNames);
+	        this.nodeName = String.Join("-", mNodeNameList);
 
 
             int toRemove = tempNode.Count;
@@ -34,6 +63,7 @@ namespace SetCover
                     child.children.Remove(tempNode[i]);
                 
             }
+
             foreach (Node child in children)
             {
                 child.children.Add(this);

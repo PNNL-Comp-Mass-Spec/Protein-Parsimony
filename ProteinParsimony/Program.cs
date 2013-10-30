@@ -6,44 +6,111 @@ namespace ProteinParsimony
 {
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
-            if (args.Length != 2)
+            if (args.Length < 1)
             {
-                throw new ArgumentException("Must have exactly 2 arguments, input and output file paths");
+	            ShowSyntax();
+	            return 0;
             }
-            if (!new FileInfo(args[0]).Exists)
-                throw new FileNotFoundException("The file: " + args[0] + ", does not exist");
 
-            bool args2Ok = false;
-            try
-            {
-                new FileInfo(args[1]);
-                args2Ok = true;
-            }
-            catch (ArgumentException) { }
-            catch (PathTooLongException) { }
-            catch (NotSupportedException) { }
-            if (!args2Ok)
-            {
-                throw new ArgumentException("The output filename" + args[1] + ", is not a legal path.");
-            }
-            var runner = new Runner();
-            runner.ShowProgressAtConsole = true;
-            runner.ProgressChanged += RunnerProgressHandler;
-            bool success = runner.RunGUIAlgorithm(args[0], args[1]);
+			FileInfo fiSourceFile;
 
-            if (success)
-                Console.WriteLine("Success");
-            else
-                Console.WriteLine("Failed");
-            Console.ReadLine();
+	        try
+	        {
+				fiSourceFile = new FileInfo(args[0]);
+				if (!fiSourceFile.Exists)
+				{
+					ShowSyntax("The file: " + args[0] + ", does not exist");
+					return -1;
+				}
+			}
+			catch (Exception ex)
+			{
+				ShowSyntax("Exception validating the input file path: " + ex.Message);
+				return -2;
 
+			}
+
+	        string outputFilePath;
+
+	        try
+	        {
+
+
+		        if (args.Length < 2)
+		        {
+			       
+			        outputFilePath = Path.Combine(fiSourceFile.Directory.FullName,
+			                                      Path.GetFileNameWithoutExtension(fiSourceFile.Name) + "_parsimony" + fiSourceFile.Extension);
+		        }
+		        else
+			        outputFilePath = args[1];
+
+		        var fiOutputFile = new FileInfo(outputFilePath);
+				if (!fiOutputFile.Directory.Exists)
+					fiOutputFile.Directory.Create();
+	        }
+	        catch (Exception ex)
+	        {
+				ShowSyntax("Exception validating the output file path: " + ex.Message);
+				return -2;
+				
+	        }
+
+	        try
+	        {
+				var runner = new Runner
+				{
+					ShowProgressAtConsole = true
+				};
+
+				runner.ProgressChanged += RunnerProgressHandler;
+				bool success = runner.RunGUIAlgorithm(fiSourceFile.FullName, outputFilePath);
+
+				if (success)
+					Console.WriteLine("Success");
+				else
+				{
+					Console.WriteLine("Failed");
+					return -3;
+				}
+	        }
+	        catch (Exception ex)
+	        {
+		        Console.WriteLine("Error computing protein parsimony: " + ex.Message); 
+		        return -4;
+	        }
+	        
+	        return 0;
         }
 
-        private static void RunnerProgressHandler(Runner id, ProgressInfo e)
+	    private static void RunnerProgressHandler(Runner id, ProgressInfo e)
         {
             Console.WriteLine(e.ProgressCurrentJob.ToString("0.0") + "% complete; " + e.Value.ToString("0.0") + "% complete overall");
         }
-    }
+
+	    private static void ShowSyntax()
+	    {
+			ShowSyntax("");
+	    }
+
+	    private static void ShowSyntax(string errorMessage)
+		{
+			Console.WriteLine();
+			if (!string.IsNullOrEmpty(errorMessage))
+			{
+				Console.WriteLine("Error: " + errorMessage);
+				Console.WriteLine();
+			}
+
+			Console.WriteLine("Program Syntax:");
+			Console.WriteLine(Path.GetFileName(System.Reflection.Assembly.GetExecutingAssembly().Location) + " InputFilePath [OutputFilePath]");
+		    Console.WriteLine();
+		    Console.WriteLine("If the output file path is not defined, then the output file ");
+			Console.WriteLine("will be created in the same location as the input file, ");
+			Console.WriteLine("but with '_parsimony' added to the filename.");
+		}
+
+	}
 }

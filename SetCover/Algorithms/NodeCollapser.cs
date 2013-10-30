@@ -49,6 +49,7 @@ namespace SetCover
                 }
                 count++;
             }
+
             //Same thing as above but with peptides
             count = 0;
             List<string> listpeptides = peptides.Keys.ToList();
@@ -97,6 +98,7 @@ namespace SetCover
                     count++;
                 }
             }
+
             //may want to change the List to a Hashset to be faster.
             //finds identical sets.
             for (int i = 0; i < node.children.Count; i++)
