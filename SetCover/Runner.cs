@@ -66,7 +66,7 @@ namespace SetCover
 			{
 				DeleteFile(parsimonyResultsFilePath);
 				DeleteFile(proteinGroupMembersFilePath);
-				throw new Exception("Error in PerformParsimony: No rows to operate on");
+				throw new Exception("Error in RunAlgorithm: No rows to operate on");
 			}
 
 			var globalIDTracker = new GlobalIDContainer();
@@ -141,7 +141,9 @@ namespace SetCover
 			{
 				success = Utilities.ReadTable(fiInputFile.FullName, out lstTrowMetadata);
 				if (!success)
+				{
 					return false;
+				}
 			}
 			catch (Exception ex)
 			{
@@ -155,7 +157,7 @@ namespace SetCover
 
 			try
 			{
-				success = success && PerformParsimony(lstTrowMetadata, out result, out globalIDTracker);
+				success = PerformParsimony(lstTrowMetadata, out result, out globalIDTracker);
 			}
 			catch (Exception ex)
 			{
@@ -185,9 +187,8 @@ namespace SetCover
 			var dfs = new DFS();
 			var cover = new Cover();
 
-			//           var dt = Utilities.TextFileToDataTableAssignTypeString(filename, false);
-
 			nodebuilder.RunAlgorithm(toParsimonize, out Proteins, out Peptides);
+
 			if (Proteins == null || Proteins.Count == 0)
 			{
 				throw new Exception("Error in PerformParsimony: Protein list is empty");
@@ -296,9 +297,6 @@ namespace SetCover
 			}
 		}
 	}
-
-
-
 
 	public class ProgressInfo : EventArgs
 	{
