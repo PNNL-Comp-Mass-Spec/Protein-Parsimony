@@ -118,8 +118,8 @@ namespace SetCover
 				{
 					new MageColumnDef("GroupID", "integer", "4")		// Note that "size" doesn't matter since we're writing to a SqLite database
 				};
-
 				writer.ColDefOverride = colDefs;
+
 				ProcessingPipeline.Assemble("ImportToSQLite", delimreader, writer).RunRoot(null);
 			}
 			catch (Exception ex)
@@ -138,11 +138,11 @@ namespace SetCover
 				const string tableName = "T_Parsimony_Group_Members";
 				writer.DbPath = fiDatabaseFile.FullName;
 				writer.TableName = tableName;
+				
 				var colDefs = new List<MageColumnDef>
 				{
 					new MageColumnDef("GroupID", "integer", "4")		// Note that "size" doesn't matter since we're writing to a SqLite database
 				};
-
 				writer.ColDefOverride = colDefs;
 
 				ProcessingPipeline.Assemble("ImportToSQLite", delimreader, writer).RunRoot(null);
