@@ -23,11 +23,30 @@ namespace SetCover
 		public event ProgressChangedHandler ProgressChanged;
 		public delegate void ProgressChangedHandler(Runner runner, ProgressInfo e);
 
+		/// <summary>
+		/// Run the parsimony algorithm against the peptides and proteins in table T_Row_Metadata in the specified file
+		/// </summary>
+		/// <param name="databaseFolderPath"></param>
+		/// <param name="dataBaseFileName"></param>
+		/// <returns>True if success; false if an error</returns>
 		public bool RunAlgorithm(string databaseFolderPath, string dataBaseFileName)
+		{
+			const string SOURCE_TABLE = "T_Row_Metadata";
+
+			return RunAlgorithm(databaseFolderPath, dataBaseFileName, SOURCE_TABLE);
+		}
+
+		/// <summary>
+		/// Run the parsimony algorithm against the peptides and proteins in table sourceTableName in the specified file
+		/// </summary>
+		/// <param name="databaseFolderPath"></param>
+		/// <param name="dataBaseFileName"></param>
+		/// <param name="sourceTableName">Table name to process</param>
+		/// <returns>True if success; false if an error</returns>
+		public bool RunAlgorithm(string databaseFolderPath, string dataBaseFileName, string sourceTableName)
 		{
 			List<RowEntry> lstTrowMetadata;
 			List<Node> result;
-			bool success;
 
 			var diDataFolder = new DirectoryInfo(databaseFolderPath);
 			if (!diDataFolder.Exists)
@@ -45,7 +64,7 @@ namespace SetCover
 
 			try
 			{
-				success = GetPeptideProteinMap(reader, out lstTrowMetadata);
+				bool success = GetPeptideProteinMap(reader, sourceTableName, out lstTrowMetadata);
 				if (!success)
 				{
 					return false;
@@ -57,8 +76,9 @@ namespace SetCover
 			}
 
 
-			System.Diagnostics.Debug.Assert(fiDatabaseFile.DirectoryName != null,
-				  "fiDatabaseFile.DirectoryName != null");
+			if (fiDatabaseFile.DirectoryName == null)
+				throw new Exception("Error determining the parent directory for " + fiDatabaseFile.FullName);
+
 			string parsimonyResultsFilePath = Path.Combine(fiDatabaseFile.DirectoryName, "pars_info_temp.txt");
 			string proteinGroupMembersFilePath = Path.Combine(fiDatabaseFile.DirectoryName, "pars_info_temp_groups.txt");
 
@@ -69,7 +89,7 @@ namespace SetCover
 				throw new Exception("Error in RunAlgorithm: No rows to operate on");
 			}
 
-			var globalIDTracker = new GlobalIDContainer();
+			GlobalIDContainer globalIDTracker;
 
 			try
 			{
@@ -94,6 +114,12 @@ namespace SetCover
 				writer.DbPath = fiDatabaseFile.FullName;
 				writer.TableName = tableName;
 
+				var colDefs = new List<MageColumnDef>
+				{
+					new MageColumnDef("GroupID", "integer", "4")		// Note that "size" doesn't matter since we're writing to a SqLite database
+				};
+
+				writer.ColDefOverride = colDefs;
 				ProcessingPipeline.Assemble("ImportToSQLite", delimreader, writer).RunRoot(null);
 			}
 			catch (Exception ex)
@@ -112,6 +138,12 @@ namespace SetCover
 				const string tableName = "T_Parsimony_Group_Members";
 				writer.DbPath = fiDatabaseFile.FullName;
 				writer.TableName = tableName;
+				var colDefs = new List<MageColumnDef>
+				{
+					new MageColumnDef("GroupID", "integer", "4")		// Note that "size" doesn't matter since we're writing to a SqLite database
+				};
+
+				writer.ColDefOverride = colDefs;
 
 				ProcessingPipeline.Assemble("ImportToSQLite", delimreader, writer).RunRoot(null);
 			}
@@ -153,7 +185,7 @@ namespace SetCover
 			if (lstTrowMetadata.Count == 0)
 				throw new Exception("Input file is empty");
 
-			var globalIDTracker = new GlobalIDContainer();
+			GlobalIDContainer globalIDTracker;
 
 			try
 			{
@@ -236,9 +268,9 @@ namespace SetCover
 
 		}
 
-		private bool GetPeptideProteinMap(SQLiteReader reader, out List<RowEntry> pepToProtMapping)
+		private bool GetPeptideProteinMap(SQLiteReader reader, string tableName, out List<RowEntry> pepToProtMapping)
 		{
-			reader.SQLText = "SELECT * FROM T_Row_Metadata";
+			reader.SQLText = "SELECT * FROM [" + tableName + "]";
 
 			//Make a Mage sink Module (row buffer
 			var sink = new SimpleSink();
@@ -260,7 +292,7 @@ namespace SetCover
 			}
 			if (pepToProtMapping.Count == 0)
 			{
-				throw new Exception("Error in getting T_Row_Metadata rows, no results found using " + reader.SQLText);
+				throw new Exception("Error reading data from " + tableName + "; no results found using " + reader.SQLText);
 			}
 
 			return true;
