@@ -156,50 +156,20 @@ namespace SetCover
 		{
 			using (var sw = new StreamWriter(new FileStream(parsimonyResultsFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
 			{
-				using (var swDetails = new StreamWriter(new FileStream(proteinGroupMembersFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
+				using (var swGroupMembers = new StreamWriter(new FileStream(proteinGroupMembersFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
 				{
-					string header = "GroupID\tProtein_First\tPeptide\tProtein_List";
+					string header = "GroupID\tProtein_First\tPeptide\tProtein_List\tProtein_Count\tGroup_Count";
 					sw.WriteLine(header);
 
 					header = "GroupID\tProtein";
-					swDetails.WriteLine(header);
+					swGroupMembers.WriteLine(header);
 
-					int groupID = 0;
+					// Step through the data to determine the number of groups that each peptide is in
+
+					var peptideToProteinGroupMap = new Dictionary<string, int>();
+
 					foreach (Node proteinNode in outData)
 					{
-						string proteinFirst;
-						string proteinsInGroup;
-						groupID++;
-
-						if (proteinNode.GetType() == typeof(ProteinGroup))
-						{
-							var currentGroup = (ProteinGroup)proteinNode;
-							proteinFirst = currentGroup.NodeNameFirst;
-							if (currentGroup.nodeName.IndexOf(Group.LIST_SEP_CHAR) > 0)
-							{
-								List<string> proteinList = globalIDTracker.IDListToNameList(currentGroup.nodeName, Group.LIST_SEP_CHAR);
-								proteinsInGroup = String.Join("; ", proteinList);
-
-								foreach (var proteinMember in proteinList)
-								{
-									swDetails.WriteLine("{0}\t{1}", groupID, proteinMember);
-								}
-							}
-							else
-							{
-								// Note: this code should never be reached
-								proteinsInGroup = currentGroup.nodeName;
-								swDetails.WriteLine("{0}\t{1}", groupID, proteinsInGroup);
-							}
-						}
-						else
-						{
-							proteinFirst = proteinNode.nodeName;
-							proteinsInGroup = proteinNode.nodeName;
-
-							swDetails.WriteLine("{0}\t{1}", groupID, proteinsInGroup);
-						}
-
 						foreach (Node child in proteinNode.children)
 						{
 							if (child.GetType() == typeof(PeptideGroup))
@@ -207,25 +177,113 @@ namespace SetCover
 								var currentPeptides = (Group)child;
 								foreach (Node groupedpep in currentPeptides.GetNodeGroup())
 								{
-									sw.WriteLine("{0}\t{1}\t{2}\t{3}",
-												 groupID, proteinFirst, groupedpep.nodeName, proteinsInGroup);
+									UpdatePeptideToProteinGroupMap(peptideToProteinGroupMap, groupedpep.nodeName);
 								}
 							}
 							else
 							{
-								sw.WriteLine("{0}\t{1}\t{2}\t{3}",
-											 groupID, proteinFirst, child.nodeName, proteinsInGroup);
+								UpdatePeptideToProteinGroupMap(peptideToProteinGroupMap, child.nodeName);
 							}
 						}
 					}
-				}
+
+
+					// Now write out the results
+					int groupID = 0;
+					foreach (Node proteinNode in outData)
+					{
+						string proteinFirst;
+						string proteinNameOrList;
+						int proteinsInGroupCount = 0;
+
+						groupID++;
+
+						// Append one or more lines to T_Parsimony_Group_Members.txt 
+						if (proteinNode.GetType() == typeof(ProteinGroup))
+						{
+							var currentGroup = (ProteinGroup)proteinNode;
+							proteinFirst = currentGroup.NodeNameFirst;
+							if (currentGroup.nodeName.IndexOf(Group.LIST_SEP_CHAR) > 0)
+							{
+								List<string> proteinList = globalIDTracker.IDListToNameList(currentGroup.nodeName, Group.LIST_SEP_CHAR);
+								proteinNameOrList = String.Join("; ", proteinList);
+								proteinsInGroupCount = proteinList.Count;
+
+								foreach (var proteinMember in proteinList)
+								{
+									WriteOutputGroupMemberLine(swGroupMembers, groupID, proteinMember);
+								}
+							}
+							else
+							{
+								// Note: this code should never be reached
+								proteinNameOrList = currentGroup.nodeName;
+								proteinsInGroupCount = 1;
+								WriteOutputGroupMemberLine(swGroupMembers, groupID, proteinNameOrList);
+							}
+						}
+						else
+						{
+							proteinFirst = proteinNode.nodeName;
+							proteinNameOrList = proteinNode.nodeName;
+							proteinsInGroupCount = 1;
+
+							WriteOutputGroupMemberLine(swGroupMembers, groupID, proteinNameOrList);
+						}
+
+						// Append one or more lines to T_Parsimony_Grouping.txt
+						foreach (Node child in proteinNode.children)
+						{
+							if (child.GetType() == typeof(PeptideGroup))
+							{
+								var currentPeptides = (Group)child;
+								foreach (Node groupedpep in currentPeptides.GetNodeGroup())
+								{
+									WriteOutputGroupingLine(sw, peptideToProteinGroupMap, groupID, proteinFirst, groupedpep.nodeName, proteinNameOrList, proteinsInGroupCount);
+								}
+							}
+							else
+							{
+								WriteOutputGroupingLine(sw, peptideToProteinGroupMap, groupID, proteinFirst, child.nodeName, proteinNameOrList, proteinsInGroupCount);
+							}
+						}
+
+					}
+
+				} // End Using
+			} // End Using
+		}
+
+		private static void UpdatePeptideToProteinGroupMap(Dictionary<string, int> peptideToProteinGroupMap, string peptide)
+		{
+			int groupCount;
+			if (peptideToProteinGroupMap.TryGetValue(peptide, out groupCount))
+			{
+				peptideToProteinGroupMap[peptide] = groupCount + 1;
+			}
+			else
+			{
+				peptideToProteinGroupMap.Add(peptide, 1);
 			}
 		}
 
+		private static void WriteOutputGroupMemberLine(StreamWriter swGroupMembers, int groupID, string proteinNameOrList)
+		{
+			swGroupMembers.WriteLine("{0}\t{1}", groupID, proteinNameOrList);
+		}
+
+		private static void WriteOutputGroupingLine(StreamWriter sw, Dictionary<string, int> peptideToProteinGroupMap,
+			int groupID, string proteinFirst, string peptide, string proteinNameOrList, int proteinsInGroupCount)
+		{
+			int peptideGroupCount = 0;
+			peptideToProteinGroupMap.TryGetValue(peptide, out peptideGroupCount);
+
+			sw.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}", groupID, proteinFirst, peptide, proteinNameOrList, proteinsInGroupCount, peptideGroupCount);
+		}
 
 		public static void WriteTableToConsole(List<Node> outData, GlobalIDContainer globalIDTracker)
 		{
-			string header = "Protein\tPeptide";
+			const string header = "Protein\tPeptide";
 			Console.WriteLine(header);
 			foreach (Node node in outData)
 			{
