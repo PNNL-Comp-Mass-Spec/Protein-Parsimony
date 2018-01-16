@@ -1,7 +1,5 @@
 ﻿
-using SetCover.Objects;
-
-namespace SetCover
+namespace SetCover.Objects
 {
 	/// <summary>
 	/// Groups peptides which have the same proteins as children.

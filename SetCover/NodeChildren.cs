@@ -1,43 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SetCover
 {
 	public class NodeChildren<T> : IList<T>
 	{
-		private List<T> list = new List<T>();
-		private int memberCount = 0;
+		private readonly List<T> Nodes = new List<T>();
 
-		public int ChildCount
-		{
-			get { return memberCount; }
-		}
+		private int memberCount;
 
-		public NodeChildren()
+		public int ChildCount => memberCount;
+
+	    public NodeChildren()
 		{
 		}
 
 		public T Get(int i)
 		{
-			return list[i];
+			return Nodes[i];
 		}
 
 		public void Sort()
 		{
-			list.Sort();
+		    Nodes.Sort();
 		}
 
 		public NodeChildren(HashSet<T> inlist)
 		{
-			this.list = new List<T>(inlist);
-			memberCount = this.list.Count;
+			Nodes = new List<T>(inlist);
+			memberCount = Nodes.Count;
 		}
 
 		public NodeChildren(NodeChildren<T> inlist)
 		{
-			this.list = new List<T>(inlist);
-			memberCount = this.list.Count;
+			Nodes = new List<T>(inlist);
+			memberCount = Nodes.Count;
 		}
 
 		/// <summary>
@@ -46,9 +43,9 @@ namespace SetCover
 		/// <param name="node"></param>
 		public void Add(T node)
 		{
-			if (!this.list.Contains(node))
+			if (!Nodes.Contains(node))
 			{
-				this.list.Add(node);
+				Nodes.Add(node);
 				memberCount++;
 			}
 
@@ -56,7 +53,7 @@ namespace SetCover
 
 		public void AddRange(NodeChildren<T> nodes)
 		{
-			list.AddRange(nodes);
+		    Nodes.AddRange(nodes);
 		}
 
 		/// <summary>
@@ -65,9 +62,9 @@ namespace SetCover
 		/// <param name="node"></param>
 		public void RemoveChild(T node)
 		{
-			if (this.list.Contains(node))
+			if (Nodes.Contains(node))
 			{
-				this.list.Remove(node);
+				Nodes.Remove(node);
 				memberCount--;
 			}
 		}
@@ -75,14 +72,14 @@ namespace SetCover
 
 		public int IndexOf(T item)
 		{
-			return this.list.IndexOf(item);
+			return Nodes.IndexOf(item);
 		}
 
 		public void Insert(int index, T item)
 		{
-			if (!this.list.Contains(item))
+			if (!Nodes.Contains(item))
 			{
-				this.list.Insert(index, item);
+				Nodes.Insert(index, item);
 				memberCount++;
 			}
 
@@ -90,55 +87,43 @@ namespace SetCover
 
 		public void RemoveAt(int index)
 		{
-			this.list.RemoveAt(index);
+			Nodes.RemoveAt(index);
 		}
 
 		public T this[int index]
 		{
-			get
-			{
-				return this.list[index];
-			}
-			set
-			{
-				this.list[index] = value;
-			}
+			get => Nodes[index];
+		    set => Nodes[index] = value;
 		}
 
 
 		public void Clear()
 		{
-			this.list.Clear();
+			Nodes.Clear();
 		}
 
 		public bool Contains(T item)
 		{
-			return this.list.Contains(item);
+			return Nodes.Contains(item);
 		}
 
 		public void CopyTo(T[] array, int arrayIndex)
 		{
-			this.list.CopyTo(array, arrayIndex);
+			Nodes.CopyTo(array, arrayIndex);
 		}
 
-		public int Count
-		{
-			get { return this.list.Count(); }
-		}
+		public int Count => Nodes.Count;
 
-		public bool IsReadOnly
-		{
-			get { return false; }
-		}
+	    public bool IsReadOnly => false;
 
-		public bool Remove(T item)
+	    public bool Remove(T item)
 		{
-			return this.list.Remove(item);
+			return Nodes.Remove(item);
 		}
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			return this.list.GetEnumerator();
+			return Nodes.GetEnumerator();
 		}
 
 

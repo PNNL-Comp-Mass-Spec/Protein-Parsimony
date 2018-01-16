@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace SetCover
+﻿namespace SetCover.Objects
 {
     /// <summary>
     /// Stores proteins
@@ -14,7 +9,7 @@ namespace SetCover
             : base(nodeName)
         { }
 
-        
+
 
     }
 }

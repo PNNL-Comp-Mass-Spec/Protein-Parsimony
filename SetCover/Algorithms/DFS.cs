@@ -1,16 +1,18 @@
 ﻿using System.Collections.Generic;
+using SetCover.Objects;
 
-namespace SetCover
+namespace SetCover.Algorithms
 {
 	class DFS
 	{
-		Dictionary<int, Node> AllNodes = new Dictionary<int, Node>();
+	    readonly Dictionary<int, Node> AllNodes = new Dictionary<int, Node>();
 
 		public void RunAlgorithm(ref List<Node> Proteins)
 		{
-			foreach (ProteinGroup p in Proteins)
+			foreach (var node in Proteins)
 			{
-				p.UpdateUntakenPeptides();
+			    var p = (ProteinGroup)node;
+			    p.UpdateUntakenPeptides();
 			}
 			Proteins = ClusterNodes(Proteins);
 		}
@@ -27,7 +29,7 @@ namespace SetCover
 		/// <param name="searchNodes"></param>
 		public void Search(Node input, HashSet<Node> searchNodes)
 		{
-			foreach (Node child in input.children)
+			foreach (var child in input.Children)
 			{
 				if (!CheckID(child, searchNodes))
 				{
@@ -40,27 +42,30 @@ namespace SetCover
 
 		public HashSet<Node> Search(Node input)
 		{
-			HashSet<Node> searchNodes = new HashSet<Node>();
-			searchNodes.Add(input);
-			AllNodes.Remove(input.Id);
+		    var searchNodes = new HashSet<Node> {
+		        input
+		    };
+		    AllNodes.Remove(input.Id);
 			Search(input, searchNodes);
 			return searchNodes;
 		}
 
 		public List<Node> ClusterNodes(List<Node> inNodes)
 		{
-			List<Node> clusters = new List<Node>();
-			foreach (Node mynode in inNodes)
+			var clusters = new List<Node>();
+			foreach (var mynode in inNodes)
 			{
 				AllNodes.Add(mynode.Id, mynode);
 			}
-			foreach (Node mynode in inNodes)
+			foreach (var mynode in inNodes)
 			{
 				if (AllNodes.ContainsKey(mynode.Id))
 				{
-					Cluster cs = new Cluster();
-					cs.children = new NodeChildren<Node>(Search(mynode));
-					//           cs.nodeName = String.Concat(cs.chi);
+				    var cs = new Cluster {
+				        Children = new NodeChildren<Node>(Search(mynode))
+				    };
+
+				    //           cs.nodeName = string.Concat(cs.chi);
 					clusters.Add(cs);
 				}
 			}

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
 
 namespace SetCover.Objects
@@ -23,8 +21,7 @@ namespace SetCover.Objects
 
 		public int GetGlobalID(string itemName)
 		{
-			int itemID;
-			if (!mItemsByName.TryGetValue(itemName, out itemID))
+		    if (!mItemsByName.TryGetValue(itemName, out var itemID))
 			{
 				itemID = mItemsByName.Count;
 				mItemsByName.Add(itemName, itemID);
@@ -35,8 +32,7 @@ namespace SetCover.Objects
 
 		public string GetNameByID(int itemID)
 		{
-			string itemName;
-			if (!mItemsByID.TryGetValue(itemID, out itemName))
+		    if (!mItemsByID.TryGetValue(itemID, out var itemName))
 			{
 				return string.Empty;
 			}
@@ -66,8 +62,7 @@ namespace SetCover.Objects
 
 			foreach (var itemIDText in itemIDs)
 			{
-				int itemID;
-				if (int.TryParse(itemIDText, out itemID))
+			    if (int.TryParse(itemIDText, out var itemID))
 				{
 					var itemName = GetNameByID(itemID);
 					nodeNames.Add(itemName);

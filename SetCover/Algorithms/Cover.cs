@@ -1,85 +1,90 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using SetCover.Objects;
 
-
-namespace SetCover
+namespace SetCover.Algorithms
 {
-	class Cover
-	{
-		public void RunAlgorithm(ref List<Node> inNode, ref List<Node> outNode)
-		{
-			RunAlgorithm(ref inNode);
-		}
+    class Cover
+    {
+        public void RunAlgorithm(ref List<Node> inNode, ref List<Node> outNode)
+        {
+            RunAlgorithm(ref inNode);
+        }
 
-		/// <summary>
-		/// Finds the best coverage using a greedy algorithm
-		/// </summary>
-		/// <param name="inNode"></param>
-		public void RunAlgorithm(ref List<Node> inNode)
-		{
-			//log.Info("Running Greedy Set Cover");
+        /// <summary>
+        /// Finds the best coverage using a greedy algorithm
+        /// </summary>
+        /// <param name="inNode"></param>
+        public void RunAlgorithm(ref List<Node> inNode)
+        {
+            //log.Info("Running Greedy Set Cover");
 
-			inNode = BulkFinder(inNode);
+            inNode = BulkFinder(inNode);
 
-		}
+        }
 
-		public List<Node> BulkFinder(List<Node> inCluster)
-		{
-			List<Node> FilteredList = new List<Node>();
-			foreach (Cluster cs in inCluster)
-			{
-				FilteredList.AddRange(GetCover(cs));
-			}
-			return FilteredList;
-		}
+        public List<Node> BulkFinder(List<Node> inCluster)
+        {
+            var FilteredList = new List<Node>();
+            foreach (var node in inCluster)
+            {
+                var cs = (Cluster)node;
+                FilteredList.AddRange(GetCover(cs));
+            }
+            return FilteredList;
+        }
 
-		private IEnumerable<Node> GetCover(Cluster cs)
-		{
-			List<Node> ProteinSet = new List<Node>();
-			List<Node> proteins = new List<Node>();
-			List<Node> peptides = new List<Node>();
-			foreach (Node node in cs.children)
-			{
-				Type t = node.GetType();
-				if (t == typeof(ProteinGroup) ||
-					t == typeof(Protein))
-				{
-					proteins.Add(node);
-				}
-				else
-				{
-					peptides.Add(node);
-				}
-			}
-			//This loop is going to have to change.
-			proteins.Sort();
-			while (proteins.Count != 0 && ((ProteinGroup)proteins[proteins.Count - 1]).UntakenPeptide != 0)
-			{
-				Node temp = proteins[proteins.Count - 1];
-				ProteinSet.Add(temp);
-				proteins.Remove(temp);
-				AdjustUntakenPeptides(temp);
-				proteins.Sort();
-			}
+        private IEnumerable<Node> GetCover(Node cs)
+        {
+            var ProteinSet = new List<Node>();
+            var proteins = new List<Node>();
+            // var peptides = new List<Node>();
 
-			return ProteinSet;
+            foreach (var node in cs.Children)
+            {
+                var t = node.GetType();
+                if (t == typeof(ProteinGroup) ||
+                    t == typeof(Protein))
+                {
+                    proteins.Add(node);
+                }
+                /*
+                else
+                {
+                    peptides.Add(node);
+                }
+                */
+            }
 
+            //This loop is going to have to change.
+            proteins.Sort();
+            while (proteins.Count != 0 && ((ProteinGroup)proteins[proteins.Count - 1]).UntakenPeptide != 0)
+            {
+                var temp = proteins[proteins.Count - 1];
+                ProteinSet.Add(temp);
+                proteins.Remove(temp);
+                AdjustUntakenPeptides(temp);
+                proteins.Sort();
+            }
 
-		}
-
-		private void AdjustUntakenPeptides(Node temp)
-		{
-			foreach (Node child in temp.children)
-			{
-				foreach (ProteinGroup pchild in child.children)
-				{
-					pchild.UntakenPeptide--;
-				}
-			}
-		}
+            return ProteinSet;
 
 
+        }
+
+        private void AdjustUntakenPeptides(Node temp)
+        {
+            foreach (var child in temp.Children)
+            {
+                foreach (var node in child.Children)
+                {
+                    var pchild = (ProteinGroup)node;
+                    pchild.UntakenPeptide--;
+                }
+            }
+        }
 
 
-	}
+
+
+    }
 }

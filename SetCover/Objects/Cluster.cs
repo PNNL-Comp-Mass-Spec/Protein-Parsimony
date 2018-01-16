@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace SetCover
+﻿namespace SetCover.Objects
 {
-	class Cluster : Node
-	{
-		public Cluster()
-			: base(NodeTypeName.Cluster)
-		{
-		}
-	}
+    class Cluster : Node
+    {
+        public Cluster() : base(NodeTypeName.Cluster)
+        {
+        }
+    }
 }

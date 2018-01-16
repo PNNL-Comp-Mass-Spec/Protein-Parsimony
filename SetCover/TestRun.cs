@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using SetCover.Algorithms;
 using SetCover.Objects;
 
 namespace SetCover
@@ -11,8 +12,8 @@ namespace SetCover
         [Test]
         public void TestFile(string[] args)
         {
-            string file = @"C:\Users\aldr699\Documents\Visual Studio 2010\Projects2\ProteinPars\SetCover\TestData\T_Row_Metadata.txt";
-            Runner run = new Runner();
+            var file = @"C:\Users\aldr699\Documents\Visual Studio 2010\Projects2\ProteinPars\SetCover\TestData\T_Row_Metadata.txt";
+            var run = new Runner();
             run.RunAlgorithm(file,"");
 
         }
@@ -20,33 +21,35 @@ namespace SetCover
         [Test]
         public void TestNodeBuilder()
         {
-            List<RowEntry> lr = new List<RowEntry>();
-            lr.Add(new RowEntry { ProteinEntry = "prot_A", PeptideEntry = "pep_A" });
-            lr.Add(new RowEntry { ProteinEntry = "prot_B", PeptideEntry = "pep_A" });
-            lr.Add(new RowEntry { ProteinEntry = "prot_B", PeptideEntry = "pep_B" });
-            lr.Add(new RowEntry { ProteinEntry = "prot_B", PeptideEntry = "pep_C" });
-            lr.Add(new RowEntry { ProteinEntry = "prot_C", PeptideEntry = "pep_A" });
-            lr.Add(new RowEntry { ProteinEntry = "prot_C", PeptideEntry = "pep_B" });
-            lr.Add(new RowEntry { ProteinEntry = "prot_C", PeptideEntry = "pep_C" });
-            lr.Add(new RowEntry { ProteinEntry = "prot_D", PeptideEntry = "pep_D" });
-            lr.Add(new RowEntry { ProteinEntry = "prot_D", PeptideEntry = "pep_E" });
+            var lr = new List<RowEntry>
+            {
+                new RowEntry {ProteinEntry = "prot_A", PeptideEntry = "pep_A"},
+                new RowEntry {ProteinEntry = "prot_B", PeptideEntry = "pep_A"},
+                new RowEntry {ProteinEntry = "prot_B", PeptideEntry = "pep_B"},
+                new RowEntry {ProteinEntry = "prot_B", PeptideEntry = "pep_C"},
+                new RowEntry {ProteinEntry = "prot_C", PeptideEntry = "pep_A"},
+                new RowEntry {ProteinEntry = "prot_C", PeptideEntry = "pep_B"},
+                new RowEntry {ProteinEntry = "prot_C", PeptideEntry = "pep_C"},
+                new RowEntry {ProteinEntry = "prot_D", PeptideEntry = "pep_D"},
+                new RowEntry {ProteinEntry = "prot_D", PeptideEntry = "pep_E"}
+            };
 
             var nodebuilder = new NodeBuilder();
             var nodecollapser = new NodeCollapser();
             var dfs = new DFS();
             var cover = new Cover();
 
-            var Proteins = new Dictionary<string,Node>();
-            var Peptides = new Dictionary<string,Node>();
-			var globalIDTracker = new GlobalIDContainer();
+            var globalIDTracker = new GlobalIDContainer();
 
-            nodebuilder.RunAlgorithm(lr, out Proteins, out Peptides);
-			nodecollapser.RunAlgorithm(ref Proteins, ref Peptides, ref globalIDTracker);
+            nodebuilder.RunAlgorithm(lr, out var Proteins, out var Peptides);
+
+            nodecollapser.RunAlgorithm(Proteins, Peptides, globalIDTracker);
+
             var clProteins = Proteins.Values.ToList();
             dfs.RunAlgorithm(ref clProteins);
             cover.RunAlgorithm(ref clProteins);
 
-			Utilities.WriteTableToConsole(clProteins, globalIDTracker);
+            Utilities.WriteTableToConsole(clProteins, globalIDTracker);
 
             Console.ReadLine();
 
@@ -63,8 +66,8 @@ namespace SetCover
         [Test]
         public void TestResultDB()
         {
-            string datadbfolder = @"C:\Users\aldr699\Documents\Visual Studio 2010\Projects2\ProteinPars\SetCover\TestData";
-            string datafile = "Results.db3";
+            var datadbfolder = @"C:\Users\aldr699\Documents\Visual Studio 2010\Projects2\ProteinPars\SetCover\TestData";
+            var datafile = "Results.db3";
 
             var runner = new Runner();
             runner.RunAlgorithm(datadbfolder,datafile);

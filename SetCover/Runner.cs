@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Mage;
+using SetCover.Algorithms;
 using SetCover.Objects;
 
 
@@ -64,7 +65,7 @@ namespace SetCover
 
 			try
 			{
-				bool success = GetPeptideProteinMap(reader, sourceTableName, out lstTrowMetadata);
+				var success = GetPeptideProteinMap(reader, sourceTableName, out lstTrowMetadata);
 				if (!success)
 				{
 					return false;
@@ -79,8 +80,8 @@ namespace SetCover
 			if (fiDatabaseFile.DirectoryName == null)
 				throw new Exception("Error determining the parent directory for " + fiDatabaseFile.FullName);
 
-			string parsimonyResultsFilePath = Path.Combine(fiDatabaseFile.DirectoryName, "pars_info_temp.txt");
-			string proteinGroupMembersFilePath = Path.Combine(fiDatabaseFile.DirectoryName, "pars_info_temp_groups.txt");
+			var parsimonyResultsFilePath = Path.Combine(fiDatabaseFile.DirectoryName, "pars_info_temp.txt");
+			var proteinGroupMembersFilePath = Path.Combine(fiDatabaseFile.DirectoryName, "pars_info_temp_groups.txt");
 
 			if (lstTrowMetadata == null || lstTrowMetadata.Count == 0)
 			{
@@ -138,7 +139,7 @@ namespace SetCover
 				const string tableName = "T_Parsimony_Group_Members";
 				writer.DbPath = fiDatabaseFile.FullName;
 				writer.TableName = tableName;
-				
+
 				var colDefs = new List<MageColumnDef>
 				{
 					new MageColumnDef("GroupID", "integer", "4")		// Note that "size" doesn't matter since we're writing to a SqLite database
@@ -161,7 +162,7 @@ namespace SetCover
 		public bool RunGUIAlgorithm(string inputFile, string parsimonyResultsFilePath, string proteinGroupMembersFilePath)
 		{
 			List<RowEntry> lstTrowMetadata;
-			List<Node> result = null;
+			List<Node> result;
 			bool success;
 
 
@@ -212,14 +213,12 @@ namespace SetCover
 		public bool PerformParsimony(List<RowEntry> toParsimonize, out List<Node> ClProteins, out GlobalIDContainer globalIDTracker)
 		{
 			//prepare objects and algorithms
-			Dictionary<string, Node> Peptides;
-			Dictionary<string, Node> Proteins;
-			var nodebuilder = new NodeBuilder();
+		    var nodebuilder = new NodeBuilder();
 			var nodecollapser = new NodeCollapser();
 			var dfs = new DFS();
 			var cover = new Cover();
 
-			nodebuilder.RunAlgorithm(toParsimonize, out Proteins, out Peptides);
+			nodebuilder.RunAlgorithm(toParsimonize, out var Proteins, out var Peptides);
 
 			if (Proteins == null || Proteins.Count == 0)
 			{
@@ -232,7 +231,7 @@ namespace SetCover
 			}
 
 			globalIDTracker = new GlobalIDContainer();
-			nodecollapser.RunAlgorithm(ref Proteins, ref Peptides, ref globalIDTracker);
+			nodecollapser.RunAlgorithm(Proteins, Peptides, globalIDTracker);
 
 			if (Proteins == null || Proteins.Count == 0)
 			{
@@ -278,8 +277,8 @@ namespace SetCover
 			//construct and run mage pipeline to get the peptide and protein info
 			ProcessingPipeline.Assemble("Test_Pipeline", reader, sink).RunRoot(null);
 
-			int proteinIdx = sink.ColumnIndex["Protein"];
-			int peptideIdx = sink.ColumnIndex["Peptide"];
+			var proteinIdx = sink.ColumnIndex["Protein"];
+			var peptideIdx = sink.ColumnIndex["Peptide"];
 			pepToProtMapping = new List<RowEntry>();
 			foreach (object[] row in sink.Rows)
 			{

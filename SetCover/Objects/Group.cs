@@ -1,80 +1,78 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using SetCover.Objects;
 
-namespace SetCover
+namespace SetCover.Objects
 {
     /// <summary>
     /// Base class for groups which are composed of peptides or proteins
     /// </summary>
     class Group : Node
     {
-	    public const char LIST_SEP_CHAR = '\t';
+        public const char LIST_SEP_CHAR = '\t';
 
         protected NodeChildren<Node> nodeGroup;
-        private List<string> mNodeNameList;
+        private readonly List<string> mNodeNameList;
 
-	    public String NodeNameFirst
-	    {
-		    get
-		    {
-				if (mNodeNameList == null || mNodeNameList.Count == 0)
-					return string.Empty;
-				else
-					return mNodeNameList.First();
-		    }
+        public string NodeNameFirst
+        {
+            get
+            {
+                if (mNodeNameList == null || mNodeNameList.Count == 0)
+                    return string.Empty;
 
-	    }
+                return mNodeNameList.First();
+            }
 
-		public List<string> NodeNameList
-		{
-			get
-			{
-				if (mNodeNameList == null)
-					return new List<string>();
-				else
-					return mNodeNameList;
-			}
-		}
+        }
 
-		// Constructor
-		public Group(NodeTypeName nodeType, string nodeName) : base(nodeType, nodeName) { }
+        public List<string> NodeNameList
+        {
+            get
+            {
+                if (mNodeNameList == null)
+                    return new List<string>();
 
-		// Constructor
-		public Group(NodeTypeName nodeType, NodeChildren<Node> groupedNodes, GlobalIDContainer globalIDTracker)
-			: base(nodeType)
+                return mNodeNameList;
+            }
+        }
+
+        // Constructor
+        public Group(NodeTypeName nodeType, string nodeName) : base(nodeType, nodeName) { }
+
+        // Constructor
+        public Group(NodeTypeName nodeType, NodeChildren<Node> groupedNodes, GlobalIDContainer globalIDTracker)
+            : base(nodeType)
         {
             //copies inputted nodes to be grouped into a list
             //copies the grouped nodes' children as the groups children.
             //In this case since they should be identical we just grab the first member
             var tempNode = new NodeChildren<Node>(groupedNodes);
-            this.nodeGroup = new NodeChildren<Node>(groupedNodes);
-            this.children = new NodeChildren<Node>(groupedNodes[0].children);
-            
-			mNodeNameList = new List<string>();
-			var nodeNameGlobalIDs = new List<int>();
+            nodeGroup = new NodeChildren<Node>(groupedNodes);
+            Children = new NodeChildren<Node>(groupedNodes[0].Children);
 
-            foreach (Node item in groupedNodes)
+            mNodeNameList = new List<string>();
+            var nodeNameGlobalIDs = new List<int>();
+
+            foreach (var item in groupedNodes)
             {
-				this.mNodeNameList.Add(item.nodeName);
-				var globalID = globalIDTracker.GetGlobalID(item.nodeName);
-	            nodeNameGlobalIDs.Add(globalID);
+                mNodeNameList.Add(item.NodeName);
+                var globalID = globalIDTracker.GetGlobalID(item.NodeName);
+                nodeNameGlobalIDs.Add(globalID);
             }
-			this.nodeName = String.Join(LIST_SEP_CHAR.ToString(), nodeNameGlobalIDs);
+            NodeName = string.Join(LIST_SEP_CHAR.ToString(), nodeNameGlobalIDs);
 
 
-            int toRemove = tempNode.Count;
-            foreach (Node child in children)
+            var toRemove = tempNode.Count;
+            foreach (var child in Children)
             {
-                for(int i = 0; i < toRemove; i++)
-                    child.children.Remove(tempNode[i]);
-                
+                for(var i = 0; i < toRemove; i++)
+                    child.Children.Remove(tempNode[i]);
+
             }
 
-            foreach (Node child in children)
+            foreach (var child in Children)
             {
-                child.children.Add(this);
+                child.Children.Add(this);
             }
 
         }

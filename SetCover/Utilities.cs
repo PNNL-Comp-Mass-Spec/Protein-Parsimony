@@ -19,17 +19,17 @@ namespace SetCover
 		/// <returns></returns>
 		public static DataTable TextFileToDataTableAssignTypeString(string filePath, bool addDataSetName)
 		{
-			string line = "";
-			string[] fields = null;
-			DataTable dt = new DataTable();
+		    var dt = new DataTable();
 
 			using (var sr = new StreamReader(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
 			{
-				// first line has headers   
-				if ((line = sr.ReadLine()) != null)
+				// first line has headers
+			    string line;
+			    string[] fields;
+			    if ((line = sr.ReadLine()) != null)
 				{
-					fields = line.Split(new char[] { '\t' });
-					foreach (string s in fields)
+					fields = line.Split('\t');
+					foreach (var s in fields)
 					{
 						dt.Columns.Add(s);
 						dt.Columns[s].DefaultValue = "";
@@ -38,20 +38,20 @@ namespace SetCover
 				}
 				else
 				{
-					// it's empty, that's an error   
+					// it's empty, that's an error
 					throw new ApplicationException("The data provided is not in a valid format: Header row must be tab delimited");
 				}
 
-				// fill the rest of the table; positional   
+				// fill the rest of the table; positional
 				while ((line = sr.ReadLine()) != null)
 				{
 					if (!string.IsNullOrEmpty(line))
 					{
-						DataRow row = dt.NewRow();
+						var row = dt.NewRow();
 
-						fields = line.Split(new char[] { '\t' });
-						int i = 0;
-						foreach (string s in fields)
+						fields = line.Split('\t');
+						var i = 0;
+						foreach (var s in fields)
 						{
 							row[i] = s;
 							i++;
@@ -84,7 +84,7 @@ namespace SetCover
 			try
 			{
 				rows = new List<RowEntry>();
-				DataTable dt = TextFileToDataTableAssignTypeString(filePath, false);
+				var dt = TextFileToDataTableAssignTypeString(filePath, false);
 
 				if (!dt.Columns.Contains("Protein"))
 					throw new Exception("Input file is missing column 'Protein'");
@@ -119,25 +119,23 @@ namespace SetCover
 		/// <param name="filePath"></param>
 		public static void WriteDataTableToText(DataTable dt, string filePath)
 		{
-			using (StreamWriter sw = new StreamWriter(filePath))
+			using (var sw = new StreamWriter(filePath))
 			{
-				string s = dt.Columns[0].ColumnName;
-				for (int i = 1; i < dt.Columns.Count; i++)
+				var headerLine = dt.Columns[0].ColumnName;
+				for (var i = 1; i < dt.Columns.Count; i++)
 				{
-					s += "\t" + dt.Columns[i].ColumnName;
+				    headerLine += "\t" + dt.Columns[i].ColumnName;
 				}
-				sw.WriteLine(s);
+				sw.WriteLine(headerLine);
 
-				s = string.Empty;
 				foreach (DataRow row in dt.Rows)
 				{
-					s = "" + row[0];
-					for (int i = 1; i < dt.Columns.Count; i++)
+					var dataLine = row[0];
+					for (var i = 1; i < dt.Columns.Count; i++)
 					{
-						s += "\t" + row[i];
+					    dataLine += "\t" + row[i];
 					}
-					sw.WriteLine(s);
-					s = string.Empty;
+					sw.WriteLine(dataLine);
 				}
 
 
@@ -158,7 +156,7 @@ namespace SetCover
 			{
 				using (var swGroupMembers = new StreamWriter(new FileStream(proteinGroupMembersFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
 				{
-					string header = "GroupID\tProtein_First\tPeptide\tProtein_List\tProtein_Count\tGroup_Count";
+					var header = "GroupID\tProtein_First\tPeptide\tProtein_List\tProtein_Count\tGroup_Count";
 					sw.WriteLine(header);
 
 					header = "GroupID\tProtein";
@@ -168,45 +166,45 @@ namespace SetCover
 
 					var peptideToProteinGroupMap = new Dictionary<string, int>();
 
-					foreach (Node proteinNode in outData)
+					foreach (var proteinNode in outData)
 					{
-						foreach (Node child in proteinNode.children)
+						foreach (var child in proteinNode.Children)
 						{
 							if (child.GetType() == typeof(PeptideGroup))
 							{
 								var currentPeptides = (Group)child;
-								foreach (Node groupedpep in currentPeptides.GetNodeGroup())
+								foreach (var groupedpep in currentPeptides.GetNodeGroup())
 								{
-									UpdatePeptideToProteinGroupMap(peptideToProteinGroupMap, groupedpep.nodeName);
+									UpdatePeptideToProteinGroupMap(peptideToProteinGroupMap, groupedpep.NodeName);
 								}
 							}
 							else
 							{
-								UpdatePeptideToProteinGroupMap(peptideToProteinGroupMap, child.nodeName);
+								UpdatePeptideToProteinGroupMap(peptideToProteinGroupMap, child.NodeName);
 							}
 						}
 					}
 
 
 					// Now write out the results
-					int groupID = 0;
-					foreach (Node proteinNode in outData)
+					var groupID = 0;
+					foreach (var proteinNode in outData)
 					{
 						string proteinFirst;
 						string proteinNameOrList;
-						int proteinsInGroupCount = 0;
+						int proteinsInGroupCount;
 
 						groupID++;
 
-						// Append one or more lines to T_Parsimony_Group_Members.txt 
+						// Append one or more lines to T_Parsimony_Group_Members.txt
 						if (proteinNode.GetType() == typeof(ProteinGroup))
 						{
 							var currentGroup = (ProteinGroup)proteinNode;
 							proteinFirst = currentGroup.NodeNameFirst;
-							if (currentGroup.nodeName.IndexOf(Group.LIST_SEP_CHAR) > 0)
+							if (currentGroup.NodeName.IndexOf(Group.LIST_SEP_CHAR) > 0)
 							{
-								List<string> proteinList = globalIDTracker.IDListToNameList(currentGroup.nodeName, Group.LIST_SEP_CHAR);
-								proteinNameOrList = String.Join("; ", proteinList);
+								var proteinList = globalIDTracker.IDListToNameList(currentGroup.NodeName, Group.LIST_SEP_CHAR);
+								proteinNameOrList = string.Join("; ", proteinList);
 								proteinsInGroupCount = proteinList.Count;
 
 								foreach (var proteinMember in proteinList)
@@ -217,34 +215,34 @@ namespace SetCover
 							else
 							{
 								// Note: this code should never be reached
-								proteinNameOrList = currentGroup.nodeName;
+								proteinNameOrList = currentGroup.NodeName;
 								proteinsInGroupCount = 1;
 								WriteOutputGroupMemberLine(swGroupMembers, groupID, proteinNameOrList);
 							}
 						}
 						else
 						{
-							proteinFirst = proteinNode.nodeName;
-							proteinNameOrList = proteinNode.nodeName;
+							proteinFirst = proteinNode.NodeName;
+							proteinNameOrList = proteinNode.NodeName;
 							proteinsInGroupCount = 1;
 
 							WriteOutputGroupMemberLine(swGroupMembers, groupID, proteinNameOrList);
 						}
 
 						// Append one or more lines to T_Parsimony_Grouping.txt
-						foreach (Node child in proteinNode.children)
+						foreach (var child in proteinNode.Children)
 						{
 							if (child.GetType() == typeof(PeptideGroup))
 							{
 								var currentPeptides = (Group)child;
-								foreach (Node groupedpep in currentPeptides.GetNodeGroup())
+								foreach (var groupedpep in currentPeptides.GetNodeGroup())
 								{
-									WriteOutputGroupingLine(sw, peptideToProteinGroupMap, groupID, proteinFirst, groupedpep.nodeName, proteinNameOrList, proteinsInGroupCount);
+									WriteOutputGroupingLine(sw, peptideToProteinGroupMap, groupID, proteinFirst, groupedpep.NodeName, proteinNameOrList, proteinsInGroupCount);
 								}
 							}
 							else
 							{
-								WriteOutputGroupingLine(sw, peptideToProteinGroupMap, groupID, proteinFirst, child.nodeName, proteinNameOrList, proteinsInGroupCount);
+								WriteOutputGroupingLine(sw, peptideToProteinGroupMap, groupID, proteinFirst, child.NodeName, proteinNameOrList, proteinsInGroupCount);
 							}
 						}
 
@@ -254,10 +252,9 @@ namespace SetCover
 			} // End Using
 		}
 
-		private static void UpdatePeptideToProteinGroupMap(Dictionary<string, int> peptideToProteinGroupMap, string peptide)
+		private static void UpdatePeptideToProteinGroupMap(IDictionary<string, int> peptideToProteinGroupMap, string peptide)
 		{
-			int groupCount;
-			if (peptideToProteinGroupMap.TryGetValue(peptide, out groupCount))
+		    if (peptideToProteinGroupMap.TryGetValue(peptide, out var groupCount))
 			{
 				peptideToProteinGroupMap[peptide] = groupCount + 1;
 			}
@@ -267,16 +264,15 @@ namespace SetCover
 			}
 		}
 
-		private static void WriteOutputGroupMemberLine(StreamWriter swGroupMembers, int groupID, string proteinNameOrList)
+		private static void WriteOutputGroupMemberLine(TextWriter swGroupMembers, int groupID, string proteinNameOrList)
 		{
 			swGroupMembers.WriteLine("{0}\t{1}", groupID, proteinNameOrList);
 		}
 
-		private static void WriteOutputGroupingLine(StreamWriter sw, Dictionary<string, int> peptideToProteinGroupMap,
+		private static void WriteOutputGroupingLine(TextWriter sw, IReadOnlyDictionary<string, int> peptideToProteinGroupMap,
 			int groupID, string proteinFirst, string peptide, string proteinNameOrList, int proteinsInGroupCount)
 		{
-			int peptideGroupCount = 0;
-			peptideToProteinGroupMap.TryGetValue(peptide, out peptideGroupCount);
+		    peptideToProteinGroupMap.TryGetValue(peptide, out var peptideGroupCount);
 
 			sw.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}", groupID, proteinFirst, peptide, proteinNameOrList, proteinsInGroupCount, peptideGroupCount);
 		}
@@ -285,31 +281,29 @@ namespace SetCover
 		{
 			const string header = "Protein\tPeptide";
 			Console.WriteLine(header);
-			foreach (Node node in outData)
+			foreach (var node in outData)
 			{
-				foreach (Node child in node.children)
+				foreach (var child in node.Children)
 				{
 					if (child.GetType() == typeof(PeptideGroup))
 					{
-						foreach (Node groupedpep in ((Group)child).GetNodeGroup())
+						foreach (var groupedpep in ((Group)child).GetNodeGroup())
 						{
 							string proteinList;
-							if (node.nodeName.IndexOf(Group.LIST_SEP_CHAR) > 0)
+							if (node.NodeName.IndexOf(Group.LIST_SEP_CHAR) > 0)
 							{
-								proteinList = globalIDTracker.IDListToNameListString(node.nodeName, Group.LIST_SEP_CHAR);
+								proteinList = globalIDTracker.IDListToNameListString(node.NodeName, Group.LIST_SEP_CHAR);
 								proteinList = proteinList.Replace(Group.LIST_SEP_CHAR.ToString(), "; ");
 							}
 							else
-								proteinList = node.nodeName;
+								proteinList = node.NodeName;
 
-							Console.WriteLine(string.Format("{0}\t{1}",
-								proteinList, groupedpep.nodeName));
+							Console.WriteLine("{0}\t{1}", proteinList, groupedpep.NodeName);
 						}
 					}
 					else
 					{
-						Console.WriteLine(string.Format("{0}\t{1}",
-								node.nodeName, child.nodeName));
+						Console.WriteLine("{0}\t{1}", node.NodeName, child.NodeName);
 					}
 				}
 

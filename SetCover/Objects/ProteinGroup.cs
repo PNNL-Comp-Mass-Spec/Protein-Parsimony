@@ -1,19 +1,18 @@
 ﻿using System;
-using SetCover.Objects;
 
-namespace SetCover
+namespace SetCover.Objects
 {
 	/// <summary>
 	/// A grouped set of proteins with identical children
 	/// </summary>
-	class ProteinGroup : Group, IComparable
+	class ProteinGroup : Group
 	{
 		public int UntakenPeptide { get; set; }
 
 		public ProteinGroup(NodeChildren<Node> groupedNodes, GlobalIDContainer globalIDTracker)
 			: base(NodeTypeName.ProteinGroup, groupedNodes, globalIDTracker)
 		{
-			UntakenPeptide = this.children.Count;
+			UntakenPeptide = Children.Count;
 
 		}
 
@@ -31,20 +30,17 @@ namespace SetCover
 		{
 			if (obj == null) return 1;
 
-			ProteinGroup otherNode = obj as ProteinGroup;
-			if (otherNode != null)
+		    if (obj is ProteinGroup otherNode)
 			{
-				return this.UntakenPeptide.CompareTo(otherNode.UntakenPeptide);
+				return UntakenPeptide.CompareTo(otherNode.UntakenPeptide);
 			}
-			else
-			{
-				throw new ArgumentException("Object is not a Node!");
-			}
+
+		    throw new ArgumentException("Object is not a Node!");
 		}
 
 		public void UpdateUntakenPeptides()
 		{
-			UntakenPeptide = this.children.Count;
+			UntakenPeptide = Children.Count;
 		}
 
 	}

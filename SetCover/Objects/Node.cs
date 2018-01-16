@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SetCover
+namespace SetCover.Objects
 {
 	/// <summary>
 	/// Main object for generating the bipartite graph
@@ -8,7 +8,7 @@ namespace SetCover
 	public class Node : IComparable
 	{
 
-		private static int IDNum = 0;
+		private static int IDNum;
 
 		public enum NodeTypeName
 		{
@@ -22,8 +22,8 @@ namespace SetCover
 
 		public NodeTypeName NodeType { get; set; }
 		public int Id { get; set; }
-		public NodeChildren<Node> children { get; set; }
-		public String nodeName { get; set; }
+		public NodeChildren<Node> Children { get; set; }
+		public string NodeName { get; set; }
 
 		// Constructor
 		public Node()
@@ -34,20 +34,20 @@ namespace SetCover
 		// Constructor
 		public Node(NodeTypeName nodeType)
 		{
-			this.NodeType = nodeType;
-			if (this.NodeType == NodeTypeName.Other)
+			NodeType = nodeType;
+			if (NodeType == NodeTypeName.Other)
 				Console.WriteLine("Found other");
 
-			this.Id = System.Threading.Interlocked.Increment(ref IDNum);
-			this.nodeName = string.Empty;
+			Id = System.Threading.Interlocked.Increment(ref IDNum);
+		    NodeName = string.Empty;
 		}
 
 		// Constructor
-		public Node(NodeTypeName nodeType, String nodeName)
+		public Node(NodeTypeName nodeType, string nodeName)
 			: this(nodeType)
 		{
-			this.nodeName = nodeName;
-			this.children = new NodeChildren<Node>();
+			NodeName = nodeName;
+		    Children = new NodeChildren<Node>();
 
 		}
 
@@ -56,25 +56,17 @@ namespace SetCover
 		{
 			if (obj == null) return 1;
 
-			Node otherNode = obj as Node;
-			if (otherNode != null)
+		    if (obj is Node otherNode)
 			{
-				return this.children.Count.CompareTo(otherNode.children.Count);
-			}
-			else
-			{
-				throw new ArgumentException("Object is not a Node!");
+				return Children.Count.CompareTo(otherNode.Children.Count);
 			}
 
+		    throw new ArgumentException("Object is not a Node!");
 
 		}
 
 
-
 	}
-
-
-
 
 
 }
