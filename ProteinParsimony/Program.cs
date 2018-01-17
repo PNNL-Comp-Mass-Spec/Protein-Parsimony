@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using PRISM;
+using PRISM.FileProcessor;
 using SetCover;
 
 namespace ProteinParsimony
@@ -38,25 +41,59 @@ namespace ProteinParsimony
 
             }
 
-            string parsimonyResultsFilePath;
-            string proteinGroupMembersFilePath;
+            var sqliteExtensions = new SortedSet<string>(StringComparer.OrdinalIgnoreCase) {
+                ".db",
+                ".db3",
+                ".sqlite",
+                ".sqlite3"
+            };
+
+            if (sqliteExtensions.Contains(fiSourceFile.Extension))
+            {
+                var result = ProcessSQLiteDB(fiSourceFile);
+                return result;
+            }
+            else
+            {
                 var result = ProcessTextfile(args, fiSourceFile);
                 return result;
+            }
+
+        }
+
+        private static int ProcessSQLiteDB(FileInfo fiSourceFile)
+        {
 
             try
             {
-
-
-                if (args.Length < 2)
+                var runner = new Runner
                 {
+                    ShowProgressAtConsole = true
+                };
 
-                    parsimonyResultsFilePath = Path.Combine(fiSourceFile.Directory.FullName,
-                                                         Path.GetFileNameWithoutExtension(fiSourceFile.Name) + "_parsimony" +
-                                                         fiSourceFile.Extension);
+                runner.ProgressChanged += RunnerProgressHandler;
+                var success = runner.RunAlgorithm(fiSourceFile.DirectoryName, fiSourceFile.Name);
 
-                    proteinGroupMembersFilePath = Path.Combine(fiSourceFile.Directory.FullName,
-                                                               Path.GetFileNameWithoutExtension(fiSourceFile.Name) +
-                                                               "_parsimony_groups" + fiSourceFile.Extension);
+                if (success)
+                {
+                    Console.WriteLine("Success");
+                    clsProgRunner.SleepMilliseconds(750);
+                    return 0;
+                }
+
+                ConsoleMsgUtils.ShowError("Error computing protein parsimony: RunAlgorithm reports false");
+                clsProgRunner.SleepMilliseconds(1500);
+                return -3;
+            }
+            catch (Exception ex)
+            {
+                ConsoleMsgUtils.ShowError("Error computing protein parsimony: " + ex.Message, ex);
+
+                clsProgRunner.SleepMilliseconds(1500);
+                return -2;
+
+            }
+        }
 
         private static int ProcessTextfile(IReadOnlyList<string> args, FileInfo fiSourceFile)
         {
