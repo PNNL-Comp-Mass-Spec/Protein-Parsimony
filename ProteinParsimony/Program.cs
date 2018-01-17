@@ -6,6 +6,8 @@ namespace ProteinParsimony
 {
     class Program
     {
+        private const string PROGRAM_DATE = "January 16, 2018";
+
         static int Main(string[] args)
         {
             if (args.Length < 1)
@@ -18,22 +20,28 @@ namespace ProteinParsimony
 
             try
             {
+                var inputFilePath = args[0];
+
                 fiSourceFile = new FileInfo(args[0]);
                 if (!fiSourceFile.Exists)
                 {
-                    ShowSyntax("The file: " + args[0] + ", does not exist");
+                    ShowSyntax("Input file not found: " + inputFilePath);
+                    clsProgRunner.SleepMilliseconds(1500);
                     return -1;
                 }
             }
             catch (Exception ex)
             {
                 ShowSyntax("Exception validating the input file path: " + ex.Message);
+                clsProgRunner.SleepMilliseconds(1500);
                 return -2;
 
             }
 
             string parsimonyResultsFilePath;
             string proteinGroupMembersFilePath;
+                var result = ProcessTextfile(args, fiSourceFile);
+                return result;
 
             try
             {
@@ -50,26 +58,33 @@ namespace ProteinParsimony
                                                                Path.GetFileNameWithoutExtension(fiSourceFile.Name) +
                                                                "_parsimony_groups" + fiSourceFile.Extension);
 
+        private static int ProcessTextfile(IReadOnlyList<string> args, FileInfo fiSourceFile)
+        {
+
+            string parsimonyResultsFilePath;
+            string proteinGroupMembersFilePath;
+
+            try
+            {
+                if (args.Count < 2)
+                {
+                    Runner.GetDefaultOutputFileNames(fiSourceFile, out parsimonyResultsFilePath, out proteinGroupMembersFilePath);
                 }
                 else
                 {
+                    Runner.GetDefaultOutputFileNames(fiSourceFile, out _, out proteinGroupMembersFilePath);
                     parsimonyResultsFilePath = args[1];
-
-                    var fiOutputfile = new FileInfo(parsimonyResultsFilePath);
-                    proteinGroupMembersFilePath = Path.Combine(fiOutputfile.Directory.FullName,
-                              Path.GetFileNameWithoutExtension(fiOutputfile.Name) + "_groups" + fiOutputfile.Extension);
-
                 }
 
                 var fiOutputFile = new FileInfo(parsimonyResultsFilePath);
-                if (!fiOutputFile.Directory.Exists)
+                if (fiOutputFile.Directory != null && !fiOutputFile.Directory.Exists)
                     fiOutputFile.Directory.Create();
             }
             catch (Exception ex)
             {
                 ShowSyntax("Exception validating the output file path: " + ex.Message);
+                clsProgRunner.SleepMilliseconds(1500);
                 return -2;
-
             }
 
             try
@@ -80,23 +95,25 @@ namespace ProteinParsimony
                 };
 
                 runner.ProgressChanged += RunnerProgressHandler;
-                var success = runner.RunGUIAlgorithm(fiSourceFile.FullName, parsimonyResultsFilePath, proteinGroupMembersFilePath);
+                var success = runner.RunGUIAlgorithm(fiSourceFile, parsimonyResultsFilePath, proteinGroupMembersFilePath);
 
                 if (success)
-                    Console.WriteLine("Success");
-                else
                 {
-                    Console.WriteLine("Failed");
-                    return -3;
+                    Console.WriteLine("Success");
+                    clsProgRunner.SleepMilliseconds(750);
+                    return 0;
                 }
+
+                ConsoleMsgUtils.ShowError("Error computing protein parsimony: RunGUIAlgorithm reports false");
+                clsProgRunner.SleepMilliseconds(1500);
+                return -3;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error computing protein parsimony: " + ex.Message);
+                ConsoleMsgUtils.ShowError("Error computing protein parsimony: " + ex.Message, ex);
+                clsProgRunner.SleepMilliseconds(1500);
                 return -4;
             }
-
-            return 0;
         }
 
         private static void RunnerProgressHandler(Runner id, ProgressInfo e)
@@ -104,26 +121,36 @@ namespace ProteinParsimony
             Console.WriteLine(e.ProgressCurrentJob.ToString("0.0") + "% complete; " + e.Value.ToString("0.0") + "% complete overall");
         }
 
-        private static void ShowSyntax()
-        {
-            ShowSyntax(string.Empty);
-        }
-
-        private static void ShowSyntax(string errorMessage)
+        private static void ShowSyntax(string errorMessage = "")
         {
             Console.WriteLine();
-            if (!string.IsNullOrEmpty(errorMessage))
+            if (!string.IsNullOrWhiteSpace(errorMessage))
             {
-                Console.WriteLine("Error: " + errorMessage);
+                ConsoleMsgUtils.ShowError("Error: " + errorMessage, false);
                 Console.WriteLine();
             }
 
-            Console.WriteLine("Program Syntax:");
-            Console.WriteLine(Path.GetFileName(System.Reflection.Assembly.GetExecutingAssembly().Location) + " InputFilePath [OutputFilePath]");
+            Console.WriteLine("This program implements a protein parsimony algorithm");
+            Console.WriteLine("for grouping proteins with similar peptides");
             Console.WriteLine();
-            Console.WriteLine("If the output file path is not defined, then the output file ");
-            Console.WriteLine("will be created in the same location as the input file, ");
-            Console.WriteLine("but with '_parsimony' added to the filename.");
+            Console.WriteLine("Program Syntax:");
+            Console.WriteLine(Path.GetFileName(ProcessFilesOrFoldersBase.GetAppPath()) + " InputFilePath [OutputFilePath]");
+            Console.WriteLine();
+            Console.WriteLine("The input file is a tab delimited text file with columns Protein and Peptide");
+            Console.WriteLine("(column order does not matter; extra columns are ignored)");
+            Console.WriteLine();
+            Console.WriteLine("If the output file path is not defined, it will be created in the same location");
+            Console.WriteLine("as the input file, but with '_parsimony' added to the filename");
+            Console.WriteLine();
+            Console.WriteLine("Alternatively, the input file can be a SQLite file (extension .db, .db3, or .sqlite)");
+            Console.WriteLine("Proteins and peptides will be read from table T_Row_Metadata and results will");
+            Console.WriteLine("be written to tables T_Row_Metadata_parsimony and T_Row_Metadata_parsimony_groups");
+            Console.WriteLine();
+            Console.WriteLine("Program written by Josh Aldrich for the Department of Energy (PNNL, Richland, WA) in 2013");
+            Console.WriteLine("Version: " + ProcessFilesOrFoldersBase.GetAppVersion(PROGRAM_DATE));
+            Console.WriteLine();
+            Console.WriteLine("E-mail: proteomics@pnnl.gov");
+            Console.WriteLine("Website: https://omics.pnl.gov/ or https://panomics.pnnl.gov/ or https://github.com/PNNL-Comp-Mass-Spec");
         }
 
     }
