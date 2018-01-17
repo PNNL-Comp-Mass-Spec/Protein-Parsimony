@@ -77,8 +77,14 @@
     <Reference Include="Mage">
       <HintPath>Lib\Mage.dll</HintPath>
     </Reference>
+    <Reference Include="MyEMSLReader">
+      <HintPath>Lib\MyEMSLReader.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>Lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Pacifica.Core">
+      <HintPath>Lib\Pacifica.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -117,6 +123,9 @@
   <ItemGroup>
     <PackageReference Include="PRISM-Library">
       <Version>2.4.54</Version>
+    </PackageReference>
+    <PackageReference Include="System.Data.SQLite.Core">
+      <Version>1.0.97</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
