@@ -3,62 +3,90 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SQLite;
 using System.IO;
+using System.Linq;
+using System.Runtime.Remoting.Channels;
 using SetCover.Objects;
 
 namespace SetCover
 {
-	static class Utilities
+	internal static class Utilities
 	{
-
 		/// <summary>
 		/// Generates a datatable with all entries being a string
 		/// </summary>
-		/// <param name="filePath">input file name</param>
-		/// <param name="addDataSetName">whether to add the datasetname as a column</param>
+		/// <param name="filePath">Input file path</param>
+		/// <param name="columnsToTrack">Column names to store in the data table</param>
 		/// <returns></returns>
-		public static DataTable TextFileToDataTableAssignTypeString(string filePath, bool addDataSetName)
+		private static DataTable TextFileToDataTableAssignTypeString(string filePath, ICollection<string> columnsToTrack)
 		{
 		    var dt = new DataTable();
 
 			using (var sr = new StreamReader(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
 			{
-				// first line has headers
-			    string line;
-			    string[] fields;
-			    if ((line = sr.ReadLine()) != null)
+				if (sr.EndOfStream)
 				{
-					fields = line.Split('\t');
-					foreach (var s in fields)
-					{
-						dt.Columns.Add(s);
-						dt.Columns[s].DefaultValue = "";
-					}
+					throw new Exception("Input file is empty: " + filePath);
+				}
 
+				// first line has headers
+				var headerLine = sr.ReadLine();
+
+				var colIndicesToLoad = new SortedSet<int>();
+
+				if (string.IsNullOrWhiteSpace(headerLine))
+				{
+					// Header line is empty, that's an error
+					throw new Exception("The data provided is not in a valid format: Header line must be tab delimited");
+				}
+
+				var headerFields = headerLine.Split('\t');
+
+				if (columnsToTrack == null || columnsToTrack.Count == 0)
+				{
+					// Load all of the data
+					foreach (var fieldIndex in Enumerable.Range(0, headerFields.Length))
+					{
+						var fieldName = headerFields[fieldIndex];
+						colIndicesToLoad.Add(fieldIndex);
+						dt.Columns.Add(fieldName);
+						dt.Columns[fieldName].DefaultValue = "";
+					}
 				}
 				else
 				{
-					// it's empty, that's an error
-					throw new ApplicationException("The data provided is not in a valid format: Header row must be tab delimited");
+					// Only load data in the specified columns
+					for (var fieldIndex = 0; fieldIndex < headerFields.Length; fieldIndex++)
+					{
+						var fieldName = headerFields[fieldIndex];
+						if (columnsToTrack.Contains(fieldName))
+						{
+							colIndicesToLoad.Add(fieldIndex);
+							dt.Columns.Add(fieldName);
+							dt.Columns[fieldName].DefaultValue = "";
+						}
+					}
 				}
 
-				// fill the rest of the table; positional
-				while ((line = sr.ReadLine()) != null)
+				// Fill the rest of the table
+				while (!sr.EndOfStream)
 				{
-					if (!string.IsNullOrEmpty(line))
-					{
-						var row = dt.NewRow();
+					var dataLine = sr.ReadLine();
 
-						fields = line.Split('\t');
-						var i = 0;
-						foreach (var s in fields)
-						{
-							row[i] = s;
-							i++;
-						}
-						dt.Rows.Add(row);
+					if (string.IsNullOrWhiteSpace(dataLine))
+						continue;
+
+					var row = dt.NewRow();
+
+					var dataVals = dataLine.Split('\t');
+
+					foreach (var fieldIndex in colIndicesToLoad)
+					{
+						row[fieldIndex] = dataVals[fieldIndex];
 					}
 
+					dt.Rows.Add(row);
 				}
 			}
 
@@ -84,7 +112,11 @@ namespace SetCover
 			try
 			{
 				rows = new List<RowEntry>();
-				var dt = TextFileToDataTableAssignTypeString(filePath, false);
+				var columnsToTrack = new SortedSet<string>(StringComparer.OrdinalIgnoreCase) {
+					"Protein", "Peptide"
+				};
+
+				var dt = TextFileToDataTableAssignTypeString(filePath, columnsToTrack);
 
 				if (!dt.Columns.Contains("Protein"))
 					throw new Exception("Input file is missing column 'Protein'");
