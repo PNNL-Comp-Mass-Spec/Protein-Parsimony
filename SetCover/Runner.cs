@@ -57,6 +57,8 @@ namespace SetCover
 			if (!fiDatabaseFile.Exists)
 				throw new FileNotFoundException("Database not found: " + fiDatabaseFile);
 
+			if (ShowProgressAtConsole)
+				Console.WriteLine("Opening SQLite database " + fiDatabaseFile.FullName);
 
 			var reader = new SQLiteReader
 			{
@@ -68,8 +70,16 @@ namespace SetCover
 				var success = GetPeptideProteinMap(reader, sourceTableName, out pepToProtMapping);
 				if (!success)
 				{
+					if (ShowProgressAtConsole)
+					{
+						PRISM.ConsoleMsgUtils.ShowError(
+							string.Format("Error loading data from table {0}; GetPeptideProteinMap returned false", sourceTableName));
+					}
 					return false;
 				}
+
+				if (ShowProgressAtConsole)
+					Console.WriteLine("Loaded {0} rows from table {1}", pepToProtMapping.Count, sourceTableName);
 			}
 			catch (Exception ex)
 			{
@@ -101,6 +111,9 @@ namespace SetCover
 				throw new Exception("Error calling PerformParsimony: " + ex.Message, ex);
 			}
 
+			if (ShowProgressAtConsole)
+				Console.WriteLine("Exporting protein groups to temp text files");
+
 			Utilities.SaveResults(result, parsimonyResultsFilePath, proteinGroupMembersFilePath, globalIDTracker);
 
 			const string PARSIMONY_GROUPING_TABLE = "T_Parsimony_Grouping";
@@ -124,6 +137,9 @@ namespace SetCover
 					new MageColumnDef("GroupID", "integer", "4")		// Note that "size" doesn't matter since we're writing to a SqLite database
 				};
 				writer.ColDefOverride = colDefs;
+
+				if (ShowProgressAtConsole)
+					Console.WriteLine("Importing data into table " + PARSIMONY_GROUPING_TABLE);
 
 				ProcessingPipeline.Assemble("ImportToSQLite", delimreader, writer).RunRoot(null);
 			}
@@ -150,6 +166,9 @@ namespace SetCover
 					new MageColumnDef("GroupID", "integer", "4")		// Note that "size" doesn't matter since we're writing to a SqLite database
 				};
 				writer.ColDefOverride = colDefs;
+
+				if (ShowProgressAtConsole)
+					Console.WriteLine("Importing data into table " + PARSIMONY_GROUP_MEMBERS_TABLE);
 
 				ProcessingPipeline.Assemble("ImportToSQLite", delimreader, writer).RunRoot(null);
 			}
@@ -208,6 +227,9 @@ namespace SetCover
 
 			if (success && result != null)
 			{
+				if (ShowProgressAtConsole)
+					Console.WriteLine("Writing results to " + parsimonyResultsFilePath);
+
 				Utilities.SaveResults(result, parsimonyResultsFilePath, proteinGroupMembersFilePath, globalIDTracker);
 			}
 			else
@@ -227,6 +249,9 @@ namespace SetCover
 			var nodecollapser = new NodeCollapser();
 			var dfs = new DFS();
 			var cover = new Cover();
+
+			if (ShowProgressAtConsole)
+				Console.WriteLine("Finding parsimonious protein groups");
 
 			nodebuilder.RunAlgorithm(peptideProteinMapList, out var proteins, out var peptides);
 
@@ -269,9 +294,8 @@ namespace SetCover
 				throw new Exception("Error in PerformParsimony: Cover returned an empty protein list");
 			}
 
-
 			if (ShowProgressAtConsole)
-				Console.WriteLine("Iteration Complete");
+				Console.WriteLine("Iteration Complete, found {0} protein groups", clusteredProteins.Count);
 
 			return true;
 

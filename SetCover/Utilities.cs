@@ -108,9 +108,13 @@ namespace SetCover
 		}
 
 		public static bool ReadTable(string filePath, out List<RowEntry> rows)
+		public static bool ReadProteinPeptideTable(string filePath, out List<RowEntry> rows, bool showProgress = true)
 		{
 			try
 			{
+				if (showProgress)
+					Console.WriteLine("Loading proteins and peptides from " + filePath);
+
 				rows = new List<RowEntry>();
 				var columnsToTrack = new SortedSet<string>(StringComparer.OrdinalIgnoreCase) {
 					"Protein", "Peptide"
@@ -134,10 +138,12 @@ namespace SetCover
 					rows.Add(entry);
 				}
 
+				if (showProgress)
+					Console.WriteLine("Loaded {0} rows", rows.Count);
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Problem adding rows to List<RowEntry>: " + ex.Message);
+				throw new Exception(string.Format("Problem loading data from {0}: {1}", filePath, ex.Message));
 			}
 
 			return true;
