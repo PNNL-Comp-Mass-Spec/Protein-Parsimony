@@ -90,20 +90,7 @@ namespace SetCover
 				}
 			}
 
-			//if (!dt.Columns.Contains("DatasetName") && addDataSetName)
-			//{
-			//    string dataSetName = Regex.Replace(Path.GetFileName(fileName).Split('.')[0],
-			//"_fht|_fht_MSGF|_fht_MSGF_full|_full|_ReporterIons|_MSGF|_cut", "");
-
-			//    dt.Columns.Add("DataSetName", typeof(string));
-			//    foreach (DataRow row in dt.Rows)
-			//    {
-			//        row["DataSetName"] = dataSetName;
-			//    }
-			//}
-
 			return dt;
-
 
 		}
 
