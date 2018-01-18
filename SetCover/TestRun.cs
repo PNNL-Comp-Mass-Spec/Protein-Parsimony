@@ -17,7 +17,7 @@ namespace SetCover
             Runner.GetDefaultOutputFileNames(file, out var parsimonyResultsFilePath, out var proteinGroupMembersFilePath);
 
             var run = new Runner();
-            run.RunGUIAlgorithm(file, parsimonyResultsFilePath, proteinGroupMembersFilePath);
+            run.ProcessTextFile(file, parsimonyResultsFilePath, proteinGroupMembersFilePath);
 
         }
 
@@ -148,11 +148,11 @@ namespace SetCover
         {
             var datadbfolder = @"\\proto-2\UnitTest_Files\ProteinParsimony";
             var datafile = "Results.db3";
+            const string sourceTableName = Runner.DEFAULT_SQLITE_TABLE;
 
             var runner = new Runner();
-            runner.RunAlgorithm(datadbfolder, datafile, "T_Row_Metadata");
-
-
+            runner.ProcessSQLite(datadbfolder, datafile, sourceTableName);
         }
+
     }
 }

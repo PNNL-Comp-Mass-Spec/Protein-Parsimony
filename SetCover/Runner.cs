@@ -59,26 +59,13 @@ namespace SetCover
         }
 
         /// <summary>
-        /// Run the parsimony algorithm against the peptides and proteins in table T_Row_Metadata in the specified file
-        /// </summary>
-        /// <param name="databaseFolderPath"></param>
-        /// <param name="dataBaseFileName"></param>
-        /// <returns>True if success; false if an error</returns>
-        public bool RunAlgorithm(string databaseFolderPath, string dataBaseFileName)
-        {
-            const string SOURCE_TABLE = "T_Row_Metadata";
-
-            return RunAlgorithm(databaseFolderPath, dataBaseFileName, SOURCE_TABLE);
-        }
-
-        /// <summary>
-        /// Run the parsimony algorithm against the peptides and proteins in table sourceTableName in the specified file
+        /// Run the parsimony algorithm against the peptides and proteins in table sourceTableName in the specified SQLite database
         /// </summary>
         /// <param name="databaseFolderPath"></param>
         /// <param name="dataBaseFileName"></param>
         /// <param name="sourceTableName">Table name to process</param>
         /// <returns>True if success; false if an error</returns>
-        public bool RunAlgorithm(string databaseFolderPath, string dataBaseFileName, string sourceTableName)
+        public bool ProcessSQLite(string databaseFolderPath, string dataBaseFileName, string sourceTableName = DEFAULT_SQLITE_TABLE)
         {
             List<RowEntry> pepToProtMapping;
             List<Node> result;
@@ -253,13 +240,13 @@ namespace SetCover
             return true;
         }
 
-        public bool RunGUIAlgorithm(string inputFilePath, string parsimonyResultsFilePath, string proteinGroupMembersFilePath)
+        public bool ProcessTextFile(string inputFilePath, string parsimonyResultsFilePath, string proteinGroupMembersFilePath)
         {
             var inputFile = new FileInfo(inputFilePath);
-            return RunGUIAlgorithm(inputFile, parsimonyResultsFilePath, proteinGroupMembersFilePath);
+            return ProcessTextFile(inputFile, parsimonyResultsFilePath, proteinGroupMembersFilePath);
         }
 
-        public bool RunGUIAlgorithm(FileInfo inputFile, string parsimonyResultsFilePath, string proteinGroupMembersFilePath)
+        public bool ProcessTextFile(FileInfo inputFile, string parsimonyResultsFilePath, string proteinGroupMembersFilePath)
         {
             List<RowEntry> peptideProteinMapList;
             List<Node> result;

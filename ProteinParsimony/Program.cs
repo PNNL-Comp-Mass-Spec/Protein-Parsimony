@@ -72,7 +72,7 @@ namespace ProteinParsimony
                 };
 
                 runner.ProgressChanged += RunnerProgressHandler;
-                var success = runner.RunAlgorithm(fiSourceFile.DirectoryName, fiSourceFile.Name);
+                var success = runner.ProcessSQLite(fiSourceFile.DirectoryName, fiSourceFile.Name, sourceTableName);
 
                 if (success)
                 {
@@ -132,7 +132,7 @@ namespace ProteinParsimony
                 };
 
                 runner.ProgressChanged += RunnerProgressHandler;
-                var success = runner.RunGUIAlgorithm(fiSourceFile, parsimonyResultsFilePath, proteinGroupMembersFilePath);
+                var success = runner.ProcessTextFile(fiSourceFile, parsimonyResultsFilePath, proteinGroupMembersFilePath);
 
                 if (success)
                 {
