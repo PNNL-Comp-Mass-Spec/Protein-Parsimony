@@ -55,19 +55,45 @@ namespace SetCover.Algorithms
                 */
             }
 
-            //This loop is going to have to change.
-            proteins.Sort();
-            while (proteins.Count != 0 && ((ProteinGroup)proteins[proteins.Count - 1]).UntakenPeptide != 0)
+            var continueCheck = true;
+            var startIndex = proteins.Count - 1;
+
+            while (continueCheck)
             {
-                var temp = proteins[proteins.Count - 1];
-                proteinSet.Add(temp);
-                proteins.Remove(temp);
-                AdjustUntakenPeptides(temp);
-                proteins.Sort();
+                // Find the peptide with the highest number of children, and 1 or more untaken peptides
+                var currentIndex = Math.Min(proteins.Count - 1, startIndex);
+                while (currentIndex >= 0)
+                {
+
+                    // Sort the proteins by number of children, then by number of untaken peptides
+                    proteins.Sort();
+
+                    if (((ProteinGroup)proteins[currentIndex]).UntakenPeptides <= 0)
+                    {
+                        // Work backward through the sorted list of proteins
+                        currentIndex--;
+                        startIndex--;
+                        continue;
+                    }
+
+                    // Protein found; create a new Protein Group
+                    var temp = proteins[currentIndex];
+                    proteinSet.Add(temp);
+
+                    // Remove the protein from the candidate proteins list
+                    proteins.Remove(temp);
+
+                    // Decrement UntakenPeptides for all proteins associated with the peptides in this new protein group
+                    AdjustUntakenPeptides(temp);
+
+                    break;
+                }
+
+                if (currentIndex < 0)
+                    continueCheck = false;
             }
 
             return proteinSet;
-
 
         }
 
