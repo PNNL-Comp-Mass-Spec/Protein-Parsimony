@@ -5,11 +5,7 @@
     /// </summary>
     class Protein : ProteinGroup
     {
-        public Protein(string nodeName)
-            : base(nodeName)
+        public Protein(string nodeName) : base(nodeName)
         { }
-
-
-
     }
 }
