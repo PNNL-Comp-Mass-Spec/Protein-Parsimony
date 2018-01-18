@@ -167,11 +167,15 @@ namespace ProteinParsimony
                 Console.WriteLine();
             }
 
+            var exeName = Path.GetFileName(ProcessFilesOrFoldersBase.GetAppPath());
+
             Console.WriteLine("This program implements a protein parsimony algorithm");
-            Console.WriteLine("for grouping proteins with similar peptides");
+            Console.WriteLine("for grouping proteins with similar peptides.");
             Console.WriteLine();
             Console.WriteLine("Program Syntax:");
-            Console.WriteLine(Path.GetFileName(ProcessFilesOrFoldersBase.GetAppPath()) + " InputFilePath [OutputFilePath]");
+            Console.WriteLine(exeName + " InputFilePath.txt [OutputFilePath]");
+            Console.WriteLine(" or ");
+            Console.WriteLine(exeName + " SQLiteDatabase.db3");
             Console.WriteLine();
             Console.WriteLine("The input file is a tab delimited text file with columns Protein and Peptide");
             Console.WriteLine("(column order does not matter; extra columns are ignored)");
@@ -179,9 +183,9 @@ namespace ProteinParsimony
             Console.WriteLine("If the output file path is not defined, it will be created in the same location");
             Console.WriteLine("as the input file, but with '_parsimony' added to the filename");
             Console.WriteLine();
-            Console.WriteLine("Alternatively, the input file can be a SQLite file (extension .db, .db3, or .sqlite)");
-            Console.WriteLine("Proteins and peptides will be read from table T_Row_Metadata and results will");
-            Console.WriteLine("be written to tables T_Row_Metadata_parsimony and T_Row_Metadata_parsimony_groups");
+            Console.WriteLine("Alternatively, the input file can be a SQLite database file (extension .db, .db3, .sqlite, or .sqlite3)");
+            Console.WriteLine("Proteins and peptides will be read from table T_Row_Metadata and results will be");
+            Console.WriteLine("written to tables T_Row_Metadata_parsimony and T_Row_Metadata_parsimony_groups");
             Console.WriteLine();
             Console.WriteLine("Program written by Josh Aldrich for the Department of Energy (PNNL, Richland, WA) in 2013");
             Console.WriteLine("Version: " + ProcessFilesOrFoldersBase.GetAppVersion(PROGRAM_DATE));
