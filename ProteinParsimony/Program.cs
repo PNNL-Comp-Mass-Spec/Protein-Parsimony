@@ -50,7 +50,8 @@ namespace ProteinParsimony
 
             if (sqliteExtensions.Contains(fiSourceFile.Extension))
             {
-                var result = ProcessSQLiteDB(fiSourceFile);
+                var sourceTableName = args.Length > 1 ? args[1] : Runner.DEFAULT_SQLITE_TABLE;
+                var result = ProcessSQLiteDB(fiSourceFile, sourceTableName);
                 return result;
             }
             else
@@ -61,7 +62,7 @@ namespace ProteinParsimony
 
         }
 
-        private static int ProcessSQLiteDB(FileInfo fiSourceFile)
+        private static int ProcessSQLiteDB(FileInfo fiSourceFile, string sourceTableName)
         {
 
             try
