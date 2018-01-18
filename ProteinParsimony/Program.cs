@@ -170,30 +170,37 @@ namespace ProteinParsimony
 
             var exeName = Path.GetFileName(ProcessFilesOrFoldersBase.GetAppPath());
 
-            Console.WriteLine("This program implements a protein parsimony algorithm");
-            Console.WriteLine("for grouping proteins with similar peptides.");
+            ConsoleWriteWrapped("This program implements a protein parsimony algorithm for grouping proteins with similar peptides.");
             Console.WriteLine();
-            Console.WriteLine("Program Syntax:");
+            Console.WriteLine("Program syntax #1:");
             Console.WriteLine(exeName + " InputFilePath.txt [OutputFilePath]");
-            Console.WriteLine(" or ");
-            Console.WriteLine(exeName + " SQLiteDatabase.db3");
             Console.WriteLine();
-            Console.WriteLine("The input file is a tab delimited text file with columns Protein and Peptide");
-            Console.WriteLine("(column order does not matter; extra columns are ignored)");
+            ConsoleWriteWrapped("The input file is a tab delimited text file with columns Protein and Peptide " +
+                                "(column order does not matter; extra columns are ignored)");
             Console.WriteLine();
-            Console.WriteLine("If the output file path is not defined, it will be created in the same location");
-            Console.WriteLine("as the input file, but with '_parsimony' added to the filename");
+            ConsoleWriteWrapped("If the output file path is not defined, it will be created in the same location " +
+                                "as the input file, but with '_parsimony' added to the filename");
             Console.WriteLine();
-            Console.WriteLine("Alternatively, the input file can be a SQLite database file (extension .db, .db3, .sqlite, or .sqlite3)");
-            Console.WriteLine("Proteins and peptides will be read from table T_Row_Metadata and results will be");
-            Console.WriteLine("written to tables T_Row_Metadata_parsimony and T_Row_Metadata_parsimony_groups");
+            Console.WriteLine("Program syntax #2:");
+            Console.WriteLine(exeName + " SQLiteDatabase.db3 [TableName]");
+            Console.WriteLine();
+            ConsoleWriteWrapped("If the input is a SQLite database file (extension .db, .db3, .sqlite, or\a.sqlite3), " +
+                                "proteins and peptides will be read from the specified table, or\afrom " +
+                                "T_Row_Metadata if TableName is not provided. The table must have columns " +
+                                "Protein and Peptide. Results will be written to tables " +
+                                Runner.PARSIMONY_GROUPING_TABLE + " and " + Runner.PARSIMONY_GROUP_MEMBERS_TABLE);
             Console.WriteLine();
             Console.WriteLine("Program written by Josh Aldrich for the Department of Energy (PNNL, Richland, WA) in 2013");
             Console.WriteLine("Version: " + ProcessFilesOrFoldersBase.GetAppVersion(PROGRAM_DATE));
             Console.WriteLine();
-            Console.WriteLine("E-mail: proteomics@pnnl.gov");
-            Console.WriteLine("Website: https://omics.pnl.gov/ or https://panomics.pnnl.gov/ or https://github.com/PNNL-Comp-Mass-Spec");
+            Console.WriteLine("E-mail:  proteomics@pnnl.gov");
+            Console.WriteLine("Website: https://omics.pnl.gov/ or https://panomics.pnnl.gov/ or ");
+            Console.WriteLine("         https://github.com/PNNL-Comp-Mass-Spec");
         }
 
+        private static void ConsoleWriteWrapped(string textToWrap)
+        {
+            Console.WriteLine(PRISM.CommandLineParser<Program>.WrapParagraph(textToWrap));
+        }
     }
 }
