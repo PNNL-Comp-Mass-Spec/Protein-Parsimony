@@ -3,6 +3,9 @@ using SetCover.Objects;
 
 namespace SetCover.Algorithms
 {
+	/// <summary>
+	/// Cluster sets of nodes using a depth first search approach
+	/// </summary>
 	class DFS
 	{
 	    readonly Dictionary<int, Node> AllNodes = new Dictionary<int, Node>();

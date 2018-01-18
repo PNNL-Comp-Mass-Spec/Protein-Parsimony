@@ -107,7 +107,12 @@ namespace SetCover
 
 		}
 
-		public static bool ReadTable(string filePath, out List<RowEntry> rows)
+		/// <summary>
+		/// Load data from a tab-delimited text file with columns Protein and Peptide
+		/// </summary>
+		/// <param name="filePath"></param>
+		/// <param name="rows">List of protein/peptide pairs (protein name and peptide sequence)</param>
+		/// <returns></returns>
 		public static bool ReadProteinPeptideTable(string filePath, out List<RowEntry> rows, bool showProgress = true)
 		{
 			try

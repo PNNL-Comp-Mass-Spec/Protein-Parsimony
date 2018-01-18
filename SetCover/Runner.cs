@@ -12,7 +12,9 @@ namespace SetCover
 	public class Runner
 	{
 
-
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		public Runner()
 		{
 			ShowProgressAtConsole = true;
@@ -240,12 +242,17 @@ namespace SetCover
 			return true;
 		}
 
-
 		/// <summary>
+		/// Group proteins having similar peptides
+		/// </summary>
+		/// <param name="peptideProteinMapList">List of protein to peptide mappings</param>
+		/// <param name="clusteredProteins">Parimonious list of protein</param>
+		/// <param name="globalIDTracker"></param>
+		/// <returns></returns>
 		public bool PerformParsimony(List<RowEntry> peptideProteinMapList, out List<Node> clusteredProteins, out GlobalIDContainer globalIDTracker)
 		{
-			//prepare objects and algorithms
-		    var nodebuilder = new NodeBuilder();
+			// Prepare objects and algorithms
+			var nodebuilder = new NodeBuilder();
 			var nodecollapser = new NodeCollapser();
 			var dfs = new DFS();
 			var cover = new Cover();
@@ -305,10 +312,10 @@ namespace SetCover
 		{
 			reader.SQLText = "SELECT * FROM [" + tableName + "]";
 
-			//Make a Mage sink Module (row buffer
+			// Make a Mage sink Module (row buffer
 			var sink = new SimpleSink();
 
-			//construct and run mage pipeline to get the peptide and protein info
+			// Construct and run mage pipeline to get the peptide and protein info
 			ProcessingPipeline.Assemble("Test_Pipeline", reader, sink).RunRoot(null);
 
 			var proteinIdx = sink.ColumnIndex["Protein"];

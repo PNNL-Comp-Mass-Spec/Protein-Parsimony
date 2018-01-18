@@ -10,6 +10,11 @@ namespace SetCover.Algorithms
 		private Dictionary<string, Node> mPeptides;
 
 		/// <summary>
+		/// Group proteins having similar peptides
+		/// </summary>
+		/// <param name="peptideProteinMapList">List of protein to peptide mappings</param>
+		/// <param name="proteins">Dictionary of proteins and children</param>
+		/// <param name="peptides">Dictionary of peptides and children</param>
 		public void RunAlgorithm(
 			List<RowEntry> peptideProteinMapList,
 			out Dictionary<string, Node> proteins,
@@ -24,9 +29,10 @@ namespace SetCover.Algorithms
 			proteins = mProteins;
 			peptides = mPeptides;
 		}
+
 		/// <summary>
-		/// Builds the nodes for a bipartite graph composed of proteins
-		/// on one side peptides on the other
+		/// Builds the nodes for a bipartite graph composed of proteins on one side
+		/// and peptides on the other
 		/// </summary>
 		/// <param name="peptideProteinMapList">List of protein to peptide mappings</param>
 		private void BuildNodes(IEnumerable<RowEntry> peptideProteinMapList)

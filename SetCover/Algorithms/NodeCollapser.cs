@@ -14,8 +14,12 @@ namespace SetCover.Algorithms
             CollapseNodes(protein, pep, globalIDTracker);
         }
 
-
-        //Collapses redundant protein and peptides into single groups.
+        /// <summary>
+        /// Collapses redundant protein and peptides into single groups
+        /// </summary>
+        /// <param name="proteins"></param>
+        /// <param name="peptides"></param>
+        /// <param name="globalIDTracker"></param>
         public void CollapseNodes(
             Dictionary<string, Node> proteins,
             Dictionary<string, Node> peptides,
@@ -86,7 +90,8 @@ namespace SetCover.Algorithms
             candidates.Remove(node);
 
             var count = 0;
-            //pulls out candidates with different counts of children than the master
+
+            // Pulls out candidates with different counts of children than the master
             while (candidates.Count != count)
             {
                 if (node.Children.Count != candidates[count].Children.Count)
@@ -99,8 +104,8 @@ namespace SetCover.Algorithms
                 }
             }
 
-            //may want to change the List to a Hashset to be faster.
-            //finds identical sets.
+            // May want to change the List to a Hashset to be faster.
+            // Finds identical sets.
             foreach (var childNode in node.Children)
             {
                 count = 0;

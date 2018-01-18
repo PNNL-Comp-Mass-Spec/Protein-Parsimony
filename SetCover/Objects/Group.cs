@@ -36,16 +36,26 @@ namespace SetCover.Objects
             }
         }
 
-        // Constructor
-        public Group(NodeTypeName nodeType, string nodeName) : base(nodeType, nodeName) { }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="nodeType"></param>
+        /// <param name="nodeName"></param>
+        public Group(NodeTypeName nodeType, string nodeName)
+            : base(nodeType, nodeName) { }
 
-        // Constructor
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="nodeType"></param>
+        /// <param name="groupedNodes"></param>
+        /// <param name="globalIDTracker"></param>
         public Group(NodeTypeName nodeType, NodeChildren<Node> groupedNodes, GlobalIDContainer globalIDTracker)
             : base(nodeType)
         {
-            //copies inputted nodes to be grouped into a list
-            //copies the grouped nodes' children as the groups children.
-            //In this case since they should be identical we just grab the first member
+            // Copies inputted nodes to be grouped into a list
+            // Copies the grouped nodes' children as the groups children.
+            // In this case since they should be identical we just grab the first member
             var tempNode = new NodeChildren<Node>(groupedNodes);
             nodeGroup = new NodeChildren<Node>(groupedNodes);
             Children = new NodeChildren<Node>(groupedNodes[0].Children);
