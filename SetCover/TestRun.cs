@@ -49,9 +49,12 @@ namespace SetCover
             var clusteredProteinSets = dfs.RunAlgorithm(proteinsWithChildren);
             var clusteredProteins = cover.RunAlgorithm(clusteredProteinSets);
 
-            Utilities.WriteTableToConsole(clProteins, globalIDTracker);
+            var outLines = Utilities.ConvertNodesToStringList(clusteredProteins, globalIDTracker);
 
-            Console.ReadLine();
+            foreach (var item in outLines)
+            {
+                Console.WriteLine(item);
+            }
 
             //Expected output:
             //prot_C-prot_B	pep_A

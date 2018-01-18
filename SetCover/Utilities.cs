@@ -309,39 +309,51 @@ namespace SetCover
 			sw.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}", groupID, proteinFirst, peptide, proteinNameOrList, proteinsInGroupCount, peptideGroupCount);
 		}
 
-		public static void WriteTableToConsole(List<Node> outData, GlobalIDContainer globalIDTracker)
+		public static List<string> ConvertNodesToStringList(List<Node> outData, GlobalIDContainer globalIDTracker)
 		{
-			const string header = "Protein\tPeptide";
-			Console.WriteLine(header);
+			var outLines = new List<string>();
+
+			var headerNames = new List<string> { "Protein", "Peptide"};
+			outLines.Add(string.Join("\t", headerNames));
+
 			foreach (var node in outData)
 			{
 				foreach (var child in node.Children)
 				{
 					if (child.GetType() == typeof(PeptideGroup))
 					{
+						var proteinList = GetProteinList(node, globalIDTracker);
 						foreach (var groupedpep in ((Group)child).GetNodeGroup())
 						{
-							string proteinList;
-							if (node.NodeName.IndexOf(Group.LIST_SEP_CHAR) > 0)
-							{
-								proteinList = globalIDTracker.IDListToNameListString(node.NodeName, Group.LIST_SEP_CHAR);
-								proteinList = proteinList.Replace(Group.LIST_SEP_CHAR.ToString(), "; ");
-							}
-							else
-								proteinList = node.NodeName;
-
-							Console.WriteLine("{0}\t{1}", proteinList, groupedpep.NodeName);
+							outLines.Add(string.Format("{0}\t{1}", proteinList, groupedpep.NodeName));
 						}
+					}
+					else if (node is ProteinGroup thisGroup)
+					{
+						var proteinList = GetProteinList(node, globalIDTracker);
+						outLines.Add(string.Format("{0}\t{1}", proteinList, child.NodeName));
 					}
 					else
 					{
-						Console.WriteLine("{0}\t{1}", node.NodeName, child.NodeName);
+						outLines.Add(string.Format("{0}\t{1}", node.NodeName, child.NodeName));
 					}
+
 				}
 
 			}
 		}
 
+			return outLines;
 
+		private static string GetProteinList(Node node, GlobalIDContainer globalIDTracker)
+		{
+			if (node.NodeName.IndexOf(Group.LIST_SEP_CHAR) > 0)
+			{
+				var proteinList = globalIDTracker.IDListToNameListString(node.NodeName, Group.LIST_SEP_CHAR);
+				return proteinList.Replace(Group.LIST_SEP_CHAR.ToString(), "; ");
+			}
+			else
+				return node.NodeName;
+		}
 	}
 }
