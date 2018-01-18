@@ -9,7 +9,7 @@ namespace ProteinParsimony
 {
     class Program
     {
-        private const string PROGRAM_DATE = "January 17, 2018";
+        private const string PROGRAM_DATE = "January 18, 2018";
 
         static int Main(string[] args)
         {
@@ -77,22 +77,21 @@ namespace ProteinParsimony
 
                 if (success)
                 {
-                    Console.WriteLine("Success");
+                    Console.WriteLine();
+                    Console.WriteLine("Processing complete");
                     clsProgRunner.SleepMilliseconds(750);
                     return 0;
                 }
 
-                ConsoleMsgUtils.ShowError("Error computing protein parsimony: RunAlgorithm reports false");
+                ConsoleMsgUtils.ShowWarning("Error computing protein parsimony: RunAlgorithm reports false");
                 clsProgRunner.SleepMilliseconds(1500);
                 return -3;
             }
             catch (Exception ex)
             {
                 ConsoleMsgUtils.ShowError("Error computing protein parsimony: " + ex.Message, ex);
-
                 clsProgRunner.SleepMilliseconds(1500);
                 return -2;
-
             }
         }
 
@@ -137,12 +136,13 @@ namespace ProteinParsimony
 
                 if (success)
                 {
-                    Console.WriteLine("Success");
+                    Console.WriteLine();
+                    Console.WriteLine("Processing Complete");
                     clsProgRunner.SleepMilliseconds(750);
                     return 0;
                 }
 
-                ConsoleMsgUtils.ShowError("Error computing protein parsimony: RunGUIAlgorithm reports false");
+                ConsoleMsgUtils.ShowWarning("Error computing protein parsimony: ProcessTextFile reports false");
                 clsProgRunner.SleepMilliseconds(1500);
                 return -3;
             }

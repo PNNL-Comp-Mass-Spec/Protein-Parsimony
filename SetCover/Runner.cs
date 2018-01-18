@@ -133,7 +133,10 @@ namespace SetCover
             }
 
             if (ShowProgressAtConsole)
+            {
+                Console.WriteLine();
                 Console.WriteLine("Exporting protein groups to temp text files");
+            }
 
             Utilities.SaveResults(result, parsimonyResultsFilePath, proteinGroupMembersFilePath, globalIDTracker);
 
@@ -174,6 +177,8 @@ namespace SetCover
             {
                 ConsoleMsgUtils.ShowWarning("Error deleting existing protein parsimony data from the SQLite database: " + ex.Message);
             }
+            if (ShowProgressAtConsole)
+                Console.WriteLine();
 
             try
             {
@@ -285,7 +290,10 @@ namespace SetCover
             if (success && result != null)
             {
                 if (ShowProgressAtConsole)
+                {
+                    Console.WriteLine();
                     Console.WriteLine("Writing results to " + parsimonyResultsFilePath);
+                }
 
                 Utilities.SaveResults(result, parsimonyResultsFilePath, proteinGroupMembersFilePath, globalIDTracker);
             }
@@ -313,7 +321,10 @@ namespace SetCover
             var cover = new Cover();
 
             if (ShowProgressAtConsole)
+            {
+                Console.WriteLine();
                 Console.WriteLine("Finding parsimonious protein groups");
+            }
 
             nodebuilder.RunAlgorithm(peptideProteinMapList, out var proteins, out var peptides);
 
