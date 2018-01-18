@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SetCover.Objects;
 
 namespace SetCover.Algorithms
@@ -15,17 +16,8 @@ namespace SetCover.Algorithms
         /// <param name="inNode"></param>
         public List<Node> RunAlgorithm(List<Node> inNode)
         {
-            //log.Info("Running Greedy Set Cover");
-
-            var outNode = BulkFinder(inNode);
-            return outNode;
-
-        }
-
-        public List<Node> BulkFinder(List<Node> inCluster)
-        {
             var filteredList = new List<Node>();
-            foreach (var node in inCluster)
+            foreach (var node in inNode)
             {
                 var cs = (Cluster)node;
                 filteredList.AddRange(GetCover(cs));
@@ -37,7 +29,6 @@ namespace SetCover.Algorithms
         {
             var proteinSet = new List<Node>();
             var proteins = new List<Node>();
-            // var peptides = new List<Node>();
 
             foreach (var node in cs.Children)
             {
