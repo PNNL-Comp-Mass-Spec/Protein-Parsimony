@@ -455,7 +455,6 @@ namespace SetCover
             return hasRows;
         }
 
-
     }
 
     public class ProgressInfo : EventArgs
