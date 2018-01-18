@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using SetCover.Objects;
 
@@ -25,37 +26,130 @@ namespace SetCover.Algorithms
             Dictionary<string, Node> peptides,
             GlobalIDContainer globalIDTracker)
         {
-            var count = 0;
-            var listprotein = proteins.Keys.ToList();//get a list of the keys
-            while (count != listprotein.Count)
+
+            var proteinNames = proteins.Keys.ToList();
+            GroupProteinsOrPeptides(proteins, proteinNames, typeof(Protein), globalIDTracker);
+
+            var peptideNames = peptides.Keys.ToList();
+            GroupProteinsOrPeptides(peptides, peptideNames, typeof(Peptide), globalIDTracker);
+
+
+            /*
+             * Deprecated
+            else
+
             {
-                if (proteins.ContainsKey(listprotein[count]))//is the key there
+
+                // Get a list of the keys
+                var listproteins = proteins.Keys.ToList();
+
+                GroupProteins(proteins, listproteins, globalIDTracker);
+
+                // Same thing as above, but with peptides
+
+                var listpeptides = peptides.Keys.ToList();
+
+                GroupPeptides(peptides, listpeptides, globalIDTracker);
+            }
+             */
+        }
+
+        void GroupProteinsOrPeptides(
+            IDictionary<string, Node> entities,
+            IReadOnlyList<string> entityNames,
+            Type entityType,
+            GlobalIDContainer globalIDTracker)
+        {
+
+            var count = 0;
+            while (count != entityNames.Count)
+            {
+                if (string.Equals(entityNames[count], "VIME_MOUSE"))
                 {
-                    var protein = proteins[listprotein[count]]; //get the protein
-                    if (protein.GetType() == typeof(Protein))//no protein groups allowed
+                    Console.WriteLine("Check this");
+                }
+
+                // Is the key there?
+                if (entities.ContainsKey(entityNames[count]))
+                {
+                    // Get the protein or peptide
+                    var entity = entities[entityNames[count]];
+
+                    // Only proceed if the correct type
+                    if (entity.GetType() == entityType)
                     {
                         var dups = new NodeChildren<Node>();
-                        dups.AddRange(FindDuplicates(protein));  // look for duplicates and add to a duplicate list
+
+                        // Look for duplicates and add to a duplicate list
+                        dups.AddRange(FindDuplicates(entity));
+
                         if (dups.Count > 1)
                         {
-                            //Create a proteins group from the duplicates
-                            var PG = new ProteinGroup(dups, globalIDTracker);
-                            foreach (var pp2 in dups)
+                            // Create a protein or peptide group from the duplicates
+                            Group newGroup;
+
+                            if (entityType == typeof(Protein))
+                                newGroup = new ProteinGroup(dups, globalIDTracker);
+                            else if (entityType == typeof(Peptide))
+                                newGroup = new PeptideGroup(dups, globalIDTracker);
+                            else
+                                throw new Exception("Invalid type: must be Protein or Peptide");
+
+                            foreach (var dupItem in dups)
                             {
-                                //Remove proteins from the library, add the protein group
-                                proteins.Remove(pp2.NodeName);
+                                // Remove entities from the library, add the new group
+                                entities.Remove(dupItem.NodeName);
                             }
 
-                            proteins.Add(PG.NodeName, PG);
+                            entities.Add(newGroup.NodeName, newGroup);
                         }
                     }
                 }
                 count++;
             }
+        }
 
-            // Same thing as above but with peptides
-            count = 0;
-            var listpeptides = peptides.Keys.ToList();
+        /*
+         * Deprecated
+        private void GroupProteins(IDictionary<string, Node> proteins, IReadOnlyList<string> listprotein, GlobalIDContainer globalIDTracker)
+        {
+            var count = 0;
+            while (count != listprotein.Count)
+            {
+                // Is the key there?
+                if (proteins.ContainsKey(listprotein[count]))
+                {
+                    // Get the protein
+                    var protein = proteins[listprotein[count]];
+
+                    // No protein groups allowed
+                    if (protein.GetType() == typeof(Protein))
+                    {
+                        var dups = new NodeChildren<Node>();
+
+                        // Look for duplicates and add to a duplicate list
+                        dups.AddRange(FindDuplicates(protein));
+                        if (dups.Count > 1)
+                        {
+                            // Create a protein group from the duplicates
+                            var protGroup = new ProteinGroup(dups, globalIDTracker);
+                            foreach (var dupProtein in dups)
+                            {
+                                // Remove proteins from the library, add the protein group
+                                proteins.Remove(dupProtein.NodeName);
+                            }
+
+                            proteins.Add(protGroup.NodeName, protGroup);
+                        }
+                    }
+                }
+                count++;
+            }
+        }
+
+        private void GroupPeptides(IDictionary<string, Node> peptides, IReadOnlyList<string> listpeptides, GlobalIDContainer globalIDTracker)
+        {
+            var count = 0;
             while (count != listpeptides.Count)
             {
                 if (peptides.ContainsKey(listpeptides[count]))
@@ -67,20 +161,22 @@ namespace SetCover.Algorithms
                         dups.AddRange(FindDuplicates(peptide));
                         if (dups.Count > 1)
                         {
-                            var PG = new PeptideGroup(dups, globalIDTracker);
+                            var protGroup = new PeptideGroup(dups, globalIDTracker);
 
-                            foreach (var pp2 in dups)
+                            foreach (var dupPeptide in dups)
                             {
-                                peptides.Remove(pp2.NodeName);
+                                peptides.Remove(dupPeptide.NodeName);
                             }
 
-                            peptides.Add(PG.NodeName, PG);
+                            peptides.Add(protGroup.NodeName, protGroup);
                         }
                     }
                 }
                 count++;
             }
+
         }
+         */
 
         private NodeChildren<Node> FindDuplicates(Node node)
         {
