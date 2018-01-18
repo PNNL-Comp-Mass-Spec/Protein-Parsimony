@@ -1,0 +1,6 @@
+GroupID	Protein
+1	Contaminant_K22E_HUMAN
+2	Contaminant_K2C1_HUMAN
+3	VIME_MOUSE
+4	K2C7_MOUSE
+5	K22O_MOUSE
