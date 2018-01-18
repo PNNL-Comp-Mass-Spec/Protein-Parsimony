@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using Mage;
+using PRISM;
 using SetCover.Algorithms;
 using SetCover.Objects;
 
@@ -25,6 +27,37 @@ namespace SetCover
 		public string WorkDir { get; set; }
 		public event ProgressChangedHandler ProgressChanged;
 		public delegate void ProgressChangedHandler(Runner runner, ProgressInfo e);
+
+		public static string ConstructParsimonyGroupsFilename(FileSystemInfo fiSourceFile, string baseName)
+		{
+			return baseName + "_parsimony_groups" + fiSourceFile.Extension;
+		}
+
+		public static void GetDefaultOutputFileNames(string inputFilePath, out string parsimonyResultsFilePath, out string proteinGroupMembersFilePath)
+		{
+			var inputFile = new FileInfo(inputFilePath);
+			GetDefaultOutputFileNames(inputFile, out parsimonyResultsFilePath, out proteinGroupMembersFilePath);
+		}
+
+		public static void GetDefaultOutputFileNames(FileInfo inputFile, out string parsimonyResultsFilePath, out string proteinGroupMembersFilePath)
+		{
+			var inputDirectory = inputFile.Directory;
+			var baseName = Path.GetFileNameWithoutExtension(inputFile.Name);
+
+			var parsimonyFileName = baseName + "_parsimony" + inputFile.Extension;
+			var proteinGroupMembersFileName = ConstructParsimonyGroupsFilename(inputFile, baseName);
+
+			if (inputDirectory == null)
+			{
+				parsimonyResultsFilePath = parsimonyFileName;
+				proteinGroupMembersFilePath = proteinGroupMembersFileName;
+			}
+			else
+			{
+				parsimonyResultsFilePath = Path.Combine(inputDirectory.FullName, parsimonyFileName);
+				proteinGroupMembersFilePath = Path.Combine(inputDirectory.FullName, proteinGroupMembersFileName);
+			}
+		}
 
 		/// <summary>
 		/// Run the parsimony algorithm against the peptides and proteins in table T_Row_Metadata in the specified file
@@ -123,6 +156,42 @@ namespace SetCover
 
 			try
 			{
+				// Make sure the parsimony tables in the SQLite database are empty
+				var connectionString = "Data Source = " + fiDatabaseFile.FullName + "; Version=3;";
+				using (var dbConnection = new SQLiteConnection(connectionString, true))
+				{
+					dbConnection.Open();
+
+					var tablesToTruncate = new List<string> {
+						PARSIMONY_GROUPING_TABLE,
+						PARSIMONY_GROUP_MEMBERS_TABLE
+					};
+
+					foreach (var tableName in tablesToTruncate)
+					{
+						if (!SQLiteTableExists(dbConnection, tableName))
+							continue;
+
+						using (var dbCommand = dbConnection.CreateCommand())
+						{
+							if (ShowProgressAtConsole)
+								Console.WriteLine("Deleting existing data in table {0}", tableName);
+
+							dbCommand.CommandText = string.Format("DELETE FROM {0};", tableName);
+							dbCommand.ExecuteNonQuery();
+						}
+					}
+
+				}
+			}
+			catch (Exception ex)
+			{
+				ConsoleMsgUtils.ShowWarning("Error deleting existing protein parsimony data from the SQLite database: " + ex.Message);
+			}
+
+			try
+			{
+
 				var delimreader = new DelimitedFileReader
 				{
 					FilePath = parsimonyResultsFilePath
@@ -368,6 +437,28 @@ namespace SetCover
 				ProgressChanged(this, e);
 			}
 		}
+
+		private bool SQLiteTableExists(SQLiteConnection dbConnection, string tableName)
+		{
+			bool hasRows;
+
+			using (var cmd = new SQLiteCommand(dbConnection)
+			{
+				CommandText = "SELECT name " +
+							  "FROM sqlite_master " +
+							  "WHERE type IN ('table','view') And tbl_name = '" + tableName + "'"
+			})
+			{
+				using (var reader = cmd.ExecuteReader())
+				{
+					hasRows = reader.HasRows;
+				}
+			}
+
+			return hasRows;
+		}
+
+
 	}
 
 	public class ProgressInfo : EventArgs
