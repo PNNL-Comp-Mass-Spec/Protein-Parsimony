@@ -32,26 +32,6 @@ namespace SetCover.Algorithms
 
             var peptideNames = peptides.Keys.ToList();
             GroupProteinsOrPeptides(peptides, peptideNames, typeof(Peptide), globalIDTracker);
-
-
-            /*
-             * Deprecated
-            else
-
-            {
-
-                // Get a list of the keys
-                var listproteins = proteins.Keys.ToList();
-
-                GroupProteins(proteins, listproteins, globalIDTracker);
-
-                // Same thing as above, but with peptides
-
-                var listpeptides = peptides.Keys.ToList();
-
-                GroupPeptides(peptides, listpeptides, globalIDTracker);
-            }
-             */
         }
 
         void GroupProteinsOrPeptides(
@@ -64,10 +44,6 @@ namespace SetCover.Algorithms
             var count = 0;
             while (count != entityNames.Count)
             {
-                if (string.Equals(entityNames[count], "VIME_MOUSE"))
-                {
-                    Console.WriteLine("Check this");
-                }
 
                 // Is the key there?
                 if (entities.ContainsKey(entityNames[count]))
@@ -108,75 +84,6 @@ namespace SetCover.Algorithms
                 count++;
             }
         }
-
-        /*
-         * Deprecated
-        private void GroupProteins(IDictionary<string, Node> proteins, IReadOnlyList<string> listprotein, GlobalIDContainer globalIDTracker)
-        {
-            var count = 0;
-            while (count != listprotein.Count)
-            {
-                // Is the key there?
-                if (proteins.ContainsKey(listprotein[count]))
-                {
-                    // Get the protein
-                    var protein = proteins[listprotein[count]];
-
-                    // No protein groups allowed
-                    if (protein.GetType() == typeof(Protein))
-                    {
-                        var dups = new NodeChildren<Node>();
-
-                        // Look for duplicates and add to a duplicate list
-                        dups.AddRange(FindDuplicates(protein));
-                        if (dups.Count > 1)
-                        {
-                            // Create a protein group from the duplicates
-                            var protGroup = new ProteinGroup(dups, globalIDTracker);
-                            foreach (var dupProtein in dups)
-                            {
-                                // Remove proteins from the library, add the protein group
-                                proteins.Remove(dupProtein.NodeName);
-                            }
-
-                            proteins.Add(protGroup.NodeName, protGroup);
-                        }
-                    }
-                }
-                count++;
-            }
-        }
-
-        private void GroupPeptides(IDictionary<string, Node> peptides, IReadOnlyList<string> listpeptides, GlobalIDContainer globalIDTracker)
-        {
-            var count = 0;
-            while (count != listpeptides.Count)
-            {
-                if (peptides.ContainsKey(listpeptides[count]))
-                {
-                    var peptide = peptides[listpeptides[count]];
-                    if (peptide.GetType() == typeof(Peptide))
-                    {
-                        var dups = new NodeChildren<Node>();
-                        dups.AddRange(FindDuplicates(peptide));
-                        if (dups.Count > 1)
-                        {
-                            var protGroup = new PeptideGroup(dups, globalIDTracker);
-
-                            foreach (var dupPeptide in dups)
-                            {
-                                peptides.Remove(dupPeptide.NodeName);
-                            }
-
-                            peptides.Add(protGroup.NodeName, protGroup);
-                        }
-                    }
-                }
-                count++;
-            }
-
-        }
-         */
 
         private NodeChildren<Node> FindDuplicates(Node node)
         {
@@ -220,39 +127,6 @@ namespace SetCover.Algorithms
             candidates.Add(node);
             return candidates;
         }
-
-        //private NodeChildren<Node> FindDuplicates(Node protein)
-        //{
-        //    protein.Children.Sort();
-        //    NodeChildren<Node> candidates = new NodeChildren<Node>();
-        //    candidates = protein.Children[0].Children;
-        //    candidates.RemoveChild(protein);
-        //    int count = 0;
-        //    while (candidates.Count != count)
-        //    {
-        //        if (protein.ChildCount != candidates[count].ChildCount)
-        //        {
-        //            candidates.RemoveAt(count);
-        //        }
-        //        count++;
-        //    }
-
-        //    for (int i = 1; i < protein.Children.Count; i++)
-        //    {
-
-        //        for (int j = 0; j < candidates.Count; j++)
-        //        {
-        //            Node temp = candidates.Get(j);
-        //            if (!protein.Children.Get(i).Children.Contains(candidates.Get(j)))
-        //            {
-        //                candidates.RemoveChild(temp);
-        //                j--;
-        //            }
-        //        }
-        //    }
-        //    return candidates;
-        //}
-
 
 
     }
