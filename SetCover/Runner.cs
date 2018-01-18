@@ -13,6 +13,10 @@ namespace SetCover
     public class Runner
     {
 
+        public const string DEFAULT_SQLITE_TABLE = "T_Row_Metadata";
+        public const string PARSIMONY_GROUPING_TABLE = "T_Parsimony_Grouping";
+        public const string PARSIMONY_GROUP_MEMBERS_TABLE = "T_Parsimony_Group_Members";
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -80,6 +84,9 @@ namespace SetCover
 
             if (ShowProgressAtConsole)
                 Console.WriteLine("Opening SQLite database " + fiDatabaseFile.FullName);
+
+            if (!VerifySourceTableExists(fiDatabaseFile, sourceTableName))
+                return false;
 
             var reader = new SQLiteReader
             {
@@ -453,6 +460,39 @@ namespace SetCover
             return hasRows;
         }
 
+        /// <summary>
+        /// Assure that table sourceTableName exists in the SQLite database
+        /// </summary>
+        /// <param name="fiDatabaseFile"></param>
+        /// <param name="sourceTableName"></param>
+        /// <returns></returns>
+        private bool VerifySourceTableExists(FileSystemInfo fiDatabaseFile, string sourceTableName)
+        {
+            try
+            {
+                var connectionString = "Data Source = " + fiDatabaseFile.FullName + "; Version=3;";
+                using (var dbConnection = new SQLiteConnection(connectionString, true))
+                {
+                    dbConnection.Open();
+
+                    if (SQLiteTableExists(dbConnection, sourceTableName))
+                        return true;
+
+                    ConsoleMsgUtils.ShowWarning(
+                        string.Format("Source table {0} not found in SQLite file\n{1}", sourceTableName, fiDatabaseFile.FullName));
+
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                ConsoleMsgUtils.ShowWarning(
+                    string.Format("Error verifying that table {0} exists in the SQLite database: {1}",
+                                  sourceTableName, ex.Message));
+                return false;
+            }
+
+        }
     }
 
     public class ProgressInfo : EventArgs
