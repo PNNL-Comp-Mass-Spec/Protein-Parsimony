@@ -92,6 +92,8 @@ namespace SetCover
                 "prot_E\tpep_I",
                 "prot_E\tpep_F",
                 "prot_E\tpep_G",
+                "prot_I\tpep_H",
+                "prot_I\tpep_J",
                 "prot_K\tpep_L",
                 "prot_L\tpep_M"
             };
@@ -124,7 +126,7 @@ namespace SetCover
                 Console.WriteLine(item);
             }
 
-            if (expectedOutput.Count == 0)
+            if (expectedOutput == null || expectedOutput.Count == 0)
                 return;
 
             for (var i = 0; i < outLines.Count; i++)
