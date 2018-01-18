@@ -1,12 +1,8 @@
-﻿//Joshua Aldrich
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SQLite;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Channels;
 using SetCover.Objects;
 
 namespace SetCover
@@ -99,6 +95,7 @@ namespace SetCover
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="rows">List of protein/peptide pairs (protein name and peptide sequence)</param>
+        /// <param name="showProgress">When true, show progress messages at the console</param>
         /// <returns></returns>
         public static bool ReadProteinPeptideTable(string filePath, out List<RowEntry> rows, bool showProgress = true)
         {
@@ -326,7 +323,7 @@ namespace SetCover
                             outLines.Add(string.Format("{0}\t{1}", proteinList, groupedpep.NodeName));
                         }
                     }
-                    else if (node is ProteinGroup thisGroup)
+                    else if (node is ProteinGroup)
                     {
                         var proteinList = GetProteinList(node, globalIDTracker);
                         outLines.Add(string.Format("{0}\t{1}", proteinList, child.NodeName));
@@ -350,8 +347,8 @@ namespace SetCover
                 var proteinList = globalIDTracker.IDListToNameListString(node.NodeName, Group.LIST_SEP_CHAR);
                 return proteinList.Replace(Group.LIST_SEP_CHAR.ToString(), "; ");
             }
-            else
-                return node.NodeName;
+
+            return node.NodeName;
         }
     }
 }

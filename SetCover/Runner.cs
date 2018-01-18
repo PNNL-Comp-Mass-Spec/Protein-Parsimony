@@ -106,7 +106,7 @@ namespace SetCover
                 {
                     if (ShowProgressAtConsole)
                     {
-                        PRISM.ConsoleMsgUtils.ShowError(
+                        ConsoleMsgUtils.ShowError(
                             string.Format("Error loading data from table {0}; GetPeptideProteinMap returned false", sourceTableName));
                     }
                     return false;
