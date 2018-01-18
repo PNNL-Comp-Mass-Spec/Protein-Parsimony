@@ -14,12 +14,6 @@ namespace SetCover.Algorithms
             CollapseNodes(protein, pep, globalIDTracker);
         }
 
-        public void RunAlgorithm(ref List<Node> inNode)
-        {
-            var dummy = new List<Node>();
-            //         CollapseNodes(ref inNode, ref dummy);
-        }
-
 
         //Collapses redundant protein and peptides into single groups.
         public void CollapseNodes(

@@ -243,18 +243,18 @@ namespace SetCover
 				throw new Exception("Error in PerformParsimony after NodeCollapser: Peptide list is empty");
 			}
 
-			ClProteins = Proteins.Values.ToList();
+			var proteinsWithChildren = proteins.Values.ToList();
 
-			dfs.RunAlgorithm(ref ClProteins);
+			var clusteredProteinSets = dfs.RunAlgorithm(proteinsWithChildren);
 
-			if (ClProteins == null || ClProteins.Count == 0)
+			if (clusteredProteinSets == null || clusteredProteinSets.Count == 0)
 			{
 				throw new Exception("Error in PerformParsimony: DFS returned an empty protein list");
 			}
 
-			cover.RunAlgorithm(ref ClProteins);
+			clusteredProteins = cover.RunAlgorithm(clusteredProteinSets);
 
-			if (ClProteins == null || ClProteins.Count == 0)
+			if (clusteredProteins == null || clusteredProteins.Count == 0)
 			{
 				throw new Exception("Error in PerformParsimony: Cover returned an empty protein list");
 			}

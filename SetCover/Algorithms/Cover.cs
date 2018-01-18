@@ -5,20 +5,22 @@ namespace SetCover.Algorithms
 {
     class Cover
     {
-        public void RunAlgorithm(ref List<Node> inNode, ref List<Node> outNode)
+
+        public void RunAlgorithm(ref List<Node> inNode, out List<Node> outNode)
         {
-            RunAlgorithm(ref inNode);
+            outNode = RunAlgorithm(inNode);
         }
 
         /// <summary>
         /// Finds the best coverage using a greedy algorithm
         /// </summary>
         /// <param name="inNode"></param>
-        public void RunAlgorithm(ref List<Node> inNode)
+        public List<Node> RunAlgorithm(List<Node> inNode)
         {
             //log.Info("Running Greedy Set Cover");
 
-            inNode = BulkFinder(inNode);
+            var outNode = BulkFinder(inNode);
+            return outNode;
 
         }
 

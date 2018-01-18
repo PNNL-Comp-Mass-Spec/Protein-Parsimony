@@ -45,9 +45,9 @@ namespace SetCover
 
             nodecollapser.RunAlgorithm(Proteins, Peptides, globalIDTracker);
 
-            var clProteins = Proteins.Values.ToList();
-            dfs.RunAlgorithm(ref clProteins);
-            cover.RunAlgorithm(ref clProteins);
+            var proteinsWithChildren = proteins.Values.ToList();
+            var clusteredProteinSets = dfs.RunAlgorithm(proteinsWithChildren);
+            var clusteredProteins = cover.RunAlgorithm(clusteredProteinSets);
 
             Utilities.WriteTableToConsole(clProteins, globalIDTracker);
 

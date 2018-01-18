@@ -7,8 +7,6 @@ namespace SetCover.Algorithms
 	{
 	    readonly Dictionary<int, Node> AllNodes = new Dictionary<int, Node>();
 
-		public void RunAlgorithm(ref List<Node> Proteins)
-		{
 			foreach (var node in Proteins)
 			{
 			    var p = (ProteinGroup)node;
@@ -16,6 +14,8 @@ namespace SetCover.Algorithms
 			}
 			Proteins = ClusterNodes(Proteins);
 		}
+        public List<Node> RunAlgorithm(List<Node> proteins)
+        {
 
 		public bool CheckID(Node nextNode, HashSet<Node> searchedNodes)
 		{
