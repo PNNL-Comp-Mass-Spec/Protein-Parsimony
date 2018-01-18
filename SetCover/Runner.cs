@@ -114,7 +114,6 @@ namespace SetCover
                 throw new Exception("Error calling GetPeptideProteinMap: " + ex.Message, ex);
             }
 
-
             if (fiDatabaseFile.DirectoryName == null)
                 throw new Exception("Error determining the parent directory for " + fiDatabaseFile.FullName);
 
@@ -147,43 +146,8 @@ namespace SetCover
 
             Utilities.SaveResults(result, parsimonyResultsFilePath, proteinGroupMembersFilePath, globalIDTracker);
 
-            const string PARSIMONY_GROUPING_TABLE = "T_Parsimony_Grouping";
-            const string PARSIMONY_GROUP_MEMBERS_TABLE = "T_Parsimony_Group_Members";
+            ClearExistingSQLiteResults(fiDatabaseFile);
 
-            try
-            {
-                // Make sure the parsimony tables in the SQLite database are empty
-                var connectionString = "Data Source = " + fiDatabaseFile.FullName + "; Version=3;";
-                using (var dbConnection = new SQLiteConnection(connectionString, true))
-                {
-                    dbConnection.Open();
-
-                    var tablesToTruncate = new List<string> {
-                        PARSIMONY_GROUPING_TABLE,
-                        PARSIMONY_GROUP_MEMBERS_TABLE
-                    };
-
-                    foreach (var tableName in tablesToTruncate)
-                    {
-                        if (!SQLiteTableExists(dbConnection, tableName))
-                            continue;
-
-                        using (var dbCommand = dbConnection.CreateCommand())
-                        {
-                            if (ShowProgressAtConsole)
-                                Console.WriteLine("Deleting existing data in table {0}", tableName);
-
-                            dbCommand.CommandText = string.Format("DELETE FROM {0};", tableName);
-                            dbCommand.ExecuteNonQuery();
-                        }
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-                ConsoleMsgUtils.ShowWarning("Error deleting existing protein parsimony data from the SQLite database: " + ex.Message);
-            }
             if (ShowProgressAtConsole)
                 Console.WriteLine();
 
@@ -381,6 +345,71 @@ namespace SetCover
 
         }
 
+        /// <summary>
+        /// Make sure the parsimony tables in the SQLite database are empty
+        /// </summary>
+        /// <param name="fiDatabaseFile"></param>
+        private void ClearExistingSQLiteResults(FileSystemInfo fiDatabaseFile)
+        {
+            try
+            {
+                var connectionString = "Data Source = " + fiDatabaseFile.FullName + "; Version=3;";
+                using (var dbConnection = new SQLiteConnection(connectionString, true))
+                {
+                    dbConnection.Open();
+
+                    var tablesToTruncate = new List<string> {
+                        PARSIMONY_GROUPING_TABLE,
+                        PARSIMONY_GROUP_MEMBERS_TABLE
+                    };
+
+                    var emptyLineAdded = false;
+                    foreach (var tableName in tablesToTruncate)
+                    {
+                        if (!SQLiteTableExists(dbConnection, tableName))
+                            continue;
+
+                        using (var dbCommand = dbConnection.CreateCommand())
+                        {
+                            if (ShowProgressAtConsole)
+                            {
+                                if (!emptyLineAdded)
+                                {
+                                    emptyLineAdded = true;
+                                    Console.WriteLine();
+                                }
+
+                                Console.WriteLine("Deleting existing data in table {0}", tableName);
+                            }
+
+                            dbCommand.CommandText = string.Format("DELETE FROM {0};", tableName);
+                            dbCommand.ExecuteNonQuery();
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                ConsoleMsgUtils.ShowWarning("Error deleting existing protein parsimony data from the SQLite database: " + ex.Message);
+            }
+
+        }
+
+        private void DeleteFile(string filePath)
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
+            }
+            // ReSharper disable once EmptyGeneralCatchClause
+            catch
+            {
+                // Ignore errors here
+            }
+        }
+
         private bool GetPeptideProteinMap(SQLiteReader reader, string tableName, out List<RowEntry> pepToProtMapping)
         {
             reader.SQLText = "SELECT * FROM [" + tableName + "]";
@@ -409,20 +438,6 @@ namespace SetCover
             }
 
             return true;
-        }
-
-        private void DeleteFile(string filePath)
-        {
-            try
-            {
-                if (File.Exists(filePath))
-                    File.Delete(filePath);
-            }
-            // ReSharper disable once EmptyGeneralCatchClause
-            catch
-            {
-                // Ignore errors here
-            }
         }
 
         protected void OnProgressChanged(float progressOverall, float progressCurrentFile)
