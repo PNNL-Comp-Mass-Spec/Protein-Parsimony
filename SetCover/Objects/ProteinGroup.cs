@@ -65,6 +65,10 @@ namespace SetCover.Objects
         {
             UntakenPeptides = Children.Count;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + "; " + UntakenPeptides + " UntakenPeptides";
         }
 
     }

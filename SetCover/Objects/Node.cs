@@ -77,9 +77,9 @@ namespace SetCover.Objects
 
         public override string ToString()
         {
-            // Protein 1: xyz, 8 children
-            // Protein 2: xyz, 1 child
-            // Peptide 5: xyz, 2 children
+            // Protein 1: ProteinName, 8 children
+            // Protein 2: ProteinName, 1 child
+            // Peptide 5: ProteinName, 2 children
             var childLabel = Children.Count == 1 ? "child" : "children";
             return string.Format("{0} {1}: {2}, {3} {4}", NodeType, Id, NodeName, Children.Count, childLabel);
         }
