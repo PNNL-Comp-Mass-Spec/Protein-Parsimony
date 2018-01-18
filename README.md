@@ -7,23 +7,26 @@ for grouping proteins with similar peptides.
 
 The ProteinParsimony.exe program can be used to manually process 
 a tab-delimited text file with columns Protein and Peptide,
-or to process a SQLite file with table `T_Row_Metadata`
+or to process data in SQLite database table.
 
-```
-ProteinParsimony.exe InputFile.txt [OutputFilePath]
- or
-ProteinParsimony.exe SQLiteDatabase.db3
-```
+### Program syntax #1:
+`ProteinParsimony.exe InputFilePath.txt [OutputFilePath]`
 
 The input file is a tab delimited text file with columns Protein and Peptide
 (column order does not matter; extra columns are ignored)
 
 If the output file path is not defined, it will be created in the same location
-as the input file, but with `_parsimony` added to the filename
+as the input file, but with '_parsimony' added to the filename
 
-Alternatively, the input file can be a SQLite database file (extension .db, .db3, .sqlite, or .sqlite3)
-Proteins and peptides will be read from table `T_Row_Metadata` and results will be
-written to tables `T_Row_Metadata_parsimony` and `T_Row_Metadata_parsimony_groups`
+### Program syntax #2:
+`ProteinParsimony.exe SQLiteDatabase.db3 [TableName]`
+
+If the input is a SQLite database file (extension .db, .db3, .sqlite,
+or .sqlite3), proteins and peptides will be read from the specified table,
+or from `T_Row_Metadata` if TableName is not provided. The table must have columns
+Protein and Peptide. \
+Results will be written to tables `T_Parsimony_Grouping` and
+`T_Parsimony_Group_Members`
 
 ## Contacts
 
