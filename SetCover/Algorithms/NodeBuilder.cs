@@ -81,18 +81,18 @@ namespace SetCover.Algorithms
         }
 
         /// <summary>
-        /// Ensures that all proteins in the graph have had the untaken peptide supdates.
+        /// Ensures that all proteins in the graph have up-to-date untaken peptide counts
         /// </summary>
         public void UpdateUntakenPeptides()
         {
-            foreach (var node in mProteins.Values)
+            foreach (var item in mProteins.Values)
             {
-                var p = (Protein)node;
+                if (item is ProteinGroup p)
+                {
                     p.UpdateUntakenPeptides();
+                }
             }
         }
-
-
 
     }
 }

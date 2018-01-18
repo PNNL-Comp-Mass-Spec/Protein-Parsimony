@@ -12,10 +12,12 @@ namespace SetCover.Algorithms
 
         public List<Node> RunAlgorithm(List<Node> proteins)
         {
-            foreach (var node in proteins)
+            foreach (var item in proteins)
             {
-                var p = (ProteinGroup)node;
-                p.UpdateUntakenPeptides();
+                if (item is ProteinGroup p)
+                {
+                    p.UpdateUntakenPeptides();
+                }
             }
 
             var clusteredProteins = ClusterNodes(proteins);
@@ -78,10 +80,6 @@ namespace SetCover.Algorithms
             }
             return clusters;
         }
-
-
-
-
 
     }
 }

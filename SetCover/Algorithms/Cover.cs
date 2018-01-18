@@ -73,14 +73,22 @@ namespace SetCover.Algorithms
 
         private void AdjustUntakenPeptides(Node temp)
         {
-            foreach (var child in temp.Children)
+            foreach (var pepChild in temp.Children)
             {
-                foreach (var node in child.Children)
+                foreach (var protChild in pepChild.Children)
                 {
-                    var pchild = (ProteinGroup)node;
-                    pchild.UntakenPeptide--;
+                    if (protChild is ProteinGroup p)
+                    {
+                        // Yes, this could become a negative number; that's OK
+                        p.UntakenPeptides--;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Possible programming bug: peptide child is not a Protein or ProteinGroup; it is a " + protChild.GetType());
+                    }
                 }
             }
+
         }
 
 
