@@ -10,7 +10,7 @@ namespace SetCover.Objects
         /// <summary>
         /// Number children peptides for this group
         /// </summary>
-        public int UntakenPeptide { get; set; }
+        public int UntakenPeptides { get; set; }
 
         /// <summary>
         /// Constructor that takes a set grouped nodes
@@ -20,7 +20,7 @@ namespace SetCover.Objects
         public ProteinGroup(NodeChildren<Node> groupedNodes, GlobalIDContainer globalIDTracker)
             : base(NodeTypeName.ProteinGroup, groupedNodes, globalIDTracker)
         {
-            UntakenPeptide = Children.Count;
+            UntakenPeptides = Children.Count;
 
         }
 
@@ -60,7 +60,8 @@ namespace SetCover.Objects
 
         public void UpdateUntakenPeptides()
         {
-            UntakenPeptide = Children.Count;
+            UntakenPeptides = Children.Count;
+        }
         }
 
     }

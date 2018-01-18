@@ -88,7 +88,7 @@ namespace SetCover.Algorithms
             foreach (var node in mProteins.Values)
             {
                 var p = (Protein)node;
-                p.UntakenPeptide = p.Children.Count;
+                    p.UpdateUntakenPeptides();
             }
         }
 
