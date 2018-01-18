@@ -33,11 +33,6 @@ namespace SetCover.Objects
         {
         }
 
-        public new int CompareTo(object obj)
-        {
-            return base.CompareTo(obj);
-        }
-
         /// <summary>
         /// Sorts on the number of untaken nodes.  Used for the set coverage portion of
         /// algorithm because when a protein(group) is removed from the set, proteins which
@@ -46,7 +41,7 @@ namespace SetCover.Objects
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public int compareTo(object obj)
+        public new int CompareTo(object obj)
         {
             if (obj == null) return 1;
 
