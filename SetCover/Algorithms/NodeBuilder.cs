@@ -6,64 +6,70 @@ namespace SetCover.Algorithms
 	class NodeBuilder
 	{
 
-		Dictionary<string, Node> Proteins;
-		Dictionary<string, Node> Peptides;
+		private Dictionary<string, Node> mProteins;
+		private Dictionary<string, Node> mPeptides;
 
-		public void RunAlgorithm(List<RowEntry> toParsimonize, out Dictionary<string, Node> prots, out Dictionary<string, Node> peps)
+		/// <summary>
+		public void RunAlgorithm(
+			List<RowEntry> peptideProteinMapList,
+			out Dictionary<string, Node> proteins,
+			out Dictionary<string, Node> peptides)
 		{
 
-			Proteins = new Dictionary<string, Node>(toParsimonize.Count);
-			Peptides = new Dictionary<string, Node>(toParsimonize.Count);
-			BuildNodes(toParsimonize);
-			prots = Proteins;
-			peps = Peptides;
+			mProteins = new Dictionary<string, Node>(peptideProteinMapList.Count);
+			mPeptides = new Dictionary<string, Node>(peptideProteinMapList.Count);
+
+			BuildNodes(peptideProteinMapList);
+
+			proteins = mProteins;
+			peptides = mPeptides;
 		}
 		/// <summary>
 		/// Builds the nodes for a bipartite graph composed of proteins
 		/// on one side peptides on the other
 		/// </summary>
-		/// <param name="toParsimonize">input table must have at peptide and protein column</param>
-		private void BuildNodes(List<RowEntry> toParsimonize)
+		/// <param name="peptideProteinMapList">List of protein to peptide mappings</param>
+		private void BuildNodes(IEnumerable<RowEntry> peptideProteinMapList)
 		{
-			foreach (var row in toParsimonize)
+			foreach (var row in peptideProteinMapList)
 			{
 
 				var prot = new Protein(row.ProteinEntry);
 				var pep = new Peptide(row.PeptideEntry);
 
-				var proteinDefined = Proteins.ContainsKey(prot.NodeName);
-				var peptideDefined = Peptides.ContainsKey(pep.NodeName);
+				var proteinDefined = mProteins.ContainsKey(prot.NodeName);
+				var peptideDefined = mPeptides.ContainsKey(pep.NodeName);
 
 				if (proteinDefined && peptideDefined)
 				{
-					if (!Proteins[prot.NodeName].Children.Contains(Peptides[pep.NodeName]))
+					if (!mProteins[prot.NodeName].Children.Contains(mPeptides[pep.NodeName]))
 					{
-						Proteins[prot.NodeName].Children.Add(Peptides[pep.NodeName]);
+						mProteins[prot.NodeName].Children.Add(mPeptides[pep.NodeName]);
 					}
-					if (!Peptides[pep.NodeName].Children.Contains(Proteins[prot.NodeName]))
+					if (!mPeptides[pep.NodeName].Children.Contains(mProteins[prot.NodeName]))
 					{
-						Peptides[pep.NodeName].Children.Add(Proteins[prot.NodeName]);
+						mPeptides[pep.NodeName].Children.Add(mProteins[prot.NodeName]);
 					}
 				}
 				else if (proteinDefined)
 				{
-					Proteins[prot.NodeName].Children.Add(pep);
-					pep.Children.Add(Proteins[prot.NodeName]);
-					Peptides.Add(pep.NodeName, pep);
+					mProteins[prot.NodeName].Children.Add(pep);
+					pep.Children.Add(mProteins[prot.NodeName]);
+					mPeptides.Add(pep.NodeName, pep);
 
 				}
 				else if (peptideDefined)
 				{
-					Peptides[pep.NodeName].Children.Add(prot);
-					prot.Children.Add(Peptides[pep.NodeName]);
-					Proteins.Add(prot.NodeName, prot);
+					mPeptides[pep.NodeName].Children.Add(prot);
+					prot.Children.Add(mPeptides[pep.NodeName]);
+					mProteins.Add(prot.NodeName, prot);
 				}
 				else
 				{
 					prot.Children.Add(pep);
 					pep.Children.Add(prot);
-					Proteins.Add(prot.NodeName, prot);
-					Peptides.Add(pep.NodeName, pep);
+					mProteins.Add(prot.NodeName, prot);
+					mPeptides.Add(pep.NodeName, pep);
 				}
 			}
 		}
@@ -73,10 +79,10 @@ namespace SetCover.Algorithms
 		/// </summary>
 		public void UpdateUntakenPeptides()
 		{
-			foreach (var node in Proteins.Values)
+			foreach (var node in mProteins.Values)
 			{
-			    var p = (Protein)node;
-			    p.UntakenPeptide = p.Children.Count;
+				var p = (Protein)node;
+				p.UntakenPeptide = p.Children.Count;
 			}
 		}
 

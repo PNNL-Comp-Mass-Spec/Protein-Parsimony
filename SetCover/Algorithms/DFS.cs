@@ -7,15 +7,18 @@ namespace SetCover.Algorithms
 	{
 	    readonly Dictionary<int, Node> AllNodes = new Dictionary<int, Node>();
 
-			foreach (var node in Proteins)
+		public List<Node> RunAlgorithm(List<Node> proteins)
+		{
+			foreach (var node in proteins)
 			{
-			    var p = (ProteinGroup)node;
-			    p.UpdateUntakenPeptides();
+				var p = (ProteinGroup)node;
+				p.UpdateUntakenPeptides();
 			}
-			Proteins = ClusterNodes(Proteins);
+
+			var clusteredProteins = ClusterNodes(proteins);
+			return clusteredProteins;
+
 		}
-        public List<Node> RunAlgorithm(List<Node> proteins)
-        {
 
 		public bool CheckID(Node nextNode, HashSet<Node> searchedNodes)
 		{

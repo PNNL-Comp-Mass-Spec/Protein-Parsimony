@@ -46,7 +46,7 @@ namespace SetCover
 		/// <returns>True if success; false if an error</returns>
 		public bool RunAlgorithm(string databaseFolderPath, string dataBaseFileName, string sourceTableName)
 		{
-			List<RowEntry> lstTrowMetadata;
+			List<RowEntry> pepToProtMapping;
 			List<Node> result;
 
 			var diDataFolder = new DirectoryInfo(databaseFolderPath);
@@ -65,7 +65,7 @@ namespace SetCover
 
 			try
 			{
-				var success = GetPeptideProteinMap(reader, sourceTableName, out lstTrowMetadata);
+				var success = GetPeptideProteinMap(reader, sourceTableName, out pepToProtMapping);
 				if (!success)
 				{
 					return false;
@@ -83,7 +83,7 @@ namespace SetCover
 			var parsimonyResultsFilePath = Path.Combine(fiDatabaseFile.DirectoryName, "pars_info_temp.txt");
 			var proteinGroupMembersFilePath = Path.Combine(fiDatabaseFile.DirectoryName, "pars_info_temp_groups.txt");
 
-			if (lstTrowMetadata == null || lstTrowMetadata.Count == 0)
+			if (pepToProtMapping == null || pepToProtMapping.Count == 0)
 			{
 				DeleteFile(parsimonyResultsFilePath);
 				DeleteFile(proteinGroupMembersFilePath);
@@ -94,7 +94,7 @@ namespace SetCover
 
 			try
 			{
-				PerformParsimony(lstTrowMetadata, out result, out globalIDTracker);
+				PerformParsimony(pepToProtMapping, out result, out globalIDTracker);
 			}
 			catch (Exception ex)
 			{
@@ -103,6 +103,9 @@ namespace SetCover
 
 			Utilities.SaveResults(result, parsimonyResultsFilePath, proteinGroupMembersFilePath, globalIDTracker);
 
+			const string PARSIMONY_GROUPING_TABLE = "T_Parsimony_Grouping";
+			const string PARSIMONY_GROUP_MEMBERS_TABLE = "T_Parsimony_Group_Members";
+
 			try
 			{
 				var delimreader = new DelimitedFileReader
@@ -110,10 +113,11 @@ namespace SetCover
 					FilePath = parsimonyResultsFilePath
 				};
 
-				var writer = new SQLiteWriter();
-				const string tableName = "T_Parsimony_Grouping";
-				writer.DbPath = fiDatabaseFile.FullName;
-				writer.TableName = tableName;
+				var writer = new SQLiteWriter
+				{
+					DbPath = fiDatabaseFile.FullName,
+					TableName = PARSIMONY_GROUPING_TABLE
+				};
 
 				var colDefs = new List<MageColumnDef>
 				{
@@ -125,7 +129,7 @@ namespace SetCover
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Error adding table T_Parsimony_Grouping to the SqLite database: " + ex.Message, ex);
+				throw new Exception("Error adding data to table " + PARSIMONY_GROUPING_TABLE + " to the SqLite database: " + ex.Message, ex);
 			}
 
 			try
@@ -135,10 +139,11 @@ namespace SetCover
 					FilePath = proteinGroupMembersFilePath
 				};
 
-				var writer = new SQLiteWriter();
-				const string tableName = "T_Parsimony_Group_Members";
-				writer.DbPath = fiDatabaseFile.FullName;
-				writer.TableName = tableName;
+				var writer = new SQLiteWriter
+				{
+					DbPath = fiDatabaseFile.FullName,
+					TableName = PARSIMONY_GROUP_MEMBERS_TABLE
+				};
 
 				var colDefs = new List<MageColumnDef>
 				{
@@ -150,7 +155,7 @@ namespace SetCover
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Error adding table T_Parsimony_Group_Members to the SqLite database: " + ex.Message, ex);
+				throw new Exception("Error adding data to table " + PARSIMONY_GROUP_MEMBERS_TABLE + " to the SqLite database: " + ex.Message, ex);
 			}
 
 			DeleteFile(parsimonyResultsFilePath);
@@ -159,20 +164,24 @@ namespace SetCover
 			return true;
 		}
 
-		public bool RunGUIAlgorithm(string inputFile, string parsimonyResultsFilePath, string proteinGroupMembersFilePath)
+		public bool RunGUIAlgorithm(string inputFilePath, string parsimonyResultsFilePath, string proteinGroupMembersFilePath)
 		{
-			List<RowEntry> lstTrowMetadata;
+			var inputFile = new FileInfo(inputFilePath);
+			return RunGUIAlgorithm(inputFile, parsimonyResultsFilePath, proteinGroupMembersFilePath);
+		}
+
+		public bool RunGUIAlgorithm(FileInfo inputFile, string parsimonyResultsFilePath, string proteinGroupMembersFilePath)
+		{
+			List<RowEntry> peptideProteinMapList;
 			List<Node> result;
 			bool success;
 
-
-			var fiInputFile = new FileInfo(inputFile);
-			if (!fiInputFile.Exists)
-				throw new FileNotFoundException("Input file not found: " + fiInputFile);
+			if (!inputFile.Exists)
+				throw new FileNotFoundException("Input file not found: " + inputFile);
 
 			try
 			{
-				success = Utilities.ReadTable(fiInputFile.FullName, out lstTrowMetadata);
+				success = Utilities.ReadProteinPeptideTable(inputFile.FullName, out peptideProteinMapList, ShowProgressAtConsole);
 				if (!success)
 				{
 					return false;
@@ -180,17 +189,17 @@ namespace SetCover
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Error loading the " + fiInputFile.FullName + "file: " + ex.Message);
+				throw new Exception("Error loading the " + inputFile.FullName + "file: " + ex.Message);
 			}
 
-			if (lstTrowMetadata.Count == 0)
+			if (peptideProteinMapList.Count == 0)
 				throw new Exception("Input file is empty");
 
 			GlobalIDContainer globalIDTracker;
 
 			try
 			{
-				success = PerformParsimony(lstTrowMetadata, out result, out globalIDTracker);
+				success = PerformParsimony(peptideProteinMapList, out result, out globalIDTracker);
 			}
 			catch (Exception ex)
 			{
@@ -210,7 +219,8 @@ namespace SetCover
 		}
 
 
-		public bool PerformParsimony(List<RowEntry> toParsimonize, out List<Node> ClProteins, out GlobalIDContainer globalIDTracker)
+		/// <summary>
+		public bool PerformParsimony(List<RowEntry> peptideProteinMapList, out List<Node> clusteredProteins, out GlobalIDContainer globalIDTracker)
 		{
 			//prepare objects and algorithms
 		    var nodebuilder = new NodeBuilder();
@@ -218,27 +228,27 @@ namespace SetCover
 			var dfs = new DFS();
 			var cover = new Cover();
 
-			nodebuilder.RunAlgorithm(toParsimonize, out var Proteins, out var Peptides);
+			nodebuilder.RunAlgorithm(peptideProteinMapList, out var proteins, out var peptides);
 
-			if (Proteins == null || Proteins.Count == 0)
+			if (proteins == null || proteins.Count == 0)
 			{
 				throw new Exception("Error in PerformParsimony: Protein list is empty");
 			}
 
-			if (Peptides == null || Peptides.Count == 0)
+			if (peptides == null || peptides.Count == 0)
 			{
 				throw new Exception("Error in PerformParsimony: Peptide list is empty");
 			}
 
 			globalIDTracker = new GlobalIDContainer();
-			nodecollapser.RunAlgorithm(Proteins, Peptides, globalIDTracker);
+			nodecollapser.RunAlgorithm(proteins, peptides, globalIDTracker);
 
-			if (Proteins == null || Proteins.Count == 0)
+			if (proteins == null || proteins.Count == 0)
 			{
 				throw new Exception("Error in PerformParsimony after NodeCollapser: Protein list is empty");
 			}
 
-			if (Peptides == null || Peptides.Count == 0)
+			if (peptides == null || peptides.Count == 0)
 			{
 				throw new Exception("Error in PerformParsimony after NodeCollapser: Peptide list is empty");
 			}

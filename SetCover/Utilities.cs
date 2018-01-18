@@ -124,12 +124,12 @@ namespace SetCover
 				if (!dt.Columns.Contains("Peptide"))
 					throw new Exception("Input file is missing column 'Peptide'");
 
-				foreach (DataRow drow in dt.Rows)
+				foreach (DataRow item in dt.Rows)
 				{
 					var entry = new RowEntry
 					{
-						ProteinEntry = (string)drow["Protein"],
-						PeptideEntry = (string)drow["Peptide"]
+						ProteinEntry = (string)item["Protein"],
+						PeptideEntry = (string)item["Peptide"]
 					};
 					rows.Add(entry);
 				}

@@ -21,7 +21,7 @@ namespace SetCover
         [Test]
         public void TestNodeBuilder()
         {
-            var lr = new List<RowEntry>
+            var peptideProteinMapList = new List<RowEntry>
             {
                 new RowEntry {ProteinEntry = "prot_A", PeptideEntry = "pep_A"},
                 new RowEntry {ProteinEntry = "prot_B", PeptideEntry = "pep_A"},
@@ -41,9 +41,9 @@ namespace SetCover
 
             var globalIDTracker = new GlobalIDContainer();
 
-            nodebuilder.RunAlgorithm(lr, out var Proteins, out var Peptides);
+            nodebuilder.RunAlgorithm(peptideProteinMapList, out var proteins, out var peptides);
 
-            nodecollapser.RunAlgorithm(Proteins, Peptides, globalIDTracker);
+            nodecollapser.RunAlgorithm(proteins, peptides, globalIDTracker);
 
             var proteinsWithChildren = proteins.Values.ToList();
             var clusteredProteinSets = dfs.RunAlgorithm(proteinsWithChildren);

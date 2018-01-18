@@ -26,18 +26,18 @@ namespace SetCover.Algorithms
 
         public List<Node> BulkFinder(List<Node> inCluster)
         {
-            var FilteredList = new List<Node>();
+            var filteredList = new List<Node>();
             foreach (var node in inCluster)
             {
                 var cs = (Cluster)node;
-                FilteredList.AddRange(GetCover(cs));
+                filteredList.AddRange(GetCover(cs));
             }
-            return FilteredList;
+            return filteredList;
         }
 
         private IEnumerable<Node> GetCover(Node cs)
         {
-            var ProteinSet = new List<Node>();
+            var proteinSet = new List<Node>();
             var proteins = new List<Node>();
             // var peptides = new List<Node>();
 
@@ -62,13 +62,13 @@ namespace SetCover.Algorithms
             while (proteins.Count != 0 && ((ProteinGroup)proteins[proteins.Count - 1]).UntakenPeptide != 0)
             {
                 var temp = proteins[proteins.Count - 1];
-                ProteinSet.Add(temp);
+                proteinSet.Add(temp);
                 proteins.Remove(temp);
                 AdjustUntakenPeptides(temp);
                 proteins.Sort();
             }
 
-            return ProteinSet;
+            return proteinSet;
 
 
         }
