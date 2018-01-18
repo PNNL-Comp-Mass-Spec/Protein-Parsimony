@@ -52,7 +52,15 @@ namespace SetCover.Objects
 
             if (obj is ProteinGroup otherNode)
             {
-                return UntakenPeptide.CompareTo(otherNode.UntakenPeptide);
+                var childComparison = Children.Count.CompareTo(otherNode.Children.Count);
+                if (childComparison != 0)
+                    return childComparison;
+
+                var untakenPepComparison = UntakenPeptides.CompareTo(otherNode.UntakenPeptides);
+                if (untakenPepComparison != 0)
+                    return untakenPepComparison;
+
+                return Id.CompareTo(otherNode.Id);
             }
 
             throw new ArgumentException("Object is not a Node!");
