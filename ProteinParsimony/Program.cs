@@ -9,7 +9,7 @@ namespace ProteinParsimony
 {
     class Program
     {
-        private const string PROGRAM_DATE = "January 18, 2018";
+        private const string PROGRAM_DATE = "October 11, 2018";
 
         static int Main(string[] args)
         {
@@ -29,14 +29,14 @@ namespace ProteinParsimony
                 if (!fiSourceFile.Exists)
                 {
                     ShowSyntax("Input file not found: " + inputFilePath);
-                    clsProgRunner.SleepMilliseconds(1500);
+                    ProgRunner.SleepMilliseconds(1500);
                     return -1;
                 }
             }
             catch (Exception ex)
             {
                 ShowSyntax("Exception validating the input file path: " + ex.Message);
-                clsProgRunner.SleepMilliseconds(1500);
+                ProgRunner.SleepMilliseconds(1500);
                 return -2;
 
             }
@@ -79,18 +79,18 @@ namespace ProteinParsimony
                 {
                     Console.WriteLine();
                     Console.WriteLine("Processing complete");
-                    clsProgRunner.SleepMilliseconds(750);
+                    ProgRunner.SleepMilliseconds(750);
                     return 0;
                 }
 
                 ConsoleMsgUtils.ShowWarning("Error computing protein parsimony: RunAlgorithm reports false");
-                clsProgRunner.SleepMilliseconds(1500);
+                ProgRunner.SleepMilliseconds(1500);
                 return -3;
             }
             catch (Exception ex)
             {
                 ConsoleMsgUtils.ShowError("Error computing protein parsimony: " + ex.Message, ex);
-                clsProgRunner.SleepMilliseconds(1500);
+                ProgRunner.SleepMilliseconds(1500);
                 return -2;
             }
         }
@@ -120,7 +120,7 @@ namespace ProteinParsimony
             catch (Exception ex)
             {
                 ShowSyntax("Exception validating the output file path: " + ex.Message);
-                clsProgRunner.SleepMilliseconds(1500);
+                ProgRunner.SleepMilliseconds(1500);
                 return -2;
             }
 
@@ -138,18 +138,18 @@ namespace ProteinParsimony
                 {
                     Console.WriteLine();
                     Console.WriteLine("Processing Complete");
-                    clsProgRunner.SleepMilliseconds(750);
+                    ProgRunner.SleepMilliseconds(750);
                     return 0;
                 }
 
                 ConsoleMsgUtils.ShowWarning("Error computing protein parsimony: ProcessTextFile reports false");
-                clsProgRunner.SleepMilliseconds(1500);
+                ProgRunner.SleepMilliseconds(1500);
                 return -3;
             }
             catch (Exception ex)
             {
                 ConsoleMsgUtils.ShowError("Error computing protein parsimony: " + ex.Message, ex);
-                clsProgRunner.SleepMilliseconds(1500);
+                ProgRunner.SleepMilliseconds(1500);
                 return -4;
             }
         }
@@ -168,7 +168,7 @@ namespace ProteinParsimony
                 Console.WriteLine();
             }
 
-            var exeName = Path.GetFileName(ProcessFilesOrFoldersBase.GetAppPath());
+            var exeName = Path.GetFileName(ProcessFilesOrDirectoriesBase.GetAppPath());
 
             ConsoleWriteWrapped("This program implements a protein parsimony algorithm for grouping proteins with similar peptides.");
             Console.WriteLine();
@@ -191,7 +191,7 @@ namespace ProteinParsimony
                                 Runner.PARSIMONY_GROUPING_TABLE + " and " + Runner.PARSIMONY_GROUP_MEMBERS_TABLE);
             Console.WriteLine();
             Console.WriteLine("Program written by Josh Aldrich for the Department of Energy (PNNL, Richland, WA) in 2013");
-            Console.WriteLine("Version: " + ProcessFilesOrFoldersBase.GetAppVersion(PROGRAM_DATE));
+            Console.WriteLine("Version: " + ProcessFilesOrDirectoriesBase.GetAppVersion(PROGRAM_DATE));
             Console.WriteLine();
             Console.WriteLine("E-mail:  proteomics@pnnl.gov");
             Console.WriteLine("Website: https://omics.pnl.gov/ or https://panomics.pnnl.gov/ or ");
@@ -200,7 +200,7 @@ namespace ProteinParsimony
 
         private static void ConsoleWriteWrapped(string textToWrap)
         {
-            Console.WriteLine(PRISM.CommandLineParser<Program>.WrapParagraph(textToWrap));
+            Console.WriteLine(ConsoleMsgUtils.WrapParagraph(textToWrap));
         }
     }
 }
