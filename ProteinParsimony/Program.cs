@@ -9,7 +9,7 @@ namespace ProteinParsimony
 {
     class Program
     {
-        private const string PROGRAM_DATE = "October 25, 2018";
+        private const string PROGRAM_DATE = "May 7, 2019";
 
         static int Main(string[] args)
         {
@@ -89,7 +89,7 @@ namespace ProteinParsimony
             }
             catch (Exception ex)
             {
-                ConsoleMsgUtils.ShowError("Error computing protein parsimony: " + ex.Message, ex);
+                ConsoleMsgUtils.ShowError("Error computing protein parsimony", ex);
                 ProgRunner.SleepMilliseconds(1500);
                 return -2;
             }
@@ -148,7 +148,7 @@ namespace ProteinParsimony
             }
             catch (Exception ex)
             {
-                ConsoleMsgUtils.ShowError("Error computing protein parsimony: " + ex.Message, ex);
+                ConsoleMsgUtils.ShowError("Error computing protein parsimony", ex);
                 ProgRunner.SleepMilliseconds(1500);
                 return -4;
             }
@@ -164,7 +164,7 @@ namespace ProteinParsimony
             Console.WriteLine();
             if (!string.IsNullOrWhiteSpace(errorMessage))
             {
-                ConsoleMsgUtils.ShowError("Error: " + errorMessage, false);
+                ConsoleMsgUtils.ShowErrorCustom("Error: " + errorMessage, false);
                 Console.WriteLine();
             }
 
