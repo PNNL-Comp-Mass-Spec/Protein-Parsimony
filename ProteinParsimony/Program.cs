@@ -9,7 +9,7 @@ namespace ProteinParsimony
 {
     class Program
     {
-        private const string PROGRAM_DATE = "May 7, 2019";
+        private const string PROGRAM_DATE = "May 9, 2019";
 
         static int Main(string[] args)
         {
@@ -56,7 +56,7 @@ namespace ProteinParsimony
             }
             else
             {
-                var result = ProcessTextfile(args, fiSourceFile);
+                var result = ProcessTextFile(args, fiSourceFile);
                 return result;
             }
 
@@ -95,7 +95,7 @@ namespace ProteinParsimony
             }
         }
 
-        private static int ProcessTextfile(IReadOnlyList<string> args, FileInfo fiSourceFile)
+        private static int ProcessTextFile(IReadOnlyList<string> args, FileInfo fiSourceFile)
         {
 
             string parsimonyResultsFilePath;
