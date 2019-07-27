@@ -9,7 +9,7 @@ namespace ProteinParsimony
 {
     class Program
     {
-        private const string PROGRAM_DATE = "May 9, 2019";
+        private const string PROGRAM_DATE = "July 26, 2019";
 
         static int Main(string[] args)
         {
