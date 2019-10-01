@@ -10,7 +10,7 @@ using SetCover.Objects;
 
 namespace SetCover
 {
-    public class Runner
+    public class Runner : EventNotifier
     {
 
         public const string DEFAULT_SQLITE_TABLE = "T_Row_Metadata";
@@ -28,8 +28,6 @@ namespace SetCover
 
         public bool ShowProgressAtConsole { get; set; }
         public string WorkDir { get; set; }
-        public event ProgressChangedHandler ProgressChanged;
-        public delegate void ProgressChangedHandler(Runner runner, ProgressInfo e);
 
         public static string ConstructParsimonyGroupsFilename(FileSystemInfo fiSourceFile, string baseName)
         {
@@ -83,7 +81,7 @@ namespace SetCover
                 throw new FileNotFoundException("Database not found: " + fiDatabaseFile);
 
             if (ShowProgressAtConsole)
-                Console.WriteLine("Opening SQLite database " + fiDatabaseFile.FullName);
+                OnStatusEvent("Opening SQLite database " + fiDatabaseFile.FullName);
 
             if (!VerifySourceTableExists(fiDatabaseFile, sourceTableName))
                 return false;
@@ -100,14 +98,14 @@ namespace SetCover
                 {
                     if (ShowProgressAtConsole)
                     {
-                        ConsoleMsgUtils.ShowError(
+                        OnErrorEvent(
                             string.Format("Error loading data from table {0}; GetPeptideProteinMap returned false", sourceTableName));
                     }
                     return false;
                 }
 
                 if (ShowProgressAtConsole)
-                    Console.WriteLine("Loaded {0} rows from table {1}", pepToProtMapping.Count, sourceTableName);
+                    OnStatusEvent(string.Format("Loaded {0} rows from table {1}", pepToProtMapping.Count, sourceTableName));
             }
             catch (Exception ex)
             {
@@ -141,7 +139,7 @@ namespace SetCover
             if (ShowProgressAtConsole)
             {
                 Console.WriteLine();
-                Console.WriteLine("Exporting protein groups to temp text files");
+                OnStatusEvent("Exporting protein groups to temp text files");
             }
 
             Utilities.SaveResults(result, parsimonyResultsFilePath, proteinGroupMembersFilePath, globalIDTracker);
@@ -172,7 +170,7 @@ namespace SetCover
                 writer.ColDefOverride = colDefs;
 
                 if (ShowProgressAtConsole)
-                    Console.WriteLine("Importing data into table " + PARSIMONY_GROUPING_TABLE);
+                    OnStatusEvent("Importing data into table " + PARSIMONY_GROUPING_TABLE);
 
                 ProcessingPipeline.Assemble("ImportToSQLite", delimreader, writer).RunRoot(null);
             }
@@ -201,7 +199,7 @@ namespace SetCover
                 writer.ColDefOverride = colDefs;
 
                 if (ShowProgressAtConsole)
-                    Console.WriteLine("Importing data into table " + PARSIMONY_GROUP_MEMBERS_TABLE);
+                    OnStatusEvent("Importing data into table " + PARSIMONY_GROUP_MEMBERS_TABLE);
 
                 ProcessingPipeline.Assemble("ImportToSQLite", delimreader, writer).RunRoot(null);
             }
@@ -263,7 +261,7 @@ namespace SetCover
                 if (ShowProgressAtConsole)
                 {
                     Console.WriteLine();
-                    Console.WriteLine("Writing results to " + parsimonyResultsFilePath);
+                    OnStatusEvent("Writing results to " + parsimonyResultsFilePath);
                 }
 
                 Utilities.SaveResults(result, parsimonyResultsFilePath, proteinGroupMembersFilePath, globalIDTracker);
@@ -291,10 +289,13 @@ namespace SetCover
             var dfs = new DFS();
             var cover = new Cover();
 
+            RegisterEvents(dfs);
+            RegisterEvents(cover);
+
             if (ShowProgressAtConsole)
             {
                 Console.WriteLine();
-                Console.WriteLine("Finding parsimonious protein groups");
+                OnStatusEvent("Finding parsimonious protein groups");
             }
 
             nodebuilder.RunAlgorithm(peptideProteinMapList, out var proteins, out var peptides);
@@ -339,7 +340,7 @@ namespace SetCover
             }
 
             if (ShowProgressAtConsole)
-                Console.WriteLine("Iteration Complete, found {0} protein groups", clusteredProteins.Count);
+                OnStatusEvent(string.Format("Iteration Complete, found {0} protein groups", clusteredProteins.Count));
 
             return true;
 
@@ -379,7 +380,7 @@ namespace SetCover
                                     Console.WriteLine();
                                 }
 
-                                Console.WriteLine("Deleting existing data in table {0}", tableName);
+                                OnStatusEvent(string.Format("Deleting existing data in table {0}", tableName));
                             }
 
                             dbCommand.CommandText = string.Format("DELETE FROM {0};", tableName);
@@ -391,7 +392,7 @@ namespace SetCover
             }
             catch (Exception ex)
             {
-                ConsoleMsgUtils.ShowWarning("Error deleting existing protein parsimony data from the SQLite database: " + ex.Message);
+                OnWarningEvent("Error deleting existing protein parsimony data from the SQLite database: " + ex.Message);
             }
 
         }
@@ -440,21 +441,6 @@ namespace SetCover
             return true;
         }
 
-        protected void OnProgressChanged(float progressOverall, float progressCurrentFile)
-        {
-
-            if (ProgressChanged != null)
-            {
-                var e = new ProgressInfo
-                {
-                    Value = progressOverall,
-                    ProgressCurrentJob = progressCurrentFile
-                };
-
-                ProgressChanged(this, e);
-            }
-        }
-
         private bool SQLiteTableExists(SQLiteConnection dbConnection, string tableName)
         {
             bool hasRows;
@@ -493,7 +479,7 @@ namespace SetCover
                     if (SQLiteTableExists(dbConnection, sourceTableName))
                         return true;
 
-                    ConsoleMsgUtils.ShowWarning(
+                    OnWarningEvent(
                         string.Format("Source table {0} not found in SQLite file\n{1}", sourceTableName, fiDatabaseFile.FullName));
 
                     return false;
@@ -501,7 +487,7 @@ namespace SetCover
             }
             catch (Exception ex)
             {
-                ConsoleMsgUtils.ShowWarning(
+                OnWarningEvent(
                     string.Format("Error verifying that table {0} exists in the SQLite database: {1}",
                                   sourceTableName, ex.Message));
                 return false;

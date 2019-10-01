@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using PRISM;
 using SetCover.Objects;
 
 namespace SetCover.Algorithms
@@ -6,7 +8,7 @@ namespace SetCover.Algorithms
     /// <summary>
     /// Cluster sets of nodes using a depth first search approach
     /// </summary>
-    class DFS
+    class DFS : EventNotifier
     {
         readonly Dictionary<int, Node> AllNodes = new Dictionary<int, Node>();
 

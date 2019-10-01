@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using PRISM;
 using SetCover.Objects;
 
 namespace SetCover.Algorithms
@@ -7,7 +8,7 @@ namespace SetCover.Algorithms
     /// <summary>
     /// Finds the best coverage using a greedy algorithm
     /// </summary>
-    class Cover
+    class Cover : EventNotifier
     {
 
         /// <summary>

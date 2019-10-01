@@ -9,7 +9,9 @@ namespace ProteinParsimony
 {
     class Program
     {
-        private const string PROGRAM_DATE = "July 26, 2019";
+        private const string PROGRAM_DATE = "October 1, 2019";
+
+        private static DateTime mLastProgressUpdateTime = DateTime.UtcNow;
 
         static int Main(string[] args)
         {
@@ -71,8 +73,8 @@ namespace ProteinParsimony
                 {
                     ShowProgressAtConsole = true
                 };
+                RegisterEvents(runner);
 
-                runner.ProgressChanged += RunnerProgressHandler;
                 var success = runner.ProcessSQLite(fiSourceFile.DirectoryName, fiSourceFile.Name, sourceTableName);
 
                 if (success)
@@ -130,8 +132,8 @@ namespace ProteinParsimony
                 {
                     ShowProgressAtConsole = true
                 };
+                RegisterEvents(runner);
 
-                runner.ProgressChanged += RunnerProgressHandler;
                 var success = runner.ProcessTextFile(fiSourceFile, parsimonyResultsFilePath, proteinGroupMembersFilePath);
 
                 if (success)
@@ -154,9 +156,14 @@ namespace ProteinParsimony
             }
         }
 
-        private static void RunnerProgressHandler(Runner id, ProgressInfo e)
+        private static void ShowErrorMessage(string message, Exception ex = null)
         {
-            Console.WriteLine(e.ProgressCurrentJob.ToString("0.0") + "% complete; " + e.Value.ToString("0.0") + "% complete overall");
+            ConsoleMsgUtils.ShowError(message, ex);
+        }
+
+        private static void ShowErrorMessage(string message, IEnumerable<string> additionalInfo)
+        {
+            ConsoleMsgUtils.ShowErrors(message, additionalInfo);
         }
 
         private static void ShowSyntax(string errorMessage = "")
@@ -202,5 +209,44 @@ namespace ProteinParsimony
         {
             Console.WriteLine(ConsoleMsgUtils.WrapParagraph(textToWrap));
         }
+
+        private static void RegisterEvents(EventNotifier processingClass)
+        {
+            processingClass.DebugEvent += OnDebugEvent;
+            processingClass.StatusEvent += OnStatusEvent;
+            processingClass.ErrorEvent += OnErrorEvent;
+            processingClass.WarningEvent += OnWarningEvent;
+            processingClass.ProgressUpdate += OnProgressUpdate;
+        }
+
+        private static void OnDebugEvent(string message)
+        {
+            ConsoleMsgUtils.ShowDebug(message);
+        }
+
+        private static void OnStatusEvent(string message)
+        {
+            Console.WriteLine(message);
+        }
+
+        private static void OnErrorEvent(string message, Exception ex)
+        {
+            ShowErrorMessage(message, ex);
+        }
+
+        private static void OnWarningEvent(string message)
+        {
+            ConsoleMsgUtils.ShowWarning(message);
+        }
+
+        private static void OnProgressUpdate(string progressMessage, float percentComplete)
+        {
+            if (DateTime.UtcNow.Subtract(mLastProgressUpdateTime).TotalSeconds >= 10)
+            {
+                Console.WriteLine("{0}% complete: {1} ", percentComplete, progressMessage);
+                mLastProgressUpdateTime = DateTime.UtcNow;
+            }
+        }
+
     }
 }
