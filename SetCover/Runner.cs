@@ -278,14 +278,14 @@ namespace SetCover
         /// Group proteins having similar peptides
         /// </summary>
         /// <param name="peptideProteinMapList">List of protein to peptide mappings</param>
-        /// <param name="clusteredProteins">Parimonious list of protein</param>
+        /// <param name="clusteredProteins">Parsimonious list of protein</param>
         /// <param name="globalIDTracker"></param>
         /// <returns></returns>
         public bool PerformParsimony(List<RowEntry> peptideProteinMapList, out List<Node> clusteredProteins, out GlobalIDContainer globalIDTracker)
         {
             // Prepare objects and algorithms
-            var nodebuilder = new NodeBuilder();
-            var nodecollapser = new NodeCollapser();
+            var nodeBuilder = new NodeBuilder();
+            var nodeCollapser = new NodeCollapser();
             var dfs = new DFS();
             var cover = new Cover();
 
@@ -298,7 +298,7 @@ namespace SetCover
                 OnStatusEvent("Finding parsimonious protein groups");
             }
 
-            nodebuilder.RunAlgorithm(peptideProteinMapList, out var proteins, out var peptides);
+            nodeBuilder.RunAlgorithm(peptideProteinMapList, out var proteins, out var peptides);
 
             if (proteins == null || proteins.Count == 0)
             {
@@ -311,16 +311,16 @@ namespace SetCover
             }
 
             globalIDTracker = new GlobalIDContainer();
-            nodecollapser.RunAlgorithm(proteins, peptides, globalIDTracker);
+            nodeCollapser.RunAlgorithm(proteins, peptides, globalIDTracker);
 
             if (proteins == null || proteins.Count == 0)
             {
-                throw new Exception("Error in PerformParsimony after NodeCollapser: Protein list is empty");
+                throw new Exception("Error in PerformParsimony after nodeCollapser.RunAlgorithm: Protein list is empty");
             }
 
             if (peptides == null || peptides.Count == 0)
             {
-                throw new Exception("Error in PerformParsimony after NodeCollapser: Peptide list is empty");
+                throw new Exception("Error in PerformParsimony after nodeCollapser.RunAlgorithm: Peptide list is empty");
             }
 
             var proteinsWithChildren = proteins.Values.ToList();
@@ -336,7 +336,7 @@ namespace SetCover
 
             if (clusteredProteins == null || clusteredProteins.Count == 0)
             {
-                throw new Exception("Error in PerformParsimony: Cover returned an empty protein list");
+                throw new Exception("Error in PerformParsimony: cover.RunAlgorithm returned an empty protein list");
             }
 
             if (ShowProgressAtConsole)

@@ -63,17 +63,18 @@ namespace SetCover.Algorithms
         public List<Node> ClusterNodes(List<Node> inNodes)
         {
             var clusters = new List<Node>();
-            foreach (var mynode in inNodes)
+            foreach (var myNode in inNodes)
             {
-                AllNodes.Add(mynode.Id, mynode);
+                AllNodes.Add(myNode.Id, myNode);
             }
 
-            foreach (var mynode in inNodes)
+            foreach (var myNode in inNodes)
             {
-                if (AllNodes.ContainsKey(mynode.Id))
+                if (AllNodes.ContainsKey(myNode.Id))
                 {
-                    var cs = new Cluster {
-                        Children = new NodeChildren<Node>(Search(mynode))
+                    var cs = new Cluster
+                    {
+                        Children = new NodeChildren<Node>(Search(myNode))
                     };
 
                     //		   cs.nodeName = string.Concat(cs.chi);

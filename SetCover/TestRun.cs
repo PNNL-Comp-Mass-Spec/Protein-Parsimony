@@ -104,16 +104,16 @@ namespace SetCover
         private void TestNodeBuilder(List<RowEntry> peptideProteinMapList, IReadOnlyList<string> expectedOutput)
         {
 
-            var nodebuilder = new NodeBuilder();
-            var nodecollapser = new NodeCollapser();
+            var nodeBuilder = new NodeBuilder();
+            var nodeCollapser = new NodeCollapser();
             var dfs = new DFS();
             var cover = new Cover();
 
             var globalIDTracker = new GlobalIDContainer();
 
-            nodebuilder.RunAlgorithm(peptideProteinMapList, out var proteins, out var peptides);
+            nodeBuilder.RunAlgorithm(peptideProteinMapList, out var proteins, out var peptides);
 
-            nodecollapser.RunAlgorithm(proteins, peptides, globalIDTracker);
+            nodeCollapser.RunAlgorithm(proteins, peptides, globalIDTracker);
 
             var proteinsWithChildren = proteins.Values.ToList();
             var clusteredProteinSets = dfs.RunAlgorithm(proteinsWithChildren);
@@ -148,12 +148,12 @@ namespace SetCover
         [Test]
         public void TestResultDB()
         {
-            var datadbfolder = @"\\proto-2\UnitTest_Files\ProteinParsimony";
-            var datafile = "Results.db3";
+            var dataDbFolder = @"\\proto-2\UnitTest_Files\ProteinParsimony";
+            var dataFile = "Results.db3";
             const string sourceTableName = Runner.DEFAULT_SQLITE_TABLE;
 
             var runner = new Runner();
-            runner.ProcessSQLite(datadbfolder, datafile, sourceTableName);
+            runner.ProcessSQLite(dataDbFolder, dataFile, sourceTableName);
         }
 
     }
