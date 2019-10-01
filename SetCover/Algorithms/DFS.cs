@@ -12,6 +12,10 @@ namespace SetCover.Algorithms
     {
         readonly Dictionary<int, Node> AllNodes = new Dictionary<int, Node>();
 
+        private const int MAX_RECURSION_DEPTH = 4000;
+        private int mRecursionDepthLimitCount;
+        private int mRecursionDepthLimitReportThreshold = 10;
+
         public List<Node> RunAlgorithm(List<Node> proteins)
         {
             foreach (var item in proteins)
@@ -37,15 +41,46 @@ namespace SetCover.Algorithms
         /// </summary>
         /// <param name="input"></param>
         /// <param name="searchNodes"></param>
-        public void Search(Node input, HashSet<Node> searchNodes)
+        /// <param name="recursionDepth"></param>
+        public void Search(Node input, HashSet<Node> searchNodes, int recursionDepth)
         {
+
+            if (recursionDepth >= MAX_RECURSION_DEPTH)
+            {
+                // C# can handle a recursion depth of ~5000
+                // For safety, we will limit it to 4000
+                mRecursionDepthLimitCount++;
+
+                if (mRecursionDepthLimitCount > 5 && mRecursionDepthLimitCount < mRecursionDepthLimitReportThreshold)
+                {
+                    return;
+                }
+
+                if (mRecursionDepthLimitCount <= 1)
+                {
+                    OnWarningEvent(string.Format(
+                                       "Recursively called SetCover.Algorithms.DFS.Search to a depth of {0}; " +
+                                       "aborting processing of remaining children", recursionDepth));
+                }
+                else
+                {
+                    OnWarningEvent(string.Format(
+                                       "Recursively called SetCover.Algorithms.DFS.Search to the maximum depth {0} times; " +
+                                       "aborting processing of remaining children", mRecursionDepthLimitCount));
+                }
+
+                mRecursionDepthLimitReportThreshold += (int)Math.Floor(mRecursionDepthLimitReportThreshold * 0.25);
+
+                return;
+            }
+
             foreach (var child in input.Children)
             {
                 if (!CheckID(child, searchNodes))
                 {
                     searchNodes.Add(child);
                     AllNodes.Remove(child.Id);
-                    Search(child, searchNodes);
+                    Search(child, searchNodes, recursionDepth + 1);
                 }
             }
         }
@@ -56,7 +91,7 @@ namespace SetCover.Algorithms
                 input
             };
             AllNodes.Remove(input.Id);
-            Search(input, searchNodes);
+            Search(input, searchNodes, 0);
             return searchNodes;
         }
 
