@@ -18,8 +18,18 @@ namespace SetCover.Algorithms
         public List<Node> RunAlgorithm(List<Node> inNode)
         {
             var filteredList = new List<Node>();
+            var lastProgressTime = DateTime.UtcNow;
+            var currentNode = 0;
+
             foreach (var node in inNode)
             {
+                currentNode++;
+                if (DateTime.UtcNow.Subtract(lastProgressTime).TotalSeconds > 15)
+                {
+                    lastProgressTime = DateTime.UtcNow;
+                    OnStatusEvent(string.Format("Computing coverage by node, {0} / {1}", currentNode, inNode.Count));
+                }
+
                 var cs = (Cluster)node;
                 filteredList.AddRange(GetCover(cs));
             }
@@ -48,7 +58,10 @@ namespace SetCover.Algorithms
             }
 
             var continueCheck = true;
-            var startIndex = proteins.Count - 1;
+            var totalProteins = proteins.Count;
+            var startIndex = totalProteins - 1;
+
+            var lastProgressTime = DateTime.UtcNow;
 
             while (continueCheck)
             {
@@ -59,6 +72,13 @@ namespace SetCover.Algorithms
 
                     // Sort the proteins by number of children, then by number of untaken peptides
                     proteins.Sort();
+
+                    if (currentIndex % 100 == 0 && DateTime.UtcNow.Subtract(lastProgressTime).TotalSeconds > 15)
+                    {
+                        lastProgressTime = DateTime.UtcNow;
+                        OnDebugEvent(string.Format("  ... computing coverage, {0} / {1}",
+                                                   totalProteins - currentIndex, totalProteins));
+                    }
 
                     if (((ProteinGroup)proteins[currentIndex]).UntakenPeptides <= 0)
                     {
