@@ -96,14 +96,14 @@ namespace SetCover
             if (!VerifySourceTableExists(fiDatabaseFile, sourceTableName))
                 return false;
 
-            var reader = new SQLiteReader
+            var dbReader = new SQLiteReader
             {
                 Database = fiDatabaseFile.FullName
             };
 
             try
             {
-                var success = GetPeptideProteinMap(reader, sourceTableName, out pepToProtMapping);
+                var success = GetPeptideProteinMap(dbReader, sourceTableName, out pepToProtMapping);
                 if (!success)
                 {
                     if (ShowProgressAtConsole)
@@ -162,7 +162,7 @@ namespace SetCover
             try
             {
 
-                var delimreader = new DelimitedFileReader
+                var resultsReader = new DelimitedFileReader
                 {
                     FilePath = parsimonyResultsFilePath
                 };
@@ -182,7 +182,7 @@ namespace SetCover
                 if (ShowProgressAtConsole)
                     OnStatusEvent("Importing data into table " + PARSIMONY_GROUPING_TABLE);
 
-                ProcessingPipeline.Assemble("ImportToSQLite", delimreader, writer).RunRoot(null);
+                ProcessingPipeline.Assemble("ImportToSQLite", resultsReader, writer).RunRoot(null);
             }
             catch (Exception ex)
             {
@@ -191,7 +191,7 @@ namespace SetCover
 
             try
             {
-                var delimreader = new DelimitedFileReader
+                var proteinGroupsReader = new DelimitedFileReader
                 {
                     FilePath = proteinGroupMembersFilePath
                 };
@@ -211,7 +211,7 @@ namespace SetCover
                 if (ShowProgressAtConsole)
                     OnStatusEvent("Importing data into table " + PARSIMONY_GROUP_MEMBERS_TABLE);
 
-                ProcessingPipeline.Assemble("ImportToSQLite", delimreader, writer).RunRoot(null);
+                ProcessingPipeline.Assemble("ImportToSQLite", proteinGroupsReader, writer).RunRoot(null);
             }
             catch (Exception ex)
             {
@@ -595,9 +595,4 @@ namespace SetCover
         }
     }
 
-    public class ProgressInfo : EventArgs
-    {
-        public float Value { get; set; }
-        public float ProgressCurrentJob { get; set; }
-    }
 }
