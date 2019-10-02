@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Mage;
 using PRISM;
 using SetCover.Algorithms;
@@ -12,10 +13,19 @@ namespace SetCover
 {
     public class Runner : EventNotifier
     {
-
         public const string DEFAULT_SQLITE_TABLE = "T_Row_Metadata";
         public const string PARSIMONY_GROUPING_TABLE = "T_Parsimony_Grouping";
         public const string PARSIMONY_GROUP_MEMBERS_TABLE = "T_Parsimony_Group_Members";
+
+        public const int DEFAULT_MAX_DFS_RECURSION_DEPTH = 3500;
+
+        private const int MAX_RUNTIME_HOURS = 24;
+
+        private List<RowEntry> mPeptideProteinMapList;
+        private List<Node> mClusteredProteins;
+        private GlobalIDContainer mGlobalIDTracker;
+        private bool mProcessingSucceeded;
+        private int mMaxDFSRecursionDepth = DEFAULT_MAX_DFS_RECURSION_DEPTH;
 
         /// <summary>
         /// Constructor
@@ -129,11 +139,11 @@ namespace SetCover
 
             try
             {
-                PerformParsimony(pepToProtMapping, out result, out globalIDTracker);
+                PerformParsimonyThreaded(pepToProtMapping, out result, out globalIDTracker);
             }
             catch (Exception ex)
             {
-                throw new Exception("Error calling PerformParsimony: " + ex.Message, ex);
+                throw new Exception("Error calling PerformParsimonyThreaded: " + ex.Message, ex);
             }
 
             if (ShowProgressAtConsole)
@@ -249,11 +259,11 @@ namespace SetCover
 
             try
             {
-                success = PerformParsimony(peptideProteinMapList, out result, out globalIDTracker);
+                success = PerformParsimonyThreaded(peptideProteinMapList, out result, out globalIDTracker);
             }
             catch (Exception ex)
             {
-                throw new Exception("Error calling PerformParsimony: " + ex.Message, ex);
+                throw new Exception("Error calling PerformParsimonyThreaded: " + ex.Message, ex);
             }
 
             if (success && result != null)
@@ -281,12 +291,102 @@ namespace SetCover
         /// <param name="clusteredProteins">Parsimonious list of protein</param>
         /// <param name="globalIDTracker"></param>
         /// <returns></returns>
-        public bool PerformParsimony(List<RowEntry> peptideProteinMapList, out List<Node> clusteredProteins, out GlobalIDContainer globalIDTracker)
+        // ReSharper disable once UnusedMember.Global
+        public bool PerformParsimony(
+            List<RowEntry> peptideProteinMapList,
+            out List<Node> clusteredProteins,
+            out GlobalIDContainer globalIDTracker)
         {
+            mPeptideProteinMapList = peptideProteinMapList;
+            mMaxDFSRecursionDepth = DEFAULT_MAX_DFS_RECURSION_DEPTH;
+
+            PerformParsimonyWork();
+
+            clusteredProteins = mClusteredProteins;
+            globalIDTracker = mGlobalIDTracker;
+
+            return mProcessingSucceeded;
+        }
+
+        /// <summary>
+        /// Group proteins having similar peptides
+        /// </summary>
+        /// <param name="peptideProteinMapList">List of protein to peptide mappings</param>
+        /// <param name="clusteredProteins">Parsimonious list of protein</param>
+        /// <param name="globalIDTracker"></param>
+        /// <returns></returns>
+        /// <remarks>Runs on a separate thread which allows for deeper recursion</remarks>
+        // ReSharper disable once UnusedMember.Global
+        public bool PerformParsimonyThreaded(
+            List<RowEntry> peptideProteinMapList,
+            out List<Node> clusteredProteins,
+            out GlobalIDContainer globalIDTracker)
+        {
+            mPeptideProteinMapList = peptideProteinMapList;
+
+            // Increase the stack size from 1 MB to 50 MB
+            var stackSizeInBytes = 50 * 1024 * 1024;
+
+            // Since we're using a larger stack size, we can increase the maximum DFS recursion depth
+            mMaxDFSRecursionDepth = 20000;
+
+            var thread = new Thread(PerformParsimonyWork, stackSizeInBytes);
+            thread.Start();
+
+            var startTime = DateTime.UtcNow;
+
+            while (true)
+            {
+                // Wait for 2 seconds
+                thread.Join(2000);
+
+                // Check whether the thread is still running
+                if (!thread.IsAlive)
+                    break;
+
+                // Check whether the thread has been running too long
+                if (!(DateTime.UtcNow.Subtract(startTime).TotalHours > MAX_RUNTIME_HOURS))
+                    continue;
+
+                OnErrorEvent("Parsimony calculations have run for over " + MAX_RUNTIME_HOURS + " hours; aborting");
+
+                try
+                {
+                    thread.Abort();
+                }
+                catch
+                {
+                    // Ignore errors here;
+                }
+
+                break;
+            }
+
+
+            clusteredProteins = mClusteredProteins;
+            globalIDTracker = mGlobalIDTracker;
+
+            return mProcessingSucceeded;
+        }
+
+        /// <summary>
+        /// Group proteins having similar peptides
+        /// </summary>
+        /// <returns></returns>
+        private void PerformParsimonyWork()
+        {
+            mProcessingSucceeded = false;
+            mClusteredProteins = new List<Node>();
+            mGlobalIDTracker = new GlobalIDContainer();
+
             // Prepare objects and algorithms
             var nodeBuilder = new NodeBuilder();
             var nodeCollapser = new NodeCollapser();
-            var dfs = new DFS();
+
+            var dfs = new DFS {
+                MaxRecursionDepth = mMaxDFSRecursionDepth
+            };
+
             var cover = new Cover();
 
             RegisterEvents(dfs);
@@ -298,7 +398,7 @@ namespace SetCover
                 OnStatusEvent("Finding parsimonious protein groups");
             }
 
-            nodeBuilder.RunAlgorithm(peptideProteinMapList, out var proteins, out var peptides);
+            nodeBuilder.RunAlgorithm(mPeptideProteinMapList, out var proteins, out var peptides);
 
             if (proteins == null || proteins.Count == 0)
             {
@@ -310,8 +410,7 @@ namespace SetCover
                 throw new Exception("Error in PerformParsimony: Peptide list is empty");
             }
 
-            globalIDTracker = new GlobalIDContainer();
-            nodeCollapser.RunAlgorithm(proteins, peptides, globalIDTracker);
+            nodeCollapser.RunAlgorithm(proteins, peptides, mGlobalIDTracker);
 
             if (proteins == null || proteins.Count == 0)
             {
@@ -332,17 +431,17 @@ namespace SetCover
                 throw new Exception("Error in PerformParsimony: DFS returned an empty protein list");
             }
 
-            clusteredProteins = cover.RunAlgorithm(clusteredProteinSets);
+            mClusteredProteins = cover.RunAlgorithm(clusteredProteinSets);
 
-            if (clusteredProteins == null || clusteredProteins.Count == 0)
+            if (mClusteredProteins == null || mClusteredProteins.Count == 0)
             {
                 throw new Exception("Error in PerformParsimony: cover.RunAlgorithm returned an empty protein list");
             }
 
             if (ShowProgressAtConsole)
-                OnStatusEvent(string.Format("Iteration Complete, found {0} protein groups", clusteredProteins.Count));
+                OnStatusEvent(string.Format("Iteration Complete, found {0} protein groups", mClusteredProteins.Count));
 
-            return true;
+            mProcessingSucceeded = true;
 
         }
 

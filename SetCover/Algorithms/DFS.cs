@@ -12,9 +12,14 @@ namespace SetCover.Algorithms
     {
         readonly Dictionary<int, Node> AllNodes = new Dictionary<int, Node>();
 
-        private const int MAX_RECURSION_DEPTH = 4000;
         private int mRecursionDepthLimitCount;
         private int mRecursionDepthLimitReportThreshold = 10;
+
+        /// <summary>
+        /// Maximum allowed recursion depth
+        /// </summary>
+        /// <remarks>Defaults to 3500; increase to 20000 if the calling procedure has allocated more memory for the stack</remarks>
+        public int MaxRecursionDepth { get; set; } = Runner.DEFAULT_MAX_DFS_RECURSION_DEPTH;
 
         public List<Node> RunAlgorithm(List<Node> proteins)
         {
@@ -45,10 +50,11 @@ namespace SetCover.Algorithms
         public void Search(Node input, HashSet<Node> searchNodes, int recursionDepth)
         {
 
-            if (recursionDepth >= MAX_RECURSION_DEPTH)
+            if (recursionDepth >= MaxRecursionDepth)
             {
-                // C# can handle a recursion depth of ~5000
-                // For safety, we will limit it to 4000
+                // C# can handle a recursion depth of ~4000 with the default stack size of 1 MB
+                // This limit can be increased by using a larger stack size
+
                 mRecursionDepthLimitCount++;
 
                 if (mRecursionDepthLimitCount > 5 && mRecursionDepthLimitCount < mRecursionDepthLimitReportThreshold)
