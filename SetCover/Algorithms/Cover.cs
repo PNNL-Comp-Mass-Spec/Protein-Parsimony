@@ -9,6 +9,13 @@ namespace SetCover.Algorithms
     /// Finds the best coverage using a greedy algorithm
     /// </summary>
     class Cover : EventNotifier
+    /// <remarks>
+    /// For more information, see Step 4 of Figure 1 in manuscript
+    /// "Proteomic Parsimony through Bipartite Graph Analysis Improves Accuracy and Transparency"
+    /// by Bing Zhang, Matthew C. Chambers, and David L. Tabb
+    /// PMID: 17676885
+    /// https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2810678
+    /// </remarks>
     {
 
         /// <summary>

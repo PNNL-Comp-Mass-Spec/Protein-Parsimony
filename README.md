@@ -1,7 +1,13 @@
 # Protein Parsimony
 
-This program implements a protein parsimony algorithm
-for grouping proteins with similar peptides.
+This program implements a protein parsimony algorithm for grouping proteins with similar peptides.
+
+The algorithm is based on concepts in the manuscript \
+"Proteomic Parsimony through Bipartite Graph Analysis Improves Accuracy and Transparency" \
+by Bing Zhang, Matthew C. Chambers, and David L. Tabb
+* J Proteome Res. 2007 Sep; 6(9): 3549-57. doi: 10.1021/pr070230d. Epub 2007 Aug 4.
+* Abstract: [PMID: 17676885](https://pubmed.ncbi.nlm.nih.gov/17676885/)
+* Full text: [PMCID: 2810678](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2810678)
 
 ## ProteinParsimony Console
 

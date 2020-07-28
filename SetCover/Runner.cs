@@ -11,6 +11,16 @@ using SetCover.Objects;
 
 namespace SetCover
 {
+    /// <summary>
+    /// Utility for forming protein groups using a list of peptide identifications and their associated proteins
+    /// </summary>
+    /// <remarks>
+    /// For more information, see Figure 1 in manuscript
+    /// "Proteomic Parsimony through Bipartite Graph Analysis Improves Accuracy and Transparency"
+    /// by Bing Zhang, Matthew C. Chambers, and David L. Tabb
+    /// PMID: 17676885
+    /// https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2810678
+    /// </remarks>
     public class Runner : EventNotifier
     {
         public const string DEFAULT_SQLITE_TABLE = "T_Row_Metadata";

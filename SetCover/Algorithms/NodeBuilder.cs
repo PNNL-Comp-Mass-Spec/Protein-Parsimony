@@ -4,6 +4,16 @@ using SetCover.Objects;
 namespace SetCover.Algorithms
 {
     class NodeBuilder
+    /// <summary>
+    /// Build a bipartite graph of proteins and peptides
+    /// </summary>
+    /// <remarks>
+    /// For more information, see Step 1 of Figure 1 in manuscript
+    /// "Proteomic Parsimony through Bipartite Graph Analysis Improves Accuracy and Transparency"
+    /// by Bing Zhang, Matthew C. Chambers, and David L. Tabb
+    /// PMID: 17676885
+    /// https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2810678
+    /// </remarks>
     {
 
         private Dictionary<string, Node> mProteins;
