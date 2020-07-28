@@ -3,7 +3,6 @@ using SetCover.Objects;
 
 namespace SetCover.Algorithms
 {
-    class NodeBuilder
     /// <summary>
     /// Build a bipartite graph of proteins and peptides
     /// </summary>
@@ -14,6 +13,7 @@ namespace SetCover.Algorithms
     /// PMID: 17676885
     /// https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2810678
     /// </remarks>
+    internal class NodeBuilder
     {
 
         private Dictionary<string, Node> mProteins;

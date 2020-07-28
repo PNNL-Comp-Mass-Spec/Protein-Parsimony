@@ -8,7 +8,6 @@ namespace SetCover.Algorithms
     /// <summary>
     /// Set of functions used for collapsing proteins with identical peptides into a single protein group
     /// </summary>
-    class NodeCollapser
     /// <remarks>
     /// For more information, see Step 2 of Figure 1 in manuscript
     /// "Proteomic Parsimony through Bipartite Graph Analysis Improves Accuracy and Transparency"
@@ -16,6 +15,7 @@ namespace SetCover.Algorithms
     /// PMID: 17676885
     /// https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2810678
     /// </remarks>
+    internal class NodeCollapser
     {
         public void RunAlgorithm(Dictionary<string, Node> protein, Dictionary<string, Node> pep, GlobalIDContainer globalIDTracker)
         {

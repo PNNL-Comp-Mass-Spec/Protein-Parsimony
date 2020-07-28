@@ -8,7 +8,6 @@ namespace SetCover.Algorithms
     /// <summary>
     /// Cluster sets of nodes using a depth first search (DFS) approach
     /// </summary>
-    class DFS : EventNotifier
     /// <remarks>
     /// For more information, see Step 3 of Figure 1 in manuscript
     /// "Proteomic Parsimony through Bipartite Graph Analysis Improves Accuracy and Transparency"
@@ -16,6 +15,7 @@ namespace SetCover.Algorithms
     /// PMID: 17676885
     /// https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2810678
     /// </remarks>
+    internal class DFS : EventNotifier
     {
         readonly Dictionary<int, Node> AllNodes = new Dictionary<int, Node>();
 
