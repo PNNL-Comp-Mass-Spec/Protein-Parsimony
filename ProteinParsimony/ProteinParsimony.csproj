@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ProteinParsimony</RootNamespace>
     <AssemblyName>ProteinParsimony</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -110,7 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="PRISM-Library">
-      <Version>2.5.26</Version>
+      <Version>2.6.9</Version>
     </PackageReference>
     <PackageReference Include="System.Data.SQLite.Core">
       <Version>1.0.111</Version>
