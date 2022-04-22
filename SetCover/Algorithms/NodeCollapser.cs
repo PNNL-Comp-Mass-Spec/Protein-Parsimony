@@ -46,46 +46,44 @@ namespace SetCover.Algorithms
             Type entityType,
             GlobalIDContainer globalIDTracker)
         {
-            var count = 0;
-            while (count != entityNames.Count)
+            for (var count = 0; count != entityNames.Count; count++)
             {
                 // Is the key there?
-                if (entities.ContainsKey(entityNames[count]))
+                if (!entities.ContainsKey(entityNames[count]))
+                    continue;
+
+                // Get the protein or peptide
+                var entity = entities[entityNames[count]];
+
+                // Only proceed if the correct type
+                if (entity.GetType() != entityType)
+                    continue;
+
+                var duplicates = new NodeChildren<Node>();
+
+                // Look for duplicates and add to a duplicate list
+                duplicates.AddRange(FindDuplicates(entity));
+
+                if (duplicates.Count <= 1)
+                    continue;
+
+                // Create a protein or peptide group from the duplicates
+                Group newGroup;
+
+                if (entityType == typeof(Protein))
+                    newGroup = new ProteinGroup(duplicates, globalIDTracker);
+                else if (entityType == typeof(Peptide))
+                    newGroup = new PeptideGroup(duplicates, globalIDTracker);
+                else
+                    throw new Exception("Invalid type: must be Protein or Peptide");
+
+                foreach (var duplicateItem in duplicates)
                 {
-                    // Get the protein or peptide
-                    var entity = entities[entityNames[count]];
-
-                    // Only proceed if the correct type
-                    if (entity.GetType() == entityType)
-                    {
-                        var dups = new NodeChildren<Node>();
-
-                        // Look for duplicates and add to a duplicate list
-                        dups.AddRange(FindDuplicates(entity));
-
-                        if (dups.Count > 1)
-                        {
-                            // Create a protein or peptide group from the duplicates
-                            Group newGroup;
-
-                            if (entityType == typeof(Protein))
-                                newGroup = new ProteinGroup(dups, globalIDTracker);
-                            else if (entityType == typeof(Peptide))
-                                newGroup = new PeptideGroup(dups, globalIDTracker);
-                            else
-                                throw new Exception("Invalid type: must be Protein or Peptide");
-
-                            foreach (var dupItem in dups)
-                            {
-                                // Remove entities from the library, add the new group
-                                entities.Remove(dupItem.NodeName);
-                            }
-
-                            entities.Add(newGroup.NodeName, newGroup);
-                        }
-                    }
+                    // Remove entities from the library, add the new group
+                    entities.Remove(duplicateItem.NodeName);
                 }
-                count++;
+
+                entities.Add(newGroup.NodeName, newGroup);
             }
         }
 
