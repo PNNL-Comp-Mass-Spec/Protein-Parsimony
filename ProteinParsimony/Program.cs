@@ -7,7 +7,7 @@ using SetCover;
 
 namespace ProteinParsimony
 {
-    class Program
+    public static class Program
     {
         private const string PROGRAM_DATE = "April 22, 2022";
 
@@ -156,11 +156,6 @@ namespace ProteinParsimony
         private static void ShowErrorMessage(string message, Exception ex = null)
         {
             ConsoleMsgUtils.ShowError(message, ex);
-        }
-
-        private static void ShowErrorMessage(string message, IEnumerable<string> additionalInfo)
-        {
-            ConsoleMsgUtils.ShowErrors(message, additionalInfo);
         }
 
         private static void ShowSyntax(string errorMessage = "")
