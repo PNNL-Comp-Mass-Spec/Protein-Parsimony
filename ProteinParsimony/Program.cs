@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using PRISM;
 using PRISM.FileProcessor;
+using PRISM.Logging;
 using SetCover;
 
 namespace ProteinParsimony
@@ -203,7 +204,7 @@ namespace ProteinParsimony
             Console.WriteLine(ConsoleMsgUtils.WrapParagraph(textToWrap));
         }
 
-        private static void RegisterEvents(EventNotifier processingClass)
+        private static void RegisterEvents(IEventNotifier processingClass)
         {
             processingClass.DebugEvent += OnDebugEvent;
             processingClass.StatusEvent += OnStatusEvent;
