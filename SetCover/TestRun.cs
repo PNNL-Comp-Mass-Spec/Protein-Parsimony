@@ -25,15 +25,15 @@ namespace SetCover
         {
             var peptideProteinMapList = new List<RowEntry>
             {
-                new RowEntry {ProteinEntry = "prot_A", PeptideEntry = "pep_A"},
-                new RowEntry {ProteinEntry = "prot_B", PeptideEntry = "pep_A"},
-                new RowEntry {ProteinEntry = "prot_B", PeptideEntry = "pep_B"},
-                new RowEntry {ProteinEntry = "prot_B", PeptideEntry = "pep_C"},
-                new RowEntry {ProteinEntry = "prot_C", PeptideEntry = "pep_A"},
-                new RowEntry {ProteinEntry = "prot_C", PeptideEntry = "pep_B"},
-                new RowEntry {ProteinEntry = "prot_C", PeptideEntry = "pep_C"},
-                new RowEntry {ProteinEntry = "prot_D", PeptideEntry = "pep_D"},
-                new RowEntry {ProteinEntry = "prot_D", PeptideEntry = "pep_E"}
+                new() {ProteinEntry = "prot_A", PeptideEntry = "pep_A"},
+                new() {ProteinEntry = "prot_B", PeptideEntry = "pep_A"},
+                new() {ProteinEntry = "prot_B", PeptideEntry = "pep_B"},
+                new() {ProteinEntry = "prot_B", PeptideEntry = "pep_C"},
+                new() {ProteinEntry = "prot_C", PeptideEntry = "pep_A"},
+                new() {ProteinEntry = "prot_C", PeptideEntry = "pep_B"},
+                new() {ProteinEntry = "prot_C", PeptideEntry = "pep_C"},
+                new() {ProteinEntry = "prot_D", PeptideEntry = "pep_D"},
+                new() {ProteinEntry = "prot_D", PeptideEntry = "pep_E"}
             };
 
             var expectedOutput = new List<string> {
@@ -52,30 +52,30 @@ namespace SetCover
         {
             var peptideProteinMapList = new List<RowEntry>
             {
-                new RowEntry {ProteinEntry = "prot_A", PeptideEntry = "pep_A"},
-                new RowEntry {ProteinEntry = "prot_B", PeptideEntry = "pep_A"},
-                new RowEntry {ProteinEntry = "prot_B", PeptideEntry = "pep_B"},
-                new RowEntry {ProteinEntry = "prot_B", PeptideEntry = "pep_C"},
-                new RowEntry {ProteinEntry = "prot_C", PeptideEntry = "pep_A"},
-                new RowEntry {ProteinEntry = "prot_C", PeptideEntry = "pep_B"},
-                new RowEntry {ProteinEntry = "prot_C", PeptideEntry = "pep_C"},
-                new RowEntry {ProteinEntry = "prot_D", PeptideEntry = "pep_D"},
-                new RowEntry {ProteinEntry = "prot_D", PeptideEntry = "pep_E"},
-                new RowEntry {ProteinEntry = "prot_E", PeptideEntry = "pep_F"},
-                new RowEntry {ProteinEntry = "prot_E", PeptideEntry = "pep_G"},
-                new RowEntry {ProteinEntry = "prot_E", PeptideEntry = "pep_H"},
-                new RowEntry {ProteinEntry = "prot_E", PeptideEntry = "pep_I"},
-                new RowEntry {ProteinEntry = "prot_E", PeptideEntry = "pep_K"},
-                new RowEntry {ProteinEntry = "prot_F", PeptideEntry = "pep_F"},
-                new RowEntry {ProteinEntry = "prot_G", PeptideEntry = "pep_I"},
-                new RowEntry {ProteinEntry = "prot_G", PeptideEntry = "pep_G"},
-                new RowEntry {ProteinEntry = "prot_H", PeptideEntry = "pep_F"},
-                new RowEntry {ProteinEntry = "prot_H", PeptideEntry = "pep_G"},
-                new RowEntry {ProteinEntry = "prot_I", PeptideEntry = "pep_H"},
-                new RowEntry {ProteinEntry = "prot_I", PeptideEntry = "pep_J"},
-                new RowEntry {ProteinEntry = "prot_J", PeptideEntry = "pep_J"},
-                new RowEntry {ProteinEntry = "prot_K", PeptideEntry = "pep_L"},
-                new RowEntry {ProteinEntry = "prot_L", PeptideEntry = "pep_M"},
+                new() {ProteinEntry = "prot_A", PeptideEntry = "pep_A"},
+                new() {ProteinEntry = "prot_B", PeptideEntry = "pep_A"},
+                new() {ProteinEntry = "prot_B", PeptideEntry = "pep_B"},
+                new() {ProteinEntry = "prot_B", PeptideEntry = "pep_C"},
+                new() {ProteinEntry = "prot_C", PeptideEntry = "pep_A"},
+                new() {ProteinEntry = "prot_C", PeptideEntry = "pep_B"},
+                new() {ProteinEntry = "prot_C", PeptideEntry = "pep_C"},
+                new() {ProteinEntry = "prot_D", PeptideEntry = "pep_D"},
+                new() {ProteinEntry = "prot_D", PeptideEntry = "pep_E"},
+                new() {ProteinEntry = "prot_E", PeptideEntry = "pep_F"},
+                new() {ProteinEntry = "prot_E", PeptideEntry = "pep_G"},
+                new() {ProteinEntry = "prot_E", PeptideEntry = "pep_H"},
+                new() {ProteinEntry = "prot_E", PeptideEntry = "pep_I"},
+                new() {ProteinEntry = "prot_E", PeptideEntry = "pep_K"},
+                new() {ProteinEntry = "prot_F", PeptideEntry = "pep_F"},
+                new() {ProteinEntry = "prot_G", PeptideEntry = "pep_I"},
+                new() {ProteinEntry = "prot_G", PeptideEntry = "pep_G"},
+                new() {ProteinEntry = "prot_H", PeptideEntry = "pep_F"},
+                new() {ProteinEntry = "prot_H", PeptideEntry = "pep_G"},
+                new() {ProteinEntry = "prot_I", PeptideEntry = "pep_H"},
+                new() {ProteinEntry = "prot_I", PeptideEntry = "pep_J"},
+                new() {ProteinEntry = "prot_J", PeptideEntry = "pep_J"},
+                new() {ProteinEntry = "prot_K", PeptideEntry = "pep_L"},
+                new() {ProteinEntry = "prot_L", PeptideEntry = "pep_M"},
             };
 
             var expectedOutput = new List<string> {

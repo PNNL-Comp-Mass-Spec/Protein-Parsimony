@@ -181,11 +181,10 @@ namespace SetCover
                     TableName = PARSIMONY_GROUPING_TABLE
                 };
 
-                var colDefs = new List<MageColumnDef>
+                writer.ColDefOverride = new List<MageColumnDef>
                 {
-                    new MageColumnDef("GroupID", "integer", "4")		// Note that "size" doesn't matter since we're writing to a SqLite database
+                    new("GroupID", "integer", "4") // Note that "size" doesn't matter since we're writing to a SqLite database
                 };
-                writer.ColDefOverride = colDefs;
 
                 if (ShowProgressAtConsole)
                     OnStatusEvent("Importing data into table " + PARSIMONY_GROUPING_TABLE);
@@ -210,11 +209,10 @@ namespace SetCover
                     TableName = PARSIMONY_GROUP_MEMBERS_TABLE
                 };
 
-                var colDefs = new List<MageColumnDef>
+                writer.ColDefOverride = new List<MageColumnDef>
                 {
-                    new MageColumnDef("GroupID", "integer", "4")		// Note that "size" doesn't matter since we're writing to a SqLite database
+                    new("GroupID", "integer", "4") // Note that "size" doesn't matter since we're writing to a SqLite database
                 };
-                writer.ColDefOverride = colDefs;
 
                 if (ShowProgressAtConsole)
                     OnStatusEvent("Importing data into table " + PARSIMONY_GROUP_MEMBERS_TABLE);

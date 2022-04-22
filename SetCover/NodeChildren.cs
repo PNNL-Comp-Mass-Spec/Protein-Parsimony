@@ -7,7 +7,7 @@ namespace SetCover
 {
 	public class NodeChildren<T> : IList<T>
 	{
-		private readonly List<T> Nodes = new List<T>();
+		private readonly List<T> Nodes = new();
 
         public int ChildCount { get; private set; }
 
@@ -25,7 +25,7 @@ namespace SetCover
 		    Nodes.Sort();
 		}
 
-		public NodeChildren(HashSet<T> inlist)
+		public NodeChildren(IEnumerable<T> nodeList)
 		{
 			Nodes = new List<T>(nodeList);
 			ChildCount = Nodes.Count;
