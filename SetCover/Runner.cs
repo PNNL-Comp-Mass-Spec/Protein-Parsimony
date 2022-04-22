@@ -458,38 +458,37 @@ namespace SetCover
             try
             {
                 var connectionString = "Data Source = " + fiDatabaseFile.FullName + "; Version=3;";
-                using (var dbConnection = new SQLiteConnection(connectionString, true))
+
+                using var dbConnection = new SQLiteConnection(connectionString, true);
+
+                dbConnection.Open();
+
+                var tablesToTruncate = new List<string> {
+                    PARSIMONY_GROUPING_TABLE,
+                    PARSIMONY_GROUP_MEMBERS_TABLE
+                };
+
+                var emptyLineAdded = false;
+                foreach (var tableName in tablesToTruncate)
                 {
-                    dbConnection.Open();
+                    if (!SQLiteTableExists(dbConnection, tableName))
+                        continue;
 
-                    var tablesToTruncate = new List<string> {
-                        PARSIMONY_GROUPING_TABLE,
-                        PARSIMONY_GROUP_MEMBERS_TABLE
-                    };
+                    using var dbCommand = dbConnection.CreateCommand();
 
-                    var emptyLineAdded = false;
-                    foreach (var tableName in tablesToTruncate)
+                    if (ShowProgressAtConsole)
                     {
-                        if (!SQLiteTableExists(dbConnection, tableName))
-                            continue;
-
-                        using (var dbCommand = dbConnection.CreateCommand())
+                        if (!emptyLineAdded)
                         {
-                            if (ShowProgressAtConsole)
-                            {
-                                if (!emptyLineAdded)
-                                {
-                                    emptyLineAdded = true;
-                                    Console.WriteLine();
-                                }
-
-                                OnStatusEvent("Deleting existing data in table {0}", tableName);
-                            }
-
-                            dbCommand.CommandText = string.Format("DELETE FROM {0};", tableName);
-                            dbCommand.ExecuteNonQuery();
+                            emptyLineAdded = true;
+                            Console.WriteLine();
                         }
+
+                        OnStatusEvent("Deleting existing data in table {0}", tableName);
                     }
+
+                    dbCommand.CommandText = string.Format("DELETE FROM {0};", tableName);
+                    dbCommand.ExecuteNonQuery();
                 }
             }
             catch (Exception ex)
@@ -544,22 +543,16 @@ namespace SetCover
 
         private bool SQLiteTableExists(SQLiteConnection dbConnection, string tableName)
         {
-            bool hasRows;
-
-            using (var cmd = new SQLiteCommand(dbConnection)
+            using var cmd = new SQLiteCommand(dbConnection)
             {
                 CommandText = "SELECT name " +
                               "FROM sqlite_master " +
                               "WHERE type IN ('table','view') And tbl_name = '" + tableName + "'"
-            })
-            {
-                using (var reader = cmd.ExecuteReader())
-                {
-                    hasRows = reader.HasRows;
-                }
-            }
+            };
 
-            return hasRows;
+            using var reader = cmd.ExecuteReader();
+
+            return reader.HasRows;
         }
 
         /// <summary>
@@ -573,17 +566,17 @@ namespace SetCover
             try
             {
                 var connectionString = "Data Source = " + fiDatabaseFile.FullName + "; Version=3;";
-                using (var dbConnection = new SQLiteConnection(connectionString, true))
-                {
-                    dbConnection.Open();
 
-                    if (SQLiteTableExists(dbConnection, sourceTableName))
-                        return true;
+                using var dbConnection = new SQLiteConnection(connectionString, true);
 
-                    OnWarningEvent("Source table {0} not found in SQLite file\n{1}", sourceTableName, fiDatabaseFile.FullName);
+                dbConnection.Open();
 
-                    return false;
-                }
+                if (SQLiteTableExists(dbConnection, sourceTableName))
+                    return true;
+
+                OnWarningEvent("Source table {0} not found in SQLite file\n{1}", sourceTableName, fiDatabaseFile.FullName);
+
+                return false;
             }
             catch (Exception ex)
             {

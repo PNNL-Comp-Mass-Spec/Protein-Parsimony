@@ -10,7 +10,7 @@ namespace SetCover
     internal static class Utilities
     {
         /// <summary>
-        /// Generates a datatable with all entries being a string
+        /// Generates a data table with all entries being a string
         /// </summary>
         /// <param name="filePath">Input file path</param>
         /// <param name="columnsToTrack">Column names to store in the data table</param>
@@ -19,71 +19,70 @@ namespace SetCover
         {
             var dt = new DataTable();
 
-            using (var sr = new StreamReader(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
+            using var reader = new StreamReader(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read));
+
+            if (reader.EndOfStream)
             {
-                if (sr.EndOfStream)
+                throw new Exception("Input file is empty: " + filePath);
+            }
+
+            // first line has headers
+            var headerLine = reader.ReadLine();
+
+            var colIndicesToLoad = new SortedSet<int>();
+
+            if (string.IsNullOrWhiteSpace(headerLine))
+            {
+                // Header line is empty, that's an error
+                throw new Exception("The data provided is not in a valid format: Header line must be tab delimited");
+            }
+
+            var headerFields = headerLine.Split('\t');
+
+            if (columnsToTrack == null || columnsToTrack.Count == 0)
+            {
+                // Load all of the data
+                foreach (var fieldIndex in Enumerable.Range(0, headerFields.Length))
                 {
-                    throw new Exception("Input file is empty: " + filePath);
+                    var fieldName = headerFields[fieldIndex];
+                    colIndicesToLoad.Add(fieldIndex);
+                    dt.Columns.Add(fieldName);
+                    dt.Columns[fieldName].DefaultValue = "";
                 }
-
-                // first line has headers
-                var headerLine = sr.ReadLine();
-
-                var colIndicesToLoad = new SortedSet<int>();
-
-                if (string.IsNullOrWhiteSpace(headerLine))
+            }
+            else
+            {
+                // Only load data in the specified columns
+                for (var fieldIndex = 0; fieldIndex < headerFields.Length; fieldIndex++)
                 {
-                    // Header line is empty, that's an error
-                    throw new Exception("The data provided is not in a valid format: Header line must be tab delimited");
-                }
-
-                var headerFields = headerLine.Split('\t');
-
-                if (columnsToTrack == null || columnsToTrack.Count == 0)
-                {
-                    // Load all of the data
-                    foreach (var fieldIndex in Enumerable.Range(0, headerFields.Length))
+                    var fieldName = headerFields[fieldIndex];
+                    if (columnsToTrack.Contains(fieldName))
                     {
-                        var fieldName = headerFields[fieldIndex];
                         colIndicesToLoad.Add(fieldIndex);
                         dt.Columns.Add(fieldName);
                         dt.Columns[fieldName].DefaultValue = "";
                     }
                 }
-                else
+            }
+
+            // Fill the rest of the table
+            while (!reader.EndOfStream)
+            {
+                var dataLine = reader.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(dataLine))
+                    continue;
+
+                var row = dt.NewRow();
+
+                var values = dataLine.Split('\t');
+
+                foreach (var fieldIndex in colIndicesToLoad)
                 {
-                    // Only load data in the specified columns
-                    for (var fieldIndex = 0; fieldIndex < headerFields.Length; fieldIndex++)
-                    {
-                        var fieldName = headerFields[fieldIndex];
-                        if (columnsToTrack.Contains(fieldName))
-                        {
-                            colIndicesToLoad.Add(fieldIndex);
-                            dt.Columns.Add(fieldName);
-                            dt.Columns[fieldName].DefaultValue = "";
-                        }
-                    }
+                    row[fieldIndex] = values[fieldIndex];
                 }
 
-                // Fill the rest of the table
-                while (!sr.EndOfStream)
-                {
-                    var dataLine = sr.ReadLine();
-
-                    if (string.IsNullOrWhiteSpace(dataLine))
-                        continue;
-
-                    var row = dt.NewRow();
-
-                    var dataVals = dataLine.Split('\t');
-
-                    foreach (var fieldIndex in colIndicesToLoad)
-                    {
-                        row[fieldIndex] = dataVals[fieldIndex];
-                    }
-
-                    dt.Rows.Add(row);
-                }
+                dt.Rows.Add(row);
             }
 
             return dt;
@@ -140,30 +139,33 @@ namespace SetCover
         // ReSharper disable once UnusedMember.Global
 
         /// <summary>
-        /// Writes a datatable to text file
+        /// Writes a data table to text file
         /// </summary>
         /// <param name="dt"></param>
         /// <param name="filePath"></param>
         public static void WriteDataTableToText(DataTable dt, string filePath)
         {
-            using (var sw = new StreamWriter(filePath))
+            using var writer = new StreamWriter(filePath);
+
+            var headerLine = dt.Columns[0].ColumnName;
+
+            for (var i = 1; i < dt.Columns.Count; i++)
             {
-                var headerLine = dt.Columns[0].ColumnName;
+                headerLine += "\t" + dt.Columns[i].ColumnName;
+            }
+
+            writer.WriteLine(headerLine);
+
+            foreach (DataRow row in dt.Rows)
+            {
+                var dataLine = row[0];
+
                 for (var i = 1; i < dt.Columns.Count; i++)
                 {
-                    headerLine += "\t" + dt.Columns[i].ColumnName;
+                    dataLine += "\t" + row[i];
                 }
-                sw.WriteLine(headerLine);
 
-                foreach (DataRow row in dt.Rows)
-                {
-                    var dataLine = row[0];
-                    for (var i = 1; i < dt.Columns.Count; i++)
-                    {
-                        dataLine += "\t" + row[i];
-                    }
-                    sw.WriteLine(dataLine);
-                }
+                writer.WriteLine(dataLine);
             }
         }
 
@@ -177,101 +179,99 @@ namespace SetCover
         /// <param name="globalIDTracker"></param>
         public static void SaveResults(List<Node> outData, string parsimonyResultsFilePath, string proteinGroupMembersFilePath, GlobalIDContainer globalIDTracker)
         {
-            using (var sw = new StreamWriter(new FileStream(parsimonyResultsFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
+            using var resultsWriter = new StreamWriter(new FileStream(parsimonyResultsFilePath, FileMode.Create, FileAccess.Write, FileShare.Read));
+            using var proteinGroupsWriter = new StreamWriter(new FileStream(proteinGroupMembersFilePath, FileMode.Create, FileAccess.Write, FileShare.Read));
+
+            var header = "GroupID\tProtein_First\tPeptide\tProtein_List\tProtein_Count\tGroup_Count";
+            resultsWriter.WriteLine(header);
+
+            header = "GroupID\tProtein";
+            proteinGroupsWriter.WriteLine(header);
+
+            // Step through the data to determine the number of groups that each peptide is in
+
+            var peptideToProteinGroupMap = new Dictionary<string, int>();
+
+            foreach (var proteinNode in outData)
             {
-                using (var swGroupMembers = new StreamWriter(new FileStream(proteinGroupMembersFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
+                foreach (var child in proteinNode.Children)
                 {
-                    var header = "GroupID\tProtein_First\tPeptide\tProtein_List\tProtein_Count\tGroup_Count";
-                    sw.WriteLine(header);
-
-                    header = "GroupID\tProtein";
-                    swGroupMembers.WriteLine(header);
-
-                    // Step through the data to determine the number of groups that each peptide is in
-
-                    var peptideToProteinGroupMap = new Dictionary<string, int>();
-
-                    foreach (var proteinNode in outData)
+                    if (child.GetType() == typeof(PeptideGroup))
                     {
-                        foreach (var child in proteinNode.Children)
+                        var currentPeptides = (Group)child;
+                        foreach (var groupedPeptide in currentPeptides.GetNodeGroup())
                         {
-                            if (child.GetType() == typeof(PeptideGroup))
-                            {
-                                var currentPeptides = (Group)child;
-                                foreach (var groupedpep in currentPeptides.GetNodeGroup())
-                                {
-                                    UpdatePeptideToProteinGroupMap(peptideToProteinGroupMap, groupedpep.NodeName);
-                                }
-                            }
-                            else
-                            {
-                                UpdatePeptideToProteinGroupMap(peptideToProteinGroupMap, child.NodeName);
-                            }
+                            UpdatePeptideToProteinGroupMap(peptideToProteinGroupMap, groupedPeptide.NodeName);
                         }
                     }
-
-                    // Now write out the results
-                    var groupID = 0;
-                    foreach (var proteinNode in outData)
+                    else
                     {
-                        string proteinFirst;
-                        string proteinNameOrList;
-                        int proteinsInGroupCount;
+                        UpdatePeptideToProteinGroupMap(peptideToProteinGroupMap, child.NodeName);
+                    }
+                }
+            }
 
-                        groupID++;
+            // Now write out the results
+            var groupID = 0;
 
-                        // Append one or more lines to T_Parsimony_Group_Members.txt
-                        if (proteinNode.GetType() == typeof(ProteinGroup))
+            foreach (var proteinNode in outData)
+            {
+                string proteinFirst;
+                string proteinNameOrList;
+                int proteinsInGroupCount;
+
+                groupID++;
+
+                // Append one or more lines to T_Parsimony_Group_Members.txt
+                if (proteinNode.GetType() == typeof(ProteinGroup))
+                {
+                    var currentGroup = (ProteinGroup)proteinNode;
+                    proteinFirst = currentGroup.NodeNameFirst;
+                    if (currentGroup.NodeName.IndexOf(Group.LIST_SEP_CHAR) > 0)
+                    {
+                        var proteinList = globalIDTracker.IDListToNameList(currentGroup.NodeName, Group.LIST_SEP_CHAR);
+                        proteinNameOrList = string.Join("; ", proteinList);
+                        proteinsInGroupCount = proteinList.Count;
+
+                        foreach (var proteinMember in proteinList)
                         {
-                            var currentGroup = (ProteinGroup)proteinNode;
-                            proteinFirst = currentGroup.NodeNameFirst;
-                            if (currentGroup.NodeName.IndexOf(Group.LIST_SEP_CHAR) > 0)
-                            {
-                                var proteinList = globalIDTracker.IDListToNameList(currentGroup.NodeName, Group.LIST_SEP_CHAR);
-                                proteinNameOrList = string.Join("; ", proteinList);
-                                proteinsInGroupCount = proteinList.Count;
-
-                                foreach (var proteinMember in proteinList)
-                                {
-                                    WriteOutputGroupMemberLine(swGroupMembers, groupID, proteinMember);
-                                }
-                            }
-                            else
-                            {
-                                // Note: this code should never be reached
-                                proteinNameOrList = currentGroup.NodeName;
-                                proteinsInGroupCount = 1;
-                                WriteOutputGroupMemberLine(swGroupMembers, groupID, proteinNameOrList);
-                            }
-                        }
-                        else
-                        {
-                            proteinFirst = proteinNode.NodeName;
-                            proteinNameOrList = proteinNode.NodeName;
-                            proteinsInGroupCount = 1;
-
-                            WriteOutputGroupMemberLine(swGroupMembers, groupID, proteinNameOrList);
-                        }
-
-                        // Append one or more lines to T_Parsimony_Grouping.txt
-                        foreach (var child in proteinNode.Children)
-                        {
-                            if (child.GetType() == typeof(PeptideGroup))
-                            {
-                                var currentPeptides = (Group)child;
-                                foreach (var groupedpep in currentPeptides.GetNodeGroup())
-                                {
-                                    WriteOutputGroupingLine(sw, peptideToProteinGroupMap, groupID, proteinFirst, groupedpep.NodeName, proteinNameOrList, proteinsInGroupCount);
-                                }
-                            }
-                            else
-                            {
-                                WriteOutputGroupingLine(sw, peptideToProteinGroupMap, groupID, proteinFirst, child.NodeName, proteinNameOrList, proteinsInGroupCount);
-                            }
+                            WriteOutputGroupMemberLine(proteinGroupsWriter, groupID, proteinMember);
                         }
                     }
-                } // End Using
-            } // End Using
+                    else
+                    {
+                        // Note: this code should never be reached
+                        proteinNameOrList = currentGroup.NodeName;
+                        proteinsInGroupCount = 1;
+                        WriteOutputGroupMemberLine(proteinGroupsWriter, groupID, proteinNameOrList);
+                    }
+                }
+                else
+                {
+                    proteinFirst = proteinNode.NodeName;
+                    proteinNameOrList = proteinNode.NodeName;
+                    proteinsInGroupCount = 1;
+
+                    WriteOutputGroupMemberLine(proteinGroupsWriter, groupID, proteinNameOrList);
+                }
+
+                // Append one or more lines to T_Parsimony_Grouping.txt
+                foreach (var child in proteinNode.Children)
+                {
+                    if (child.GetType() == typeof(PeptideGroup))
+                    {
+                        var currentPeptides = (Group)child;
+                        foreach (var groupedPeptide in currentPeptides.GetNodeGroup())
+                        {
+                            WriteOutputGroupingLine(resultsWriter, peptideToProteinGroupMap, groupID, proteinFirst, groupedPeptide.NodeName, proteinNameOrList, proteinsInGroupCount);
+                        }
+                    }
+                    else
+                    {
+                        WriteOutputGroupingLine(resultsWriter, peptideToProteinGroupMap, groupID, proteinFirst, child.NodeName, proteinNameOrList, proteinsInGroupCount);
+                    }
+                }
+            }
         }
 
         private static void UpdatePeptideToProteinGroupMap(IDictionary<string, int> peptideToProteinGroupMap, string peptide)
