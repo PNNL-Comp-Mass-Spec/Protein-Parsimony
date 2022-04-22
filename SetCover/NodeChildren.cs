@@ -9,9 +9,7 @@ namespace SetCover
 	{
 		private readonly List<T> Nodes = new List<T>();
 
-		private int memberCount;
-
-		public int ChildCount => memberCount;
+        public int ChildCount { get; private set; }
 
 	    public NodeChildren()
 		{
@@ -30,13 +28,13 @@ namespace SetCover
 		public NodeChildren(HashSet<T> inlist)
 		{
 			Nodes = new List<T>(inlist);
-			memberCount = Nodes.Count;
+			ChildCount = Nodes.Count;
 		}
 
 		public NodeChildren(NodeChildren<T> inlist)
 		{
 			Nodes = new List<T>(inlist);
-			memberCount = Nodes.Count;
+			ChildCount = Nodes.Count;
 		}
 
 		/// <summary>
@@ -48,7 +46,7 @@ namespace SetCover
 			if (!Nodes.Contains(node))
 			{
 				Nodes.Add(node);
-				memberCount++;
+				ChildCount++;
 			}
 		}
 
@@ -66,7 +64,7 @@ namespace SetCover
 			if (Nodes.Contains(node))
 			{
 				Nodes.Remove(node);
-				memberCount--;
+				ChildCount--;
 			}
 		}
 
@@ -80,7 +78,7 @@ namespace SetCover
 			if (!Nodes.Contains(item))
 			{
 				Nodes.Insert(index, item);
-				memberCount++;
+				ChildCount++;
 			}
 		}
 
