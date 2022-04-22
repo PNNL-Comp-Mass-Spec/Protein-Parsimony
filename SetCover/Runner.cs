@@ -333,7 +333,7 @@ namespace SetCover
             mPeptideProteinMapList = peptideProteinMapList;
 
             // Increase the stack size from 1 MB to 50 MB
-            var stackSizeInBytes = 50 * 1024 * 1024;
+            const int stackSizeInBytes = 50 * 1024 * 1024;
 
             // Since we're using a larger stack size, we can increase the maximum DFS recursion depth
             mMaxDFSRecursionDepth = 20000;

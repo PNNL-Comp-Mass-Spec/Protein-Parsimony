@@ -12,7 +12,7 @@ namespace SetCover
         [Test]
         public void TestFile()
         {
-            var file = @"\\proto-2\UnitTest_Files\ProteinParsimony\T_Row_Metadata.txt";
+            const string file = @"\\proto-2\UnitTest_Files\ProteinParsimony\T_Row_Metadata.txt";
 
             Runner.GetDefaultOutputFileNames(file, out var parsimonyResultsFilePath, out var proteinGroupMembersFilePath);
 
@@ -144,8 +144,8 @@ namespace SetCover
         [Test]
         public void TestResultDB()
         {
-            var dataDbFolder = @"\\proto-2\UnitTest_Files\ProteinParsimony";
-            var dataFile = "Results.db3";
+            const string dataDbFolder = @"\\proto-2\UnitTest_Files\ProteinParsimony";
+            const string dataFile = "Results.db3";
             const string sourceTableName = Runner.DEFAULT_SQLITE_TABLE;
 
             var runner = new Runner();
