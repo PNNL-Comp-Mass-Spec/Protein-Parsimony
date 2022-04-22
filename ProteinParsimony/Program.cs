@@ -9,7 +9,7 @@ namespace ProteinParsimony
 {
     class Program
     {
-        private const string PROGRAM_DATE = "October 2, 2019";
+        private const string PROGRAM_DATE = "April 22, 2022";
 
         private static DateTime mLastProgressUpdateTime = DateTime.UtcNow;
 
@@ -193,11 +193,11 @@ namespace ProteinParsimony
                                 "Protein and Peptide. Results will be written to tables " +
                                 Runner.PARSIMONY_GROUPING_TABLE + " and " + Runner.PARSIMONY_GROUP_MEMBERS_TABLE);
             Console.WriteLine();
-            Console.WriteLine("Program written by Josh Aldrich for the Department of Energy (PNNL, Richland, WA) in 2013");
+            Console.WriteLine("Program written by Josh Aldrich for the Department of Energy (PNNL, Richland, WA)");
             Console.WriteLine("Version: " + ProcessFilesOrDirectoriesBase.GetAppVersion(PROGRAM_DATE));
             Console.WriteLine();
             Console.WriteLine("E-mail:  proteomics@pnnl.gov");
-            Console.WriteLine("Website: https://omics.pnl.gov/ or https://panomics.pnnl.gov/ or ");
+            Console.WriteLine("Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics or ");
             Console.WriteLine("         https://github.com/PNNL-Comp-Mass-Spec");
         }
 
