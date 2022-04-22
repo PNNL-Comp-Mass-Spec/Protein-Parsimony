@@ -111,9 +111,10 @@ namespace ProteinParsimony
                     parsimonyResultsFilePath = args[1];
                 }
 
-                var fiOutputFile = new FileInfo(parsimonyResultsFilePath);
-                if (fiOutputFile.Directory != null && !fiOutputFile.Directory.Exists)
-                    fiOutputFile.Directory.Create();
+                var outputFile = new FileInfo(parsimonyResultsFilePath);
+
+                if (outputFile.Directory != null && !outputFile.Directory.Exists)
+                    outputFile.Directory.Create();
             }
             catch (Exception ex)
             {

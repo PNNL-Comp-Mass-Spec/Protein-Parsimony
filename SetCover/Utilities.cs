@@ -311,9 +311,9 @@ namespace SetCover
                     if (child.GetType() == typeof(PeptideGroup))
                     {
                         var proteinList = GetProteinList(node, globalIDTracker);
-                        foreach (var groupedpep in ((Group)child).GetNodeGroup())
+                        foreach (var groupedPeptide in ((Group)child).GetNodeGroup())
                         {
-                            outLines.Add(string.Format("{0}\t{1}", proteinList, groupedpep.NodeName));
+                            outLines.Add(string.Format("{0}\t{1}", proteinList, groupedPeptide.NodeName));
                         }
                     }
                     else if (node is ProteinGroup)
