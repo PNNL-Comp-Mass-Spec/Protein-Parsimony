@@ -24,6 +24,7 @@ namespace SetCover.Objects
             }
         }
 
+        // ReSharper disable once UnusedMember.Global
         public List<string> NodeNameList => mNodeNameList ?? new List<string>();
 
         /// <summary>

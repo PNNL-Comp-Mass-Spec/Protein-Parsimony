@@ -24,13 +24,18 @@ namespace SetCover.Objects
         public NodeChildren<Node> Children { get; set; }
         public string NodeName { get; set; }
 
-        // Constructor
-        public Node()
-            : this(NodeTypeName.Other)
+        // ReSharper disable once UnusedMember.Global
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public Node() : this(NodeTypeName.Other)
         {
         }
 
-        // Constructor
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Node(NodeTypeName nodeType)
         {
             NodeType = nodeType;
@@ -41,9 +46,10 @@ namespace SetCover.Objects
             NodeName = string.Empty;
         }
 
-        // Constructor
-        public Node(NodeTypeName nodeType, string nodeName)
-            : this(nodeType)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public Node(NodeTypeName nodeType, string nodeName) : this(nodeType)
         {
             NodeName = nodeName;
             Children = new NodeChildren<Node>();

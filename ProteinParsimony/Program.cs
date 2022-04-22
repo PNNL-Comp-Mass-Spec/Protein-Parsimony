@@ -113,6 +113,7 @@ namespace ProteinParsimony
 
                 var outputFile = new FileInfo(parsimonyResultsFilePath);
 
+                // ReSharper disable once MergeIntoPattern
                 if (outputFile.Directory != null && !outputFile.Directory.Exists)
                     outputFile.Directory.Create();
             }

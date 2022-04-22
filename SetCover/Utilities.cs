@@ -137,6 +137,8 @@ namespace SetCover
             return true;
         }
 
+        // ReSharper disable once UnusedMember.Global
+
         /// <summary>
         /// Writes a datatable to text file
         /// </summary>

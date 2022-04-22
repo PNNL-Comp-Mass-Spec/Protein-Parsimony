@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+// ReSharper disable UnusedMember.Global
+
 namespace SetCover
 {
 	public class NodeChildren<T> : IList<T>
