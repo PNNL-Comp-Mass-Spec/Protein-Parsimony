@@ -118,14 +118,13 @@ namespace SetCover
                 {
                     if (ShowProgressAtConsole)
                     {
-                        OnErrorEvent(
-                            string.Format("Error loading data from table {0}; GetPeptideProteinMap returned false", sourceTableName));
+                        OnErrorEvent("Error loading data from table {0}; GetPeptideProteinMap returned false", sourceTableName);
                     }
                     return false;
                 }
 
                 if (ShowProgressAtConsole)
-                    OnStatusEvent(string.Format("Loaded {0} rows from table {1}", pepToProtMapping.Count, sourceTableName));
+                    OnStatusEvent("Loaded {0} rows from table {1}", pepToProtMapping.Count, sourceTableName);
             }
             catch (Exception ex)
             {
@@ -447,7 +446,7 @@ namespace SetCover
             }
 
             if (ShowProgressAtConsole)
-                OnStatusEvent(string.Format("Iteration Complete, found {0} protein groups", mClusteredProteins.Count));
+                OnStatusEvent("Iteration Complete, found {0} protein groups", mClusteredProteins.Count);
 
             mProcessingSucceeded = true;
         }
@@ -486,7 +485,7 @@ namespace SetCover
                                     Console.WriteLine();
                                 }
 
-                                OnStatusEvent(string.Format("Deleting existing data in table {0}", tableName));
+                                OnStatusEvent("Deleting existing data in table {0}", tableName);
                             }
 
                             dbCommand.CommandText = string.Format("DELETE FROM {0};", tableName);
@@ -583,17 +582,14 @@ namespace SetCover
                     if (SQLiteTableExists(dbConnection, sourceTableName))
                         return true;
 
-                    OnWarningEvent(
-                        string.Format("Source table {0} not found in SQLite file\n{1}", sourceTableName, fiDatabaseFile.FullName));
+                    OnWarningEvent("Source table {0} not found in SQLite file\n{1}", sourceTableName, fiDatabaseFile.FullName);
 
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                OnWarningEvent(
-                    string.Format("Error verifying that table {0} exists in the SQLite database: {1}",
-                                  sourceTableName, ex.Message));
+                OnWarningEvent("Error verifying that table {0} exists in the SQLite database: {1}", sourceTableName, ex.Message);
                 return false;
             }
         }

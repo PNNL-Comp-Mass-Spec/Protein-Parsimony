@@ -33,7 +33,7 @@ namespace SetCover.Algorithms
                 if (DateTime.UtcNow.Subtract(lastProgressTime).TotalSeconds > 15)
                 {
                     lastProgressTime = DateTime.UtcNow;
-                    OnStatusEvent(string.Format("Computing coverage by node, {0} / {1}", currentNode, inNode.Count));
+                    OnStatusEvent("Computing coverage by node, {0} / {1}", currentNode, inNode.Count);
                 }
 
                 var cs = (Cluster)node;
@@ -81,8 +81,7 @@ namespace SetCover.Algorithms
                     if (currentIndex % 100 == 0 && DateTime.UtcNow.Subtract(lastProgressTime).TotalSeconds > 15)
                     {
                         lastProgressTime = DateTime.UtcNow;
-                        OnDebugEvent(string.Format("  ... computing coverage, {0} / {1}",
-                                                   totalProteins - currentIndex, totalProteins));
+                        OnDebugEvent("  ... computing coverage, {0} / {1}", totalProteins - currentIndex, totalProteins);
                     }
 
                     if (((ProteinGroup)proteins[currentIndex]).UntakenPeptides <= 0)

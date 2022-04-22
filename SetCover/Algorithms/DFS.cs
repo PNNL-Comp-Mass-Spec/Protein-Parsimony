@@ -69,15 +69,15 @@ namespace SetCover.Algorithms
 
                 if (mRecursionDepthLimitCount <= 1)
                 {
-                    OnWarningEvent(string.Format(
-                                       "Recursively called SetCover.Algorithms.DFS.Search to a depth of {0}; " +
-                                       "aborting processing of remaining children", recursionDepth));
+                    OnWarningEvent(
+                        "Recursively called SetCover.Algorithms.DFS.Search to a depth of {0}; " +
+                        "aborting processing of remaining children", recursionDepth);
                 }
                 else
                 {
-                    OnWarningEvent(string.Format(
-                                       "Recursively called SetCover.Algorithms.DFS.Search to the maximum depth {0} times; " +
-                                       "aborting processing of remaining children", mRecursionDepthLimitCount));
+                    OnWarningEvent(
+                        "Recursively called SetCover.Algorithms.DFS.Search to the maximum depth {0} times; " +
+                        "aborting processing of remaining children", mRecursionDepthLimitCount);
                 }
 
                 mRecursionDepthLimitReportThreshold += (int)Math.Floor(mRecursionDepthLimitReportThreshold * 0.25);
