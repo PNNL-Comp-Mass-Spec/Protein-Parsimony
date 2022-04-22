@@ -123,7 +123,7 @@ namespace SetCover.Algorithms
                         Children = new NodeChildren<Node>(Search(myNode))
                     };
 
-                    //		   cs.nodeName = string.Concat(cs.chi);
+                    // cs.nodeName = string.Concat(cs.chi);
                     clusters.Add(cs);
                 }
             }

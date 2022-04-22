@@ -5,126 +5,126 @@ using System.Collections.Generic;
 
 namespace SetCover
 {
-	public class NodeChildren<T> : IList<T>
-	{
-		private readonly List<T> Nodes = new();
+    public class NodeChildren<T> : IList<T>
+    {
+        private readonly List<T> Nodes = new();
 
         public int ChildCount { get; private set; }
 
-	    public NodeChildren()
-		{
-		}
+        public NodeChildren()
+        {
+        }
 
-		public T Get(int i)
-		{
-			return Nodes[i];
-		}
+        public T Get(int i)
+        {
+            return Nodes[i];
+        }
 
-		public void Sort()
-		{
-		    Nodes.Sort();
-		}
+        public void Sort()
+        {
+            Nodes.Sort();
+        }
 
-		public NodeChildren(IEnumerable<T> nodeList)
-		{
-			Nodes = new List<T>(nodeList);
-			ChildCount = Nodes.Count;
-		}
+        public NodeChildren(IEnumerable<T> nodeList)
+        {
+            Nodes = new List<T>(nodeList);
+            ChildCount = Nodes.Count;
+        }
 
-		public NodeChildren(NodeChildren<T> nodeList)
-		{
-			Nodes = new List<T>(nodeList);
-			ChildCount = Nodes.Count;
-		}
+        public NodeChildren(NodeChildren<T> nodeList)
+        {
+            Nodes = new List<T>(nodeList);
+            ChildCount = Nodes.Count;
+        }
 
-		/// <summary>
-		/// Ensures there are no duplicate adds
-		/// </summary>
-		/// <param name="node"></param>
-		public void Add(T node)
-		{
-			if (!Nodes.Contains(node))
-			{
-				Nodes.Add(node);
-				ChildCount++;
-			}
-		}
+        /// <summary>
+        /// Ensures there are no duplicate adds
+        /// </summary>
+        /// <param name="node"></param>
+        public void Add(T node)
+        {
+            if (!Nodes.Contains(node))
+            {
+                Nodes.Add(node);
+                ChildCount++;
+            }
+        }
 
-		public void AddRange(NodeChildren<T> nodes)
-		{
-		    Nodes.AddRange(nodes);
-		}
+        public void AddRange(NodeChildren<T> nodes)
+        {
+            Nodes.AddRange(nodes);
+        }
 
-		/// <summary>
-		/// Ensures removal is smooth
-		/// </summary>
-		/// <param name="node"></param>
-		public void RemoveChild(T node)
-		{
-			if (Nodes.Contains(node))
-			{
-				Nodes.Remove(node);
-				ChildCount--;
-			}
-		}
+        /// <summary>
+        /// Ensures removal is smooth
+        /// </summary>
+        /// <param name="node"></param>
+        public void RemoveChild(T node)
+        {
+            if (Nodes.Contains(node))
+            {
+                Nodes.Remove(node);
+                ChildCount--;
+            }
+        }
 
-		public int IndexOf(T item)
-		{
-			return Nodes.IndexOf(item);
-		}
+        public int IndexOf(T item)
+        {
+            return Nodes.IndexOf(item);
+        }
 
-		public void Insert(int index, T item)
-		{
-			if (!Nodes.Contains(item))
-			{
-				Nodes.Insert(index, item);
-				ChildCount++;
-			}
-		}
+        public void Insert(int index, T item)
+        {
+            if (!Nodes.Contains(item))
+            {
+                Nodes.Insert(index, item);
+                ChildCount++;
+            }
+        }
 
-		public void RemoveAt(int index)
-		{
-			Nodes.RemoveAt(index);
-		}
+        public void RemoveAt(int index)
+        {
+            Nodes.RemoveAt(index);
+        }
 
-		public T this[int index]
-		{
-			get => Nodes[index];
-		    set => Nodes[index] = value;
-		}
+        public T this[int index]
+        {
+            get => Nodes[index];
+            set => Nodes[index] = value;
+        }
 
-		public void Clear()
-		{
-			Nodes.Clear();
-		}
+        public void Clear()
+        {
+            Nodes.Clear();
+        }
 
-		public bool Contains(T item)
-		{
-			return Nodes.Contains(item);
-		}
+        public bool Contains(T item)
+        {
+            return Nodes.Contains(item);
+        }
 
-		public void CopyTo(T[] array, int arrayIndex)
-		{
-			Nodes.CopyTo(array, arrayIndex);
-		}
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            Nodes.CopyTo(array, arrayIndex);
+        }
 
-		public int Count => Nodes.Count;
+        public int Count => Nodes.Count;
 
-	    public bool IsReadOnly => false;
+        public bool IsReadOnly => false;
 
-	    public bool Remove(T item)
-		{
-			return Nodes.Remove(item);
-		}
+        public bool Remove(T item)
+        {
+            return Nodes.Remove(item);
+        }
 
-		public IEnumerator<T> GetEnumerator()
-		{
-			return Nodes.GetEnumerator();
-		}
+        public IEnumerator<T> GetEnumerator()
+        {
+            return Nodes.GetEnumerator();
+        }
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		{
-			throw new NotImplementedException();
-		}
-	}
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
