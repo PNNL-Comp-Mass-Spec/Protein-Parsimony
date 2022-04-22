@@ -27,13 +27,13 @@ namespace SetCover
 
 		public NodeChildren(HashSet<T> inlist)
 		{
-			Nodes = new List<T>(inlist);
+			Nodes = new List<T>(nodeList);
 			ChildCount = Nodes.Count;
 		}
 
-		public NodeChildren(NodeChildren<T> inlist)
+		public NodeChildren(NodeChildren<T> nodeList)
 		{
-			Nodes = new List<T>(inlist);
+			Nodes = new List<T>(nodeList);
 			ChildCount = Nodes.Count;
 		}
 
