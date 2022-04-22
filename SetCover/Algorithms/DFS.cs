@@ -17,7 +17,7 @@ namespace SetCover.Algorithms
     /// </remarks>
     internal class DFS : EventNotifier
     {
-        readonly Dictionary<int, Node> AllNodes = new Dictionary<int, Node>();
+        readonly Dictionary<int, Node> AllNodes = new();
 
         private int mRecursionDepthLimitCount;
         private int mRecursionDepthLimitReportThreshold = 10;

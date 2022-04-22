@@ -20,20 +20,11 @@ namespace SetCover.Objects
                 if (mNodeNameList == null || mNodeNameList.Count == 0)
                     return string.Empty;
 
-                return mNodeNameList.First();
+                return mNodeNameList[0];
             }
         }
 
-        public List<string> NodeNameList
-        {
-            get
-            {
-                if (mNodeNameList == null)
-                    return new List<string>();
-
-                return mNodeNameList;
-            }
-        }
+        public List<string> NodeNameList => mNodeNameList ?? new List<string>();
 
         /// <summary>
         /// Constructor
