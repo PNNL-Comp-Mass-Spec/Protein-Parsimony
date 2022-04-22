@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace SetCover.Objects
 {
@@ -66,7 +65,9 @@ namespace SetCover.Objects
             foreach (var child in Children)
             {
                 for(var i = 0; i < toRemove; i++)
+                {
                     child.Children.Remove(tempNode[i]);
+                }
             }
 
             foreach (var child in Children)
