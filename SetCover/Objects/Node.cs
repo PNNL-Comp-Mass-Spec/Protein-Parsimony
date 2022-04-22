@@ -7,7 +7,6 @@ namespace SetCover.Objects
     /// </summary>
     public class Node : IComparable
     {
-
         private static int IDNum;
 
         public enum NodeTypeName
@@ -72,7 +71,6 @@ namespace SetCover.Objects
             }
 
             throw new ArgumentException("Object is not a Node!");
-
         }
 
         public override string ToString()
@@ -83,9 +81,5 @@ namespace SetCover.Objects
             var childLabel = Children.Count == 1 ? "child" : "children";
             return string.Format("{0} {1}: {2}, {3} {4}", NodeType, Id, NodeName, Children.Count, childLabel);
         }
-
-
     }
-
-
 }

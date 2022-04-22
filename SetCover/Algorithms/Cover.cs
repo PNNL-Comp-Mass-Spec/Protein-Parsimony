@@ -17,7 +17,6 @@ namespace SetCover.Algorithms
     /// </remarks>
     internal class Cover : EventNotifier
     {
-
         /// <summary>
         /// Finds the best coverage using a greedy algorithm
         /// </summary>
@@ -76,7 +75,6 @@ namespace SetCover.Algorithms
                 var currentIndex = Math.Min(proteins.Count - 1, startIndex);
                 while (currentIndex >= 0)
                 {
-
                     // Sort the proteins by number of children, then by number of untaken peptides
                     proteins.Sort();
 
@@ -113,7 +111,6 @@ namespace SetCover.Algorithms
             }
 
             return proteinSet;
-
         }
 
         private void AdjustUntakenPeptides(Node temp)
@@ -133,11 +130,6 @@ namespace SetCover.Algorithms
                     }
                 }
             }
-
         }
-
-
-
-
     }
 }

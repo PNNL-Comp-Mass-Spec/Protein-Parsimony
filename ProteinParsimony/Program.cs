@@ -40,7 +40,6 @@ namespace ProteinParsimony
                 ShowSyntax("Exception validating the input file path: " + ex.Message);
                 ProgRunner.SleepMilliseconds(1500);
                 return -2;
-
             }
 
             var sqliteExtensions = new SortedSet<string>(StringComparer.OrdinalIgnoreCase) {
@@ -61,12 +60,10 @@ namespace ProteinParsimony
                 var result = ProcessTextFile(args, fiSourceFile);
                 return result;
             }
-
         }
 
         private static int ProcessSQLiteDB(FileInfo fiSourceFile, string sourceTableName)
         {
-
             try
             {
                 var runner = new Runner
@@ -99,7 +96,6 @@ namespace ProteinParsimony
 
         private static int ProcessTextFile(IReadOnlyList<string> args, FileInfo fiSourceFile)
         {
-
             string parsimonyResultsFilePath;
             string proteinGroupMembersFilePath;
 
@@ -247,6 +243,5 @@ namespace ProteinParsimony
                 mLastProgressUpdateTime = DateTime.UtcNow;
             }
         }
-
     }
 }

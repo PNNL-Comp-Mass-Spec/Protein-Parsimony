@@ -21,7 +21,6 @@ namespace SetCover.Objects
             : base(NodeTypeName.ProteinGroup, groupedNodes, globalIDTracker)
         {
             UntakenPeptides = Children.Count;
-
         }
 
         /// <summary>
@@ -70,6 +69,5 @@ namespace SetCover.Objects
         {
             return base.ToString() + "; " + UntakenPeptides + " UntakenPeptides";
         }
-
     }
 }

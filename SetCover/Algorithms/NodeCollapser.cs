@@ -33,7 +33,6 @@ namespace SetCover.Algorithms
             Dictionary<string, Node> peptides,
             GlobalIDContainer globalIDTracker)
         {
-
             var proteinNames = proteins.Keys.ToList();
             GroupProteinsOrPeptides(proteins, proteinNames, typeof(Protein), globalIDTracker);
 
@@ -47,11 +46,9 @@ namespace SetCover.Algorithms
             Type entityType,
             GlobalIDContainer globalIDTracker)
         {
-
             var count = 0;
             while (count != entityNames.Count)
             {
-
                 // Is the key there?
                 if (entities.ContainsKey(entityNames[count]))
                 {
@@ -134,7 +131,5 @@ namespace SetCover.Algorithms
             candidates.Add(node);
             return candidates;
         }
-
-
     }
 }

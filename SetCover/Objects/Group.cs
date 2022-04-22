@@ -22,7 +22,6 @@ namespace SetCover.Objects
 
                 return mNodeNameList.First();
             }
-
         }
 
         public List<string> NodeNameList
@@ -71,20 +70,17 @@ namespace SetCover.Objects
             }
             NodeName = string.Join(LIST_SEP_CHAR.ToString(), nodeNameGlobalIDs);
 
-
             var toRemove = tempNode.Count;
             foreach (var child in Children)
             {
                 for(var i = 0; i < toRemove; i++)
                     child.Children.Remove(tempNode[i]);
-
             }
 
             foreach (var child in Children)
             {
                 child.Children.Add(this);
             }
-
         }
 
         /// <summary>

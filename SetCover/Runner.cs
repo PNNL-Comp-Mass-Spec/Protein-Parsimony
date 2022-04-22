@@ -171,7 +171,6 @@ namespace SetCover
 
             try
             {
-
                 var resultsReader = new DelimitedFileReader
                 {
                     FilePath = parsimonyResultsFilePath
@@ -372,7 +371,6 @@ namespace SetCover
                 break;
             }
 
-
             clusteredProteins = mClusteredProteins;
             globalIDTracker = mGlobalIDTracker;
 
@@ -452,7 +450,6 @@ namespace SetCover
                 OnStatusEvent(string.Format("Iteration Complete, found {0} protein groups", mClusteredProteins.Count));
 
             mProcessingSucceeded = true;
-
         }
 
         /// <summary>
@@ -496,14 +493,12 @@ namespace SetCover
                             dbCommand.ExecuteNonQuery();
                         }
                     }
-
                 }
             }
             catch (Exception ex)
             {
                 OnWarningEvent("Error deleting existing protein parsimony data from the SQLite database: " + ex.Message);
             }
-
         }
 
         private void DeleteFile(string filePath)
@@ -601,8 +596,6 @@ namespace SetCover
                                   sourceTableName, ex.Message));
                 return false;
             }
-
         }
     }
-
 }

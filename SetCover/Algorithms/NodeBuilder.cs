@@ -15,7 +15,6 @@ namespace SetCover.Algorithms
     /// </remarks>
     internal class NodeBuilder
     {
-
         private Dictionary<string, Node> mProteins;
         private Dictionary<string, Node> mPeptides;
 
@@ -30,7 +29,6 @@ namespace SetCover.Algorithms
             out Dictionary<string, Node> proteins,
             out Dictionary<string, Node> peptides)
         {
-
             mProteins = new Dictionary<string, Node>(peptideProteinMapList.Count);
             mPeptides = new Dictionary<string, Node>(peptideProteinMapList.Count);
 
@@ -49,7 +47,6 @@ namespace SetCover.Algorithms
         {
             foreach (var row in peptideProteinMapList)
             {
-
                 var prot = new Protein(row.ProteinEntry);
                 var pep = new Peptide(row.PeptideEntry);
 
@@ -72,7 +69,6 @@ namespace SetCover.Algorithms
                     mProteins[prot.NodeName].Children.Add(pep);
                     pep.Children.Add(mProteins[prot.NodeName]);
                     mPeptides.Add(pep.NodeName, pep);
-
                 }
                 else if (peptideDefined)
                 {
@@ -103,6 +99,5 @@ namespace SetCover.Algorithms
                 }
             }
         }
-
     }
 }

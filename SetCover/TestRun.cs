@@ -18,7 +18,6 @@ namespace SetCover
 
             var run = new Runner();
             run.ProcessTextFile(file, parsimonyResultsFilePath, proteinGroupMembersFilePath);
-
         }
 
         [Test]
@@ -46,7 +45,6 @@ namespace SetCover
                 "prot_D\tpep_D"};
 
             TestNodeBuilder(peptideProteinMapList, expectedOutput);
-
         }
 
         [Test]
@@ -99,11 +97,9 @@ namespace SetCover
             };
 
             TestNodeBuilder(peptideProteinMapList, expectedOutput);
-
         }
         private void TestNodeBuilder(List<RowEntry> peptideProteinMapList, IReadOnlyList<string> expectedOutput)
         {
-
             var nodeBuilder = new NodeBuilder();
             var nodeCollapser = new NodeCollapser();
             var dfs = new DFS();
@@ -155,6 +151,5 @@ namespace SetCover
             var runner = new Runner();
             runner.ProcessSQLite(dataDbFolder, dataFile, sourceTableName);
         }
-
     }
 }

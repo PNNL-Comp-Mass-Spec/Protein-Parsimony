@@ -40,7 +40,6 @@ namespace SetCover.Algorithms
 
             var clusteredProteins = ClusterNodes(proteins);
             return clusteredProteins;
-
         }
 
         public bool CheckID(Node nextNode, HashSet<Node> searchedNodes)
@@ -56,7 +55,6 @@ namespace SetCover.Algorithms
         /// <param name="recursionDepth"></param>
         public void Search(Node input, HashSet<Node> searchNodes, int recursionDepth)
         {
-
             if (recursionDepth >= MaxRecursionDepth)
             {
                 // C# can handle a recursion depth of ~4000 with the default stack size of 1 MB
@@ -131,6 +129,5 @@ namespace SetCover.Algorithms
             }
             return clusters;
         }
-
     }
 }

@@ -48,7 +48,6 @@ namespace SetCover
 				Nodes.Add(node);
 				memberCount++;
 			}
-
 		}
 
 		public void AddRange(NodeChildren<T> nodes)
@@ -69,7 +68,6 @@ namespace SetCover
 			}
 		}
 
-
 		public int IndexOf(T item)
 		{
 			return Nodes.IndexOf(item);
@@ -82,7 +80,6 @@ namespace SetCover
 				Nodes.Insert(index, item);
 				memberCount++;
 			}
-
 		}
 
 		public void RemoveAt(int index)
@@ -95,7 +92,6 @@ namespace SetCover
 			get => Nodes[index];
 		    set => Nodes[index] = value;
 		}
-
 
 		public void Clear()
 		{
@@ -125,7 +121,6 @@ namespace SetCover
 		{
 			return Nodes.GetEnumerator();
 		}
-
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{

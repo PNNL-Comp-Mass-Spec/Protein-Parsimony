@@ -87,7 +87,6 @@ namespace SetCover
             }
 
             return dt;
-
         }
 
         /// <summary>
@@ -138,7 +137,6 @@ namespace SetCover
             return true;
         }
 
-
         /// <summary>
         /// Writes a datatable to text file
         /// </summary>
@@ -164,8 +162,6 @@ namespace SetCover
                     }
                     sw.WriteLine(dataLine);
                 }
-
-
             }
         }
 
@@ -211,7 +207,6 @@ namespace SetCover
                             }
                         }
                     }
-
 
                     // Now write out the results
                     var groupID = 0;
@@ -272,9 +267,7 @@ namespace SetCover
                                 WriteOutputGroupingLine(sw, peptideToProteinGroupMap, groupID, proteinFirst, child.NodeName, proteinNameOrList, proteinsInGroupCount);
                             }
                         }
-
                     }
-
                 } // End Using
             } // End Using
         }
@@ -332,9 +325,7 @@ namespace SetCover
                     {
                         outLines.Add(string.Format("{0}\t{1}", node.NodeName, child.NodeName));
                     }
-
                 }
-
             }
 
             return outLines;
