@@ -10,7 +10,7 @@ namespace ProteinParsimony
 {
     public static class Program
     {
-        private const string PROGRAM_DATE = "April 22, 2022";
+        private const string PROGRAM_DATE = "July 19, 2024";
 
         private static DateTime mLastProgressUpdateTime = DateTime.UtcNow;
 
@@ -32,14 +32,14 @@ namespace ProteinParsimony
                 if (!fiSourceFile.Exists)
                 {
                     ShowSyntax("Input file not found: " + inputFilePath);
-                    ProgRunner.SleepMilliseconds(1500);
+                    AppUtils.SleepMilliseconds(1500);
                     return -1;
                 }
             }
             catch (Exception ex)
             {
                 ShowSyntax("Exception validating the input file path: " + ex.Message);
-                ProgRunner.SleepMilliseconds(1500);
+                AppUtils.SleepMilliseconds(1500);
                 return -2;
             }
 
@@ -79,18 +79,18 @@ namespace ProteinParsimony
                 {
                     Console.WriteLine();
                     Console.WriteLine("Processing complete");
-                    ProgRunner.SleepMilliseconds(750);
+                    AppUtils.SleepMilliseconds(750);
                     return 0;
                 }
 
                 ConsoleMsgUtils.ShowWarning("Error computing protein parsimony: RunAlgorithm reports false");
-                ProgRunner.SleepMilliseconds(1500);
+                AppUtils.SleepMilliseconds(1500);
                 return -3;
             }
             catch (Exception ex)
             {
                 ConsoleMsgUtils.ShowError("Error computing protein parsimony", ex);
-                ProgRunner.SleepMilliseconds(1500);
+                AppUtils.SleepMilliseconds(1500);
                 return -2;
             }
         }
@@ -121,7 +121,7 @@ namespace ProteinParsimony
             catch (Exception ex)
             {
                 ShowSyntax("Exception validating the output file path: " + ex.Message);
-                ProgRunner.SleepMilliseconds(1500);
+                AppUtils.SleepMilliseconds(1500);
                 return -2;
             }
 
@@ -139,18 +139,18 @@ namespace ProteinParsimony
                 {
                     Console.WriteLine();
                     Console.WriteLine("Processing Complete");
-                    ProgRunner.SleepMilliseconds(750);
+                    AppUtils.SleepMilliseconds(750);
                     return 0;
                 }
 
                 ConsoleMsgUtils.ShowWarning("Error computing protein parsimony: ProcessTextFile reports false");
-                ProgRunner.SleepMilliseconds(1500);
+                AppUtils.SleepMilliseconds(1500);
                 return -3;
             }
             catch (Exception ex)
             {
                 ConsoleMsgUtils.ShowError("Error computing protein parsimony", ex);
-                ProgRunner.SleepMilliseconds(1500);
+                AppUtils.SleepMilliseconds(1500);
                 return -4;
             }
         }
@@ -169,7 +169,7 @@ namespace ProteinParsimony
                 Console.WriteLine();
             }
 
-            var exeName = Path.GetFileName(ProcessFilesOrDirectoriesBase.GetAppPath());
+            var exeName = Path.GetFileName(AppUtils.GetAppPath());
 
             ConsoleWriteWrapped("This program implements a protein parsimony algorithm for grouping proteins with similar peptides.");
             Console.WriteLine();
@@ -192,7 +192,7 @@ namespace ProteinParsimony
                                 Runner.PARSIMONY_GROUPING_TABLE + " and " + Runner.PARSIMONY_GROUP_MEMBERS_TABLE);
             Console.WriteLine();
             Console.WriteLine("Program written by Josh Aldrich for the Department of Energy (PNNL, Richland, WA)");
-            Console.WriteLine("Version: " + ProcessFilesOrDirectoriesBase.GetAppVersion(PROGRAM_DATE));
+            Console.WriteLine("Version: " + AppUtils.GetAppVersion(PROGRAM_DATE));
             Console.WriteLine();
             Console.WriteLine("E-mail:  proteomics@pnnl.gov");
             Console.WriteLine("Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://www.pnnl.gov/integrative-omics or ");
