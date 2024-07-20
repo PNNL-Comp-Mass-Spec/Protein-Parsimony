@@ -195,7 +195,7 @@ namespace ProteinParsimony
             Console.WriteLine("Version: " + ProcessFilesOrDirectoriesBase.GetAppVersion(PROGRAM_DATE));
             Console.WriteLine();
             Console.WriteLine("E-mail:  proteomics@pnnl.gov");
-            Console.WriteLine("Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics or ");
+            Console.WriteLine("Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://www.pnnl.gov/integrative-omics or ");
             Console.WriteLine("         https://github.com/PNNL-Comp-Mass-Spec");
         }
 
