@@ -82,12 +82,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\SetCover\Lib\Mage.dll</HintPath>
     </Reference>
-    <Reference Include="MyEMSLReader">
-      <HintPath>..\SetCover\Lib\MyEMSLReader.dll</HintPath>
-    </Reference>
-    <Reference Include="Pacifica.Core">
-      <HintPath>..\SetCover\Lib\Pacifica.Core.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -111,6 +105,9 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="MyEMSL-Reader">
+      <Version>2.1.117</Version>
+    </PackageReference>
     <PackageReference Include="PRISM-DatabaseUtils">
       <Version>1.4.15</Version>
     </PackageReference>
