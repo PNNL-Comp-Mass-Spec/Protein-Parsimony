@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using PRISM;
-using PRISM.FileProcessor;
 using PRISM.Logging;
 using SetCover;
 
@@ -10,7 +9,7 @@ namespace ProteinParsimony
 {
     public static class Program
     {
-        private const string PROGRAM_DATE = "July 19, 2024";
+        private const string PROGRAM_DATE = "September 17, 2024";
 
         private static DateTime mLastProgressUpdateTime = DateTime.UtcNow;
 
