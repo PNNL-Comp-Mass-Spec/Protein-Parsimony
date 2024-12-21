@@ -9,7 +9,7 @@ namespace ProteinParsimony
 {
     public static class Program
     {
-        private const string PROGRAM_DATE = "September 17, 2024";
+        private const string PROGRAM_DATE = "December 20, 2024";
 
         private static DateTime mLastProgressUpdateTime = DateTime.UtcNow;
 
